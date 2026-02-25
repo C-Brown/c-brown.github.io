@@ -1,14 +1,16 @@
 {{ define "main" }}
-<article class="reference-page">
-  <header class="post-header">
-    <h1 class="post-title">{{ .Title }}</h1>
-  </header>
-  <div class="post-content">
-    <p><a href="/references/">← Back to Cheat Sheets</a></p>
-    <iframe
-      src="/references/{{ .Params.reference_file }}"
-      loading="lazy"
-    ></iframe>
-  </div>
-</article>
+<div class="reference-container">
+  {{ partial "reference-nav.html" . }}
+  <article class="reference-page">
+    <header class="post-header">
+      <h1 class="post-title">{{ .Title }}</h1>
+    </header>
+    <div class="post-content">
+      <iframe
+        src="/references/{{ .Params.reference_file }}"
+        loading="lazy"
+      ></iframe>
+    </div>
+  </article>
+</div>
 {{ end }}

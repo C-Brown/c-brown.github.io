@@ -4,10 +4,137 @@ body:has(.reference-page) .main {
     padding: 0 16px;
 }
 
+/* ── Reference container: sidebar + content grid ── */
+.reference-container {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 140px);
+}
+
+/* ── Sidebar navigation ── */
+.reference-nav {
+    position: sticky;
+    top: 80px;
+    align-self: start;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    padding: 12px 0 24px 0;
+    border-right: 1px solid var(--border);
+}
+
+.reference-nav-header {
+    padding: 0 16px 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+}
+
+.reference-nav-header a {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.reference-nav-header a:hover {
+    text-decoration: underline;
+}
+
+.reference-nav-group {
+    padding: 0 16px;
+}
+
+.reference-nav-category {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--secondary);
+    margin: 12px 0 4px;
+    padding: 0;
+}
+
+.reference-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.reference-nav li {
+    margin: 0;
+}
+
+.reference-nav li a {
+    display: block;
+    padding: 4px 8px;
+    font-size: 13px;
+    color: var(--primary);
+    text-decoration: none;
+    border-radius: 4px;
+    border-left: 2px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.reference-nav li a:hover {
+    background: var(--code-bg);
+}
+
+.reference-nav li a.active {
+    background: var(--code-bg);
+    border-left-color: var(--primary);
+    font-weight: 600;
+}
+
+/* ── Reference page content area ── */
+.reference-page {
+    min-width: 0;
+}
+
 .reference-page .post-content iframe {
     width: 100%;
     height: calc(100vh - 140px);
     border: 1px solid #333;
     border-radius: 8px;
     background: #0d1117;
+}
+
+/* ── Mobile toggle button ── */
+.reference-nav-toggle {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: var(--code-bg);
+    color: var(--primary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 8px;
+}
+
+/* ── Mobile styles ── */
+@media (max-width: 768px) {
+    .reference-container {
+        grid-template-columns: 1fr;
+    }
+
+    .reference-nav {
+        position: static;
+        max-height: none;
+        overflow-y: visible;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 0 0 12px;
+        margin-bottom: 12px;
+        display: none;
+    }
+
+    .reference-nav.open {
+        display: block;
+    }
+
+    .reference-nav-toggle {
+        display: flex;
+    }
 }

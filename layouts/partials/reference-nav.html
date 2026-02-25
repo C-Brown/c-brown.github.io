@@ -1,0 +1,29 @@
+{{- $categories := slice "Offense" "Infrastructure & OPSEC" "Exploit Development" "Development" -}}
+{{- $currentPage := . -}}
+{{- $refSection := site.GetPage "/references" -}}
+{{- $allPages := $refSection.RegularPages -}}
+
+<button class="reference-nav-toggle" aria-label="Toggle navigation" onclick="document.querySelector('.reference-nav').classList.toggle('open')">
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  <span>Cheat Sheets</span>
+</button>
+
+<nav class="reference-nav">
+  <div class="reference-nav-header">
+    <a href="/references/">Cheat Sheets</a>
+  </div>
+  {{- range $cat := $categories }}
+  <div class="reference-nav-group">
+    <h3 class="reference-nav-category">{{ $cat }}</h3>
+    <ul>
+      {{- range $allPages }}
+        {{- if eq (.Params.category | default "") $cat }}
+        <li>
+          <a href="{{ .RelPermalink }}"{{ if eq .RelPermalink $currentPage.RelPermalink }} class="active"{{ end }}>{{ .Title }}</a>
+        </li>
+        {{- end }}
+      {{- end }}
+    </ul>
+  </div>
+  {{- end }}
+</nav>
