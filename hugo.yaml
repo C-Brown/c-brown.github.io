@@ -1,0 +1,86 @@
+baseURL: "https://c-brown.github.io/"
+languageCode: en-us
+title: Underblog
+theme: PaperMod
+paginate: 20
+
+services:
+  googleAnalytics:
+    id: G-M131L6MHJE
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    style: monokai
+    lineNos: false
+    guessSyntax: true
+
+params:
+  defaultTheme: dark
+  disableThemeToggle: true
+  ShowReadingTime: true
+  ShowShareButtons: false
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowToc: true
+  TocOpen: false
+  env: production
+
+  profileMode:
+    enabled: true
+    title: Underblog
+    subtitle: "Offensive security research — shellcoding, exploit development, red team operations, and AI-powered security tooling."
+    imageUrl: "/img/hacker.png"
+    imageWidth: 150
+    imageHeight: 150
+    buttons:
+      - name: Blog
+        url: /posts/
+      - name: References
+        url: /references/
+      - name: About
+        url: /about/
+
+  socialIcons:
+    - name: github
+      url: "https://github.com/C-Brown"
+    - name: rss
+      url: "/index.xml"
+
+  assets:
+    favicon: "/img/favicon.ico"
+    favicon16x16: "/img/favicon.ico"
+    favicon32x32: "/img/favicon.ico"
+    apple_touch_icon: "/img/favicon.ico"
+
+menu:
+  main:
+    - identifier: blog
+      name: Blog
+      url: /posts/
+      weight: 10
+    - identifier: references
+      name: References
+      url: /references/
+      weight: 20
+    - identifier: about
+      name: About
+      url: /about/
+      weight: 30
+    - identifier: search
+      name: Search
+      url: /search/
+      weight: 40
+
+taxonomies:
+  category: categories
+  tag: tags

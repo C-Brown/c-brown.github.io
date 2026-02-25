@@ -1,4 +1,13 @@
-_site*
-.sass-cache
-.jekyll-metadata
+public/
+resources/_gen/
+.hugo_build.lock
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
 *backup/
+CLAUDE.md
+.claude/

