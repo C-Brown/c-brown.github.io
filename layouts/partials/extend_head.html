@@ -1,0 +1,11 @@
+{{- /* Google Consent Mode v2 — must run before gtag.js loads */ -}}
+{{- if hugo.IsProduction | or (eq site.Params.env "production") }}
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {
+  'analytics_storage': localStorage.getItem('cookie_consent') === 'granted' ? 'granted' : 'denied',
+  'wait_for_update': 500
+});
+</script>
+{{- end }}
