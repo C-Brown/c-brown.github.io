@@ -1,4 +1,13 @@
-/* Reference iframe styling */
-.post-content iframe {
+/* Full-width reference pages — break out of PaperMod's 720px constraint */
+body:has(.reference-page) .main {
+    max-width: 100%;
+    padding: 0 16px;
+}
+
+.reference-page .post-content iframe {
+    width: 100%;
+    height: calc(100vh - 140px);
+    border: 1px solid #333;
+    border-radius: 8px;
     background: #0d1117;
 }
