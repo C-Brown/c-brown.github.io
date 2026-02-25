@@ -2,6 +2,7 @@
 title: SLAE 5.1 - Metasploit Payload Analysis Exec
 date:   2019-03-01
 categories: [SLAE, Assembly]
+tags: [shellcode, metasploit, reverse-engineering, x86, linux, gdb, ndisasm, libemu]
 draft: false
 ---
 

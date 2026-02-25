@@ -2,6 +2,7 @@
 title: SLAE 1 - Shell Bind TCP Shellcode
 date:   2019-02-25
 categories: [SLAE, Assembly]
+tags: [shellcode, bind-shell, socketcall, x86, linux, networking]
 draft: false
 ---
 

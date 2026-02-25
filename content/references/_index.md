@@ -1,8 +1,8 @@
 ---
-title: "Red Team References"
+title: "Cheat Sheets"
 ---
 
-One-pager quick references for red team operations — techniques, implementations, and tooling.
+One-pager cheat sheets for red team operations — techniques, implementations, and tooling.
 
 ### Offense
 

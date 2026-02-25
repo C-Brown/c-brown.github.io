@@ -2,6 +2,7 @@
 title: SLAE 7 - Custom Crypter - AES256 in C
 date:   2019-03-07
 categories: [SLAE, Assembly]
+tags: [shellcode, crypter, AES, encryption, evasion, x86, linux, C]
 draft: false
 ---
 

@@ -2,6 +2,7 @@
 title: SLAE 4 - Custom Encoder
 date:   2019-02-28
 categories: [SLAE, Assembly]
+tags: [shellcode, encoder, evasion, x86, linux, python]
 draft: false
 ---
 

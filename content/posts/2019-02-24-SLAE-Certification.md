@@ -2,6 +2,7 @@
 title: "SLAE Certification"
 date: 2019-02-24
 categories: [SLAE, Assembly]
+tags: [shellcode, x86, linux, certification]
 draft: false
 ---
 

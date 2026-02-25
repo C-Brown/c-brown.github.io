@@ -2,6 +2,7 @@
 title: SLAE 6.1 - Shell-Storm Polymorphism - force reboot
 date:   2019-03-04
 categories: [SLAE, Assembly]
+tags: [shellcode, polymorphism, evasion, x86, linux, shell-storm]
 draft: false
 ---
 

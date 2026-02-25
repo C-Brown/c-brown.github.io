@@ -2,6 +2,7 @@
 title: SLAE 3 - Egghunter Shellcode
 date:   2019-02-27
 categories: [SLAE, Assembly]
+tags: [shellcode, egghunter, x86, linux, exploit-development]
 draft: false
 ---
 

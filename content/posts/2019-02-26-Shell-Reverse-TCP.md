@@ -2,6 +2,7 @@
 title: SLAE 2 - Shell Reverse TCP Shellcode
 date:   2019-02-26
 categories: [SLAE, Assembly]
+tags: [shellcode, reverse-shell, socketcall, x86, linux, networking]
 draft: false
 ---
 

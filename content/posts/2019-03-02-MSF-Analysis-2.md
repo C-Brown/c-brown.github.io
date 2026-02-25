@@ -2,6 +2,7 @@
 title: SLAE 5.2 - Metasploit Payload Analysis adduser
 date:   2019-03-02
 categories: [SLAE, Assembly]
+tags: [shellcode, metasploit, reverse-engineering, x86, linux, gdb, ndisasm, libemu]
 draft: false
 ---
 

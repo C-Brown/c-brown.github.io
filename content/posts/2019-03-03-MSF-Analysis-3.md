@@ -2,6 +2,7 @@
 title: SLAE 5.3 - Metasploit Payload Analysis chmod
 date:   2019-03-03
 categories: [SLAE, Assembly]
+tags: [shellcode, metasploit, reverse-engineering, x86, linux, ndisasm, libemu]
 draft: false
 ---
 

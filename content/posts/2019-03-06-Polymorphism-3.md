@@ -2,6 +2,7 @@
 title: SLAE 6.3 - Shell-Storm Polymorphism - edit sudoers
 date:   2019-03-06
 categories: [SLAE, Assembly]
+tags: [shellcode, polymorphism, evasion, x86, linux, shell-storm, privilege-escalation]
 draft: false
 ---
 

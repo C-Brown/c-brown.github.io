@@ -46,7 +46,7 @@ params:
     buttons:
       - name: Blog
         url: /posts/
-      - name: References
+      - name: Cheat Sheets
         url: /references/
       - name: About
         url: /about/
@@ -70,9 +70,21 @@ menu:
       url: /posts/
       weight: 10
     - identifier: references
-      name: References
+      name: Cheat Sheets
       url: /references/
       weight: 20
+    - identifier: categories
+      name: Categories
+      url: /categories/
+      weight: 22
+    - identifier: tags
+      name: Tags
+      url: /tags/
+      weight: 24
+    - identifier: archives
+      name: Archives
+      url: /archives/
+      weight: 25
     - identifier: about
       name: About
       url: /about/
